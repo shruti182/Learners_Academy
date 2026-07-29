@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — Upload Video — Learners Academy</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Poppins:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  .upload-list{max-width:640px;margin:32px auto 0;}
+  .upload-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 18px;border:1px solid var(--line);border-radius:14px;margin-bottom:10px;font-size:0.9rem;}
+  .upload-row__meta{opacity:0.65;font-size:0.8rem;}
+  .upload-row a{color:var(--purple);font-weight:600;}
+  #adminGate{max-width:400px;margin:80px auto;text-align:center;}
+  #adminGate input{width:100%;padding:12px 14px;border:2px solid var(--line);border-radius:12px;margin:16px 0;font-size:1rem;}
+</style>
+</head>
+<body>
+
+<header class="nav" id="nav">
+  <div class="nav__inner">
+    <a href="index.html" class="nav__logo">
+      <span class="nav__logo-mark">LA</span>
+      <span class="nav__logo-text">Learners Academy</span>
+    </a>
+    <nav class="nav__links" id="navLinks">
+      <a href="index.html">Home</a>
+      <a href="courses.html">Courses</a>
+      <a href="live-classes.html">Live Classes</a>
+      <a href="faculty.html">Faculty</a>
+    </nav>
+    <div class="nav__actions">
+      <a href="login.html" class="btn btn--ghost">Log in</a>
+    </div>
+    <button class="nav__burger" id="burger" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<main>
+
+  <!-- SIMPLE ADMIN GATE: replace with real auth later -->
+  <section id="adminGate">
+    <span class="eyebrow eyebrow--coral">Admin</span>
+    <h2>Enter admin passcode</h2>
+    <input type="password" id="adminPass" placeholder="Passcode">
+    <button class="btn btn--solid btn--lg" id="adminUnlock" style="width:100%">Unlock</button>
+    <p class="auth-note">This is a placeholder gate for design purposes. For real security, wire this page behind your actual login/role system so only teacher accounts can reach it.</p>
+  </section>
+
+  <!-- UPLOAD PANEL (hidden until unlocked) -->
+  <section class="section" id="uploadPanel" hidden>
+    <div class="section__head">
+      <span class="eyebrow eyebrow--teal">Admin</span>
+      <h2>Upload a lesson video</h2>
+      <p>Videos upload directly to Cloudinary. Once done, copy the link into your course/live-class page, or keep a running list below.</p>
+    </div>
+
+    <div class="auth-card" style="max-width:520px;margin:0 auto;">
+      <form class="auth-form" id="videoMetaForm" onsubmit="return false;">
+        <label>Course / Class name
+          <input type="text" id="videoTitle" placeholder="e.g. Mathematics Masterclass — Grade 10, Lesson 3" required>
+        </label>
+        <label>Track
+          <select id="videoTrack" style="padding:12px 14px;border:2px solid var(--line);border-radius:12px;font-size:0.95rem;">
+            <option value="school">School (Grade 6–12)</option>
+            <option value="career">Career / Professional</option>
+          </select>
+        </label>
+        <button type="button" class="btn btn--solid btn--lg auth-submit" id="uploadBtn">Choose &amp; upload video</button>
+        <p class="auth-note" id="uploadStatus">No video selected yet.</p>
+      </form>
+    </div>
+
+    <div class="upload-list" id="uploadList"></div>
+  </section>
+
+</main>
+
+<script src="https://upload-widget.cloudinary.com/global/all.js"></script>
+<script src="script.js"></script>
+<script>
+/* ===== Placeholder admin gate — swap for real auth ===== */
+document.getElementById('adminUnlock').addEventListener('click', () => {
+  const val = document.getElementById('adminPass').value;
+  // TODO: replace this with a real check against your login system
+  if (val === 'learners2026') {
+    document.getElementById('adminGate').hidden = true;
+    document.getElementById('uploadPanel').hidden = false;
+    renderUploadList();
+  } else {
+    alert('Incorrect passcode.');
+  }
+});
+
+/* ===== Cloudinary config — fill these in ===== */
+const CLOUD_NAME = 'rdh4ed2g';               // your Cloudinary cloud name
+const UPLOAD_PRESET = 'shrutika';           // your unsigned Cloudinary upload preset
+
+const uploadStatus = document.getElementById('uploadStatus');
+
+const widget = cloudinary.createUploadWidget(
+  {
+    cloudName: CLOUD_NAME,
+    uploadPreset: UPLOAD_PRESET,
+    resourceType: 'video',
+    sources: ['local'],
+    multiple: false,
+    maxFileSize: 500000000 // 500MB, matches the preset limit set in step 4
+  },
+  (error, result) => {
+    if (error) {
+      uploadStatus.textContent = 'Upload failed — check console for details.';
+      console.error(error);
+      return;
+    }
+    if (result.event === 'success') {
+      const title = document.getElementById('videoTitle').value || 'Untitled lesson';
+      const track = document.getElementById('videoTrack').value;
+      const videoUrl = result.info.secure_url;
+      const thumbUrl = result.info.thumbnail_url || '';
+
+      saveVideoRecord({ title, track, videoUrl, thumbUrl, uploadedAt: new Date().toISOString() });
+      uploadStatus.textContent = 'Uploaded! Link saved below.';
+      renderUploadList();
+    }
+    if (result.event === 'queues-start') {
+      uploadStatus.textContent = 'Uploading…';
+    }
+  }
+);
+
+document.getElementById('uploadBtn').addEventListener('click', () => {
+  if (!document.getElementById('videoTitle').value) {
+    alert('Add a course/class name first.');
+    return;
+  }
+  widget.open();
+});
+
+/* ===== Local record-keeping so you can see + copy past uploads =====
+   NOTE: localStorage only persists on this browser/device. For a shared
+   list visible to everyone, log each upload to your existing Google
+   Sheets integration instead (send title, track, videoUrl there). */
+function saveVideoRecord(record) {
+  const list = JSON.parse(localStorage.getItem('la_videos') || '[]');
+  list.unshift(record);
+  localStorage.setItem('la_videos', JSON.stringify(list));
+}
+
+function renderUploadList() {
+  const list = JSON.parse(localStorage.getItem('la_videos') || '[]');
+  const container = document.getElementById('uploadList');
+  container.innerHTML = list.length
+    ? list.map(v => `
+      <div class="upload-row">
+        <div>
+          <strong>${v.title}</strong>
+          <div class="upload-row__meta">${v.track === 'school' ? 'School' : 'Career'} · ${new Date(v.uploadedAt).toLocaleDateString()}</div>
+        </div>
+        <a href="${v.videoUrl}" target="_blank" rel="noopener">Open ↗</a>
+      </div>
+    `).join('')
+    : '<p class="auth-note">No videos uploaded yet on this device.</p>';
+}
+</script>
+
+</body>
+</html>

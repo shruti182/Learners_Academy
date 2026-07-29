@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sample Lesson — Learners Academy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Poppins:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  .lesson-wrap{max-width:900px;margin:48px auto;padding:0 24px;}
+  .video-frame{position:relative;width:100%;aspect-ratio:16/9;border-radius:var(--radius);overflow:hidden;background:var(--navy);box-shadow:0 20px 50px rgba(32,26,59,0.15);}
+  .video-frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0;}
+  .lock-screen{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;color:#fff;text-align:center;padding:24px;}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav__inner">
+    <a href="index.html" class="nav__logo">
+      <span class="nav__logo-mark">LA</span>
+      <span class="nav__logo-text">Learners Academy</span>
+    </a>
+    <nav class="nav__links">
+      <a href="index.html">Home</a>
+      <a href="courses.html">Courses</a>
+    </nav>
+  </div>
+</header>
+
+<main class="lesson-wrap">
+  <span class="eyebrow eyebrow--coral">Mathematics · Grade 10</span>
+  <h1 style="margin-top:8px;">Quadratic Equations — Lesson 1</h1>
+  <p style="margin-top:8px;">This lesson only plays once you're logged in — the same pattern works for every video on the site.</p>
+
+  <div class="video-frame" id="videoFrame" style="margin-top:24px;">
+    <!-- Locked state shown by default; script swaps this for the real embed once it confirms login -->
+    <div class="lock-screen" id="lockScreen">
+      <span style="font-size:2rem;">🔒</span>
+      <p style="color:#fff;">Log in to watch this lesson</p>
+      <a href="login.html?next=lesson-example.html" class="btn btn--solid">Log in / Sign up</a>
+    </div>
+  </div>
+
+  <p class="auth-note" style="margin-top:16px;">
+    Video source right now: an <strong>Unlisted YouTube video</strong> — free, zero setup, good enough for launch.
+    When you're ready for real access control (so the video file itself can't be shared as a link),
+    swap the iframe src for a <strong>Bunny.net Stream</strong> signed URL — see the comment in the code below.
+  </p>
+</main>
+
+<script type="module">
+  import { getCurrentUser } from "./supabase-client.js";
+
+  const YOUTUBE_VIDEO_ID = "dQw4w9WgXcQ"; // ← replace with your unlisted video's ID
+
+  // ---- STAGE 2 (later): swap the block below for Bunny.net Stream ----
+  // Bunny gives you a signed, expiring URL per user so the raw video link
+  // can't just be copy-pasted and shared. Roughly:
+  //   const res = await fetch(`https://your-backend/get-signed-url?video=${videoId}`);
+  //   const { signedUrl } = await res.json();
+  //   iframe.src = signedUrl;
+  // (Signing needs to happen server-side with your Bunny API key — never in
+  // browser JS — so this step needs a tiny backend function, not just Supabase.)
+
+  const frame = document.getElementById("videoFrame");
+  const user = await getCurrentUser();
+
+  if (user) {
+    frame.innerHTML = `
+      <iframe
+        src="https://www.youtube.com/embed/${YOUTUBE_VIDEO_ID}"
+        title="Lesson video"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen>
+      </iframe>`;
+  }
+  // else: the lock screen already showing in the HTML stays as-is
+</script>
+</body>
+</html>

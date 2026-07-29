@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Learners Academy — Every grade. Every skill. One path forward.</title>
+<meta name="description" content="Video lessons, live classes and real certificates for school students (Grade 6–12) and working professionals.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Poppins:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="road-progress" aria-hidden="true"><div class="road-progress__fill" id="roadFill"></div></div>
+
+<header class="nav" id="nav">
+  <div class="nav__inner">
+    <a href="index.html" class="nav__logo">
+      <span class="nav__logo-mark">LA</span>
+      <span class="nav__logo-text">Learners Academy</span>
+    </a>
+    <nav class="nav__links" id="navLinks">
+      <a href="index.html" class="is-active">Home</a>
+      <a href="courses.html">Courses</a>
+      <a href="live-classes.html">Live Classes</a>
+      <a href="faculty.html">Faculty</a>
+    </nav>
+    <div class="nav__actions">
+      <a href="login.html" class="btn btn--ghost">Log in</a>
+      <button type="button" class="btn btn--solid" id="demoOpenBtn">Book a free demo</button>
+    </div>
+    <button class="nav__burger" id="burger" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero__eyebrow">
+      <span class="dot"></span> Built for two journeys, one platform
+    </div>
+    <h1 class="hero__title">
+      Every grade.<br>
+      Every skill.<br>
+      <em>One path forward.</em>
+    </h1>
+    <p class="hero__sub">
+      Learners Academy carries school students from Grade 6 through their board exams,
+      and carries professionals from their first Python script to their next
+      promotion — with video lessons, live doubt-clearing, and certificates
+      that hold up in the real world.
+    </p>
+
+    <div class="hero__paths">
+      <a href="courses.html?track=school" class="path-card path-card--school">
+        <span class="path-card__km">MILESTONE 06 → 12</span>
+        <h3>School Path</h3>
+        <p>CBSE &amp; ICSE aligned lessons, chapter quizzes, and live doubt sessions for Grade 6–12.</p>
+        <span class="path-card__go">Explore subjects →</span>
+      </a>
+      <a href="courses.html?track=career" class="path-card path-card--career">
+        <span class="path-card__km">MILESTONE FIRST JOB → NEXT ROLE</span>
+        <h3>Career Path</h3>
+        <p>Python, SQL, Power BI and Data Analytics tracks with certificates employers recognise.</p>
+        <span class="path-card__go">Explore tracks →</span>
+      </a>
+    </div>
+
+    <svg class="hero__road" viewBox="0 0 1200 140" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0,90 C 200,20 350,140 600,70 S 1000,10 1200,60" stroke="var(--yellow)" stroke-width="3" stroke-dasharray="2 14" stroke-linecap="round" fill="none"/>
+    </svg>
+  </section>
+
+  <!-- STATS -->
+  <section class="stats">
+    <div class="stat">
+      <span class="stat__num" data-count="18400">0</span>
+      <span class="stat__label">Learners on the path</span>
+    </div>
+    <div class="stat">
+      <span class="stat__num" data-count="64">0</span>
+      <span class="stat__label">Video courses</span>
+    </div>
+    <div class="stat">
+      <span class="stat__num" data-count="47" data-decimal="1">0</span>
+      <span class="stat__label">Average rating ×10</span>
+    </div>
+    <div class="stat">
+      <span class="stat__num-static">100%</span>
+      <span class="stat__label">Verifiable certificates</span>
+    </div>
+  </section>
+
+  <!-- SCHOOL PATH TEASER -->
+  <section class="section" id="school">
+    <div class="section__head section__head--row">
+      <div>
+        <span class="eyebrow eyebrow--coral">School Path, Grade 6–12</span>
+        <h2>Built around the syllabus, not around us</h2>
+        <p>Every chapter matches what's taught in class — so revision feels familiar, not like starting over.</p>
+      </div>
+      <a href="courses.html?track=school" class="btn btn--ghost">See all →</a>
+    </div>
+
+    <div class="course-grid">
+      <article class="course-card">
+        <div class="course-card__top course-card__top--coral">Popular</div>
+        <h4>Mathematics Masterclass — Grade 10</h4>
+        <p class="course-card__meta">★ 4.8 · 32 video lessons</p>
+        <p class="course-card__price">₹999</p>
+      </article>
+      <article class="course-card">
+        <div class="course-card__top course-card__top--coral">Popular</div>
+        <h4>Science Explorer — Grade 9</h4>
+        <p class="course-card__meta">★ 4.7 · 28 video lessons</p>
+        <p class="course-card__price">₹799</p>
+      </article>
+      <article class="course-card">
+        <div class="course-card__top">New</div>
+        <h4>English Literature &amp; Grammar — Grade 12</h4>
+        <p class="course-card__meta">★ 4.6 · 24 video lessons</p>
+        <p class="course-card__price">₹699</p>
+      </article>
+      <article class="course-card">
+        <div class="course-card__top course-card__top--free">Free</div>
+        <h4>Social Studies Made Fun — Grade 8</h4>
+        <p class="course-card__meta">★ 4.5 · 20 video lessons</p>
+        <p class="course-card__price">Free</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- CAREER PATH TEASER -->
+  <section class="section section--dark" id="career">
+    <div class="section__head section__head--row">
+      <div>
+        <span class="eyebrow eyebrow--teal">Career Path, Working Professionals</span>
+        <h2>Skills your manager will actually notice</h2>
+        <p>Self-paced tracks built on real datasets, so what you practice is what you'll ship at work.</p>
+      </div>
+      <a href="courses.html?track=career" class="btn btn--outline">See all →</a>
+    </div>
+
+    <div class="course-grid course-grid--dark">
+      <article class="course-card course-card--dark">
+        <div class="course-card__top course-card__top--teal">Popular</div>
+        <h4>SQL — Complete Database Mastery</h4>
+        <p class="course-card__meta">★ 4.9 · 41 video lessons</p>
+        <p class="course-card__price">₹1,499</p>
+      </article>
+      <article class="course-card course-card--dark">
+        <div class="course-card__top course-card__top--teal">Popular</div>
+        <h4>Power BI — Business Intelligence Bootcamp</h4>
+        <p class="course-card__meta">★ 4.8 · 38 video lessons</p>
+        <p class="course-card__price">₹2,499</p>
+      </article>
+      <article class="course-card course-card--dark">
+        <div class="course-card__top course-card__top--teal">Popular</div>
+        <h4>Python for Data Science &amp; Automation</h4>
+        <p class="course-card__meta">★ 4.8 · 45 video lessons</p>
+        <p class="course-card__price">₹1,799</p>
+      </article>
+      <article class="course-card course-card--dark">
+        <div class="course-card__top">New</div>
+        <h4>Data Analytics — Complete Career Path</h4>
+        <p class="course-card__meta">★ 4.9 · 60 video lessons</p>
+        <p class="course-card__price">₹3,999</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- 100% FREE -->
+  <section class="section section--free">
+    <div class="free-banner">
+      <div>
+        <span class="eyebrow eyebrow--coral">100% Free</span>
+        <h2>Start for free</h2>
+        <p>No signup needed. No credit card. Just learn.</p>
+      </div>
+      <a href="courses.html?filter=free" class="btn btn--solid">All free courses</a>
+    </div>
+  </section>
+
+  <!-- LIVE CLASSES TEASER -->
+  <section class="section section--live" id="live">
+    <div class="section__head section__head--row">
+      <div>
+        <span class="eyebrow eyebrow--marigold">Happening soon</span>
+        <h2>Learn live, not just on-demand</h2>
+        <p>Seats are limited on purpose — small enough that your question gets answered.</p>
+      </div>
+      <a href="live-classes.html" class="btn btn--ghost">All live classes →</a>
+    </div>
+
+    <div class="live-grid">
+      <article class="live-card">
+        <span class="live-card__pill">LIVE · FREE</span>
+        <h4>Trigonometry Problem-Solving Marathon</h4>
+        <p class="live-card__meta">Wed · 4:00 PM IST · 90 min</p>
+        <p class="live-card__seats">44 seats left</p>
+      </article>
+      <article class="live-card">
+        <span class="live-card__pill live-card__pill--paid">LIVE · ₹299</span>
+        <h4>Power BI DAX Formulas Workshop</h4>
+        <p class="live-card__meta">Fri · 7:00 PM IST · 120 min</p>
+        <p class="live-card__seats">18 seats left</p>
+      </article>
+      <article class="live-card">
+        <span class="live-card__pill">LIVE · FREE</span>
+        <h4>Physics — Newton's Laws Deep Dive</h4>
+        <p class="live-card__meta">Sun · 5:00 PM IST · 90 min</p>
+        <p class="live-card__seats">91 seats left</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="section" id="stories">
+    <div class="section__head">
+      <span class="eyebrow">On the record</span>
+      <h2>Two kinds of learners, one platform</h2>
+    </div>
+
+    <div class="quote-grid">
+      <blockquote class="quote-card">
+        <p>"I stopped dreading maths once I could pause a video and rewatch the one step I didn't get. My marks followed."</p>
+        <footer><span class="quote-card__avatar">AV</span> Aditi Verma · Grade 10</footer>
+      </blockquote>
+      <blockquote class="quote-card">
+        <p>"The SQL track used our exact kind of messy data — window functions finally clicked at my actual job, not just in theory."</p>
+        <footer><span class="quote-card__avatar">RN</span> Rahul Nair · Data Analyst</footer>
+      </blockquote>
+      <blockquote class="quote-card">
+        <p>"Live doubt sessions felt like extra tuition, minus the awkwardness of asking in a full classroom."</p>
+        <footer><span class="quote-card__avatar">SK</span> Simran Kaur · Grade 8</footer>
+      </blockquote>
+    </div>
+  </section>
+
+  <!-- FACULTY TEASER -->
+  <section class="section" id="faculty">
+    <div class="section__head section__head--row">
+      <div>
+        <span class="eyebrow eyebrow--teal">Who's teaching</span>
+        <h2>Learn from people who've done the job</h2>
+        <p>Every instructor teaches what they practice — in a classroom or on the job.</p>
+      </div>
+      <a href="faculty.html" class="btn btn--ghost">Meet everyone →</a>
+    </div>
+    <div class="faculty-grid">
+      <article class="faculty-card">
+        <span class="faculty-card__avatar">DS</span>
+        <h4>Dr. Neha Sharma</h4>
+        <p>Mathematics · 12 yrs teaching Grade 9–12</p>
+      </article>
+      <article class="faculty-card">
+        <span class="faculty-card__avatar">AK</span>
+        <h4>Aditya Kapoor</h4>
+        <p>Tableau &amp; Power BI · Ex-Analytics Lead, Myntra</p>
+      </article>
+      <article class="faculty-card">
+        <span class="faculty-card__avatar">PK</span>
+        <h4>Prof. Rajesh Kumar</h4>
+        <p>Physics · JEE mentor, 3D-animated lessons</p>
+      </article>
+      <article class="faculty-card">
+        <span class="faculty-card__avatar">SR</span>
+        <h4>Sneha Reddy</h4>
+        <p>SQL &amp; Data Analytics · Senior BI Consultant</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta" id="join">
+    <h2>Pick your path. Start today.</h2>
+    <p>Free courses available. No card required.</p>
+    <div class="cta__buttons">
+      <a href="login.html?mode=signup&as=student" class="btn btn--solid btn--lg">I'm a school student</a>
+      <a href="login.html?mode=signup&as=professional" class="btn btn--outline btn--lg">I'm a professional</a>
+    </div>
+  </section>
+
+</main>
+
+<section class="newsletter">
+  <h3>Stay updated with Learners Academy</h3>
+  <p>Free study tips, course updates, and offers — straight to your inbox.</p>
+  <form class="newsletter__form" onsubmit="return false;">
+    <input type="email" placeholder="you@email.com" aria-label="Email address" required>
+    <button type="submit" class="btn btn--solid">Subscribe</button>
+  </form>
+</section>
+
+<footer class="footer">
+  <div class="footer__top">
+    <div class="footer__brand">
+      <span class="nav__logo-mark">LA</span> <span class="nav__logo-text">Learners Academy</span>
+      <p>A path from Grade 6 to your next promotion — video lessons, live classes, real certificates.</p>
+      <p class="footer__contact">
+        <a href="mailto:khandelwalshrutika@gmail.com">khandelwalshrutika@gmail.com</a><br>
+        <a href="tel:+917409859114">+91 74098 59114</a><br>
+        Jaipur, Rajasthan
+      </p>
+    </div>
+    <div class="footer__col">
+      <h6>School</h6>
+      <a href="courses.html?tag=grade-6">Grade 6–10</a><a href="courses.html?tag=grade-11">Grade 11–12</a><a href="courses.html?tag=board-prep">Board Exam Prep</a><a href="courses.html?tag=competitive">JEE / NEET</a>
+    </div>
+    <div class="footer__col">
+      <h6>Career Tools</h6>
+      <a href="courses.html?subject=python">Python</a><a href="courses.html?subject=sql">SQL</a><a href="courses.html?subject=power-bi">Power BI</a><a href="courses.html?subject=tableau">Tableau</a>
+    </div>
+    <div class="footer__col">
+      <h6>Company</h6>
+      <a href="about.html">About</a><a href="#">Teach on Learners Academy</a><a href="#">Careers</a><a href="#">Contact</a>
+    </div>
+  </div>
+  <div class="footer__bottom">
+    <span>© 2026 Learners Academy Learning. All rights reserved.</span>
+    <span class="footer__legal"><a href="#">Privacy</a><a href="#">Terms</a></span>
+  </div>
+</footer>
+
+<!-- BOOK A FREE DEMO — POPUP -->
+<div class="demo-modal" id="demoModal" role="dialog" aria-modal="true" aria-labelledby="demoModalTitle" hidden>
+  <div class="demo-modal__backdrop" id="demoModalBackdrop"></div>
+  <div class="demo-modal__panel">
+    <button type="button" class="demo-modal__close" id="demoCloseBtn" aria-label="Close">&times;</button>
+
+    <span class="eyebrow eyebrow--coral">Free · 30 minutes · No card needed</span>
+    <h3 id="demoModalTitle">Book your free demo</h3>
+    <p>See a real lesson, meet an instructor, and get a personalised path — for your grade or your career track.</p>
+
+    <div class="demo-modal__points">
+      <span>✓ Live 1:1 walkthrough</span>
+      <span>✓ Pick School or Career path</span>
+      <span>✓ No commitment required</span>
+    </div>
+
+    <a href="login.html?mode=signup&intent=demo" class="btn btn--solid btn--lg demo-modal__cta">Continue to sign up →</a>
+  </div>
+</div>
+
+<script src="script.js"></script>
+<script>
+  (function () {
+    var modal = document.getElementById('demoModal');
+    var openBtn = document.getElementById('demoOpenBtn');
+    var closeBtn = document.getElementById('demoCloseBtn');
+    var backdrop = document.getElementById('demoModalBackdrop');
+    var lastFocused = null;
+
+    function openModal() {
+      lastFocused = document.activeElement;
+      modal.hidden = false;
+      document.body.style.overflow = 'hidden';
+      closeBtn.focus();
+    }
+    function closeModal() {
+      modal.hidden = true;
+      document.body.style.overflow = '';
+      if (lastFocused) lastFocused.focus();
+    }
+
+    if (openBtn) openBtn.addEventListener('click', openModal);
+    if (closeBtn) closeBtn.addEventListener('click', closeModal);
+    if (backdrop) backdrop.addEventListener('click', closeModal);
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && !modal.hidden) closeModal();
+    });
+  })();
+</script>
+
+<!-- ===== FREE CHATBOT WIDGET ===== -->
+<!-- Get your free API key: https://huggingface.co/settings/tokens (Hugging Face)
+     or https://aistudio.google.com/apikey (Google Gemini) -->
+<script src="chatbot-widget.js"></script>
+<!-- To use Gemini instead, replace above with: <script src="chatbot-widget-gemini.js"></script> -->
+
+</body>
+</html>

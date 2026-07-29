@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Faculty — Learners Academy</title>
+<meta name="description" content="Meet the instructors teaching on Learners Academy.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Poppins:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="road-progress" aria-hidden="true"><div class="road-progress__fill" id="roadFill"></div></div>
+
+<header class="nav" id="nav">
+  <div class="nav__inner">
+    <a href="index.html" class="nav__logo">
+      <span class="nav__logo-mark">LA</span>
+      <span class="nav__logo-text">Learners Academy</span>
+    </a>
+    <nav class="nav__links" id="navLinks">
+      <a href="index.html">Home</a>
+      <a href="courses.html">Courses</a>
+      <a href="live-classes.html">Live Classes</a>
+      <a href="faculty.html" class="is-active">Faculty</a>
+    </nav>
+    <div class="nav__actions">
+      <a href="login.html" class="btn btn--ghost">Log in</a>
+      <a href="login.html?mode=signup" class="btn btn--solid">Start free</a>
+    </div>
+    <button class="nav__burger" id="burger" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<main>
+  <section class="page-hero">
+    <span class="eyebrow eyebrow--teal">Who's teaching</span>
+    <h1>Learn from people who've done the job</h1>
+    <p>Every instructor teaches what they practice — in a classroom or on the job.</p>
+  </section>
+
+  <section class="section">
+    <div class="faculty-grid faculty-grid--wide">
+      <article class="faculty-card faculty-card--wide">
+        <span class="faculty-card__avatar">SK</span>
+        <h4>Shrutika Khandelwal</h4>
+        <p class="faculty-card__role">Founder · Mathematics (Grade 6–12) &amp; Data Analytics</p>
+        <p>Founder of Learners Academy with 10 years of teaching experience across Grade 6–12, specialising in Mathematics and Vedic Maths. Also leads the professional-track courses in Power BI, Tableau, SQL and Python, drawing on 7+ years of industry experience as a Senior Data Analyst.</p>
+      </article>
+      <article class="faculty-card faculty-card--wide">
+        <span class="faculty-card__avatar">DS</span>
+        <h4>Dr. Neha Sharma</h4>
+        <p class="faculty-card__role">Mathematics</p>
+        <p>12 years teaching Grade 9–12 CBSE Mathematics. Known for turning trigonometry into something students actually enjoy.</p>
+      </article>
+      <article class="faculty-card faculty-card--wide">
+        <span class="faculty-card__avatar">AK</span>
+        <h4>Aditya Kapoor</h4>
+        <p class="faculty-card__role">Tableau &amp; Power BI</p>
+        <p>Ex-Analytics Lead at Myntra. Teaches dashboarding the way it's actually done in a BI team, not just in theory.</p>
+      </article>
+      <article class="faculty-card faculty-card--wide">
+        <span class="faculty-card__avatar">PK</span>
+        <h4>Prof. Rajesh Kumar</h4>
+        <p class="faculty-card__role">Physics</p>
+        <p>JEE mentor for over a decade. Builds 3D animations for every mechanics topic so motion actually looks like motion.</p>
+      </article>
+      <article class="faculty-card faculty-card--wide">
+        <span class="faculty-card__avatar">SR</span>
+        <h4>Sneha Reddy</h4>
+        <p class="faculty-card__role">SQL &amp; Data Analytics</p>
+        <p>Senior BI Consultant with clients across fintech and retail. Her window-functions unit is the most-repeated lesson on the platform.</p>
+      </article>
+      <article class="faculty-card faculty-card--wide">
+        <span class="faculty-card__avatar">AR</span>
+        <h4>Ms. Ananya Rao</h4>
+        <p class="faculty-card__role">English Literature</p>
+        <p>Grade 12 English faculty who treats every poem like it deserves a close reading, not a summary to memorise.</p>
+      </article>
+      <article class="faculty-card faculty-card--wide">
+        <span class="faculty-card__avatar">VJ</span>
+        <h4>Vikram Joshi</h4>
+        <p class="faculty-card__role">Python &amp; Automation</p>
+        <p>Backend engineer turned instructor. Teaches Python the way you'd actually use it: to stop doing something twice.</p>
+      </article>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="footer__top">
+    <div class="footer__brand">
+      <span class="nav__logo-mark">LA</span> <span class="nav__logo-text">Learners Academy</span>
+      <p>A path from Grade 6 to your next promotion — video lessons, live classes, real certificates.</p>
+    </div>
+    <div class="footer__col">
+      <h6>School</h6>
+      <a href="courses.html?tag=grade-6">Grade 6–10</a><a href="courses.html?tag=grade-11">Grade 11–12</a><a href="courses.html?tag=board-prep">Board Exam Prep</a><a href="courses.html?tag=competitive">JEE / NEET</a>
+    </div>
+    <div class="footer__col">
+      <h6>Career Tools</h6>
+      <a href="courses.html?subject=python">Python</a><a href="courses.html?subject=sql">SQL</a><a href="courses.html?subject=power-bi">Power BI</a><a href="courses.html?subject=tableau">Tableau</a>
+    </div>
+    <div class="footer__col">
+      <h6>Company</h6>
+      <a href="#">About</a><a href="#">Teach on Learners Academy</a><a href="#">Careers</a><a href="#">Contact</a>
+    </div>
+  </div>
+  <div class="footer__bottom">
+    <span>© 2026 Learners Academy Learning. All rights reserved.</span>
+    <span class="footer__legal"><a href="#">Privacy</a><a href="#">Terms</a></span>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>

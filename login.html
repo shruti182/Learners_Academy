@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Log in or sign up — Learners Academy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Poppins:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="nav" id="nav">
+  <div class="nav__inner">
+    <a href="index.html" class="nav__logo">
+      <span class="nav__logo-mark">LA</span>
+      <span class="nav__logo-text">Learners Academy</span>
+    </a>
+    <nav class="nav__links" id="navLinks">
+      <a href="index.html">Home</a>
+      <a href="courses.html">Courses</a>
+      <a href="live-classes.html">Live Classes</a>
+      <a href="faculty.html">Faculty</a>
+    </nav>
+  </div>
+</header>
+
+<main class="auth-wrap">
+  <div class="auth-card">
+
+    <div class="auth-tabs">
+      <button type="button" class="auth-tab" id="tabLogin">Log in</button>
+      <button type="button" class="auth-tab" id="tabSignup">Sign up</button>
+    </div>
+
+    <div id="formError" class="auth-note" style="display:none;color:#D8501C;font-style:normal;"></div>
+    <div id="formSuccess" class="auth-note" style="display:none;color:var(--green);font-style:normal;"></div>
+
+    <!-- LOG IN -->
+    <form class="auth-form" id="loginForm">
+      <h1>Welcome back</h1>
+      <p class="auth-sub">Log in to pick up where you left off.</p>
+
+      <label>
+        Email
+        <input type="email" id="loginEmail" required autocomplete="email">
+      </label>
+      <label>
+        Password
+        <input type="password" id="loginPassword" required autocomplete="current-password">
+      </label>
+
+      <button type="submit" class="btn btn--solid auth-submit" id="loginSubmitBtn">Log in</button>
+      <p class="auth-note">No account yet? <a href="#" id="goToSignup" style="color:var(--purple);font-weight:600;">Sign up free</a></p>
+    </form>
+
+    <!-- SIGN UP -->
+    <form class="auth-form" id="signupForm" style="display:none;">
+      <h1>Start learning</h1>
+      <p class="auth-sub" id="signupSub">Create your free account.</p>
+
+      <div class="auth-role">
+        <label class="auth-role__option">
+          <input type="radio" name="signupRole" value="student" checked> I'm a school student
+        </label>
+        <label class="auth-role__option">
+          <input type="radio" name="signupRole" value="professional"> I'm a professional
+        </label>
+      </div>
+
+      <label>
+        Full name
+        <input type="text" id="signupName" required autocomplete="name">
+      </label>
+      <label>
+        Email
+        <input type="email" id="signupEmail" required autocomplete="email">
+      </label>
+      <label>
+        Password
+        <input type="password" id="signupPassword" required minlength="6" autocomplete="new-password">
+      </label>
+
+      <button type="submit" class="btn btn--solid auth-submit" id="signupSubmitBtn">Create free account</button>
+      <p class="auth-note">Already have an account? <a href="#" id="goToLogin" style="color:var(--purple);font-weight:600;">Log in</a></p>
+    </form>
+
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="footer__bottom">
+    <span>© 2026 Learners Academy Learning. All rights reserved.</span>
+  </div>
+</footer>
+
+<script type="module">
+  import { supabase } from "./supabase-client.js";
+
+  // ---------- Read the URL so ?mode=signup / ?as=student / ?intent=demo pre-fill things ----------
+  const params = new URLSearchParams(window.location.search);
+  const mode = params.get("mode");        // "login" | "signup"
+  const asRole = params.get("as");        // "student" | "professional"
+  const intent = params.get("intent");    // e.g. "demo"
+  const nextUrl = params.get("next");     // where to send them after success
+
+  const tabLogin = document.getElementById("tabLogin");
+  const tabSignup = document.getElementById("tabSignup");
+  const loginForm = document.getElementById("loginForm");
+  const signupForm = document.getElementById("signupForm");
+  const errorBox = document.getElementById("formError");
+  const successBox = document.getElementById("formSuccess");
+
+  function showTab(tab) {
+    const isSignup = tab === "signup";
+    tabLogin.classList.toggle("is-active", !isSignup);
+    tabSignup.classList.toggle("is-active", isSignup);
+    loginForm.style.display = isSignup ? "none" : "block";
+    signupForm.style.display = isSignup ? "block" : "none";
+    errorBox.style.display = "none";
+    successBox.style.display = "none";
+  }
+
+  tabLogin.addEventListener("click", () => showTab("login"));
+  tabSignup.addEventListener("click", () => showTab("signup"));
+  document.getElementById("goToSignup").addEventListener("click", (e) => { e.preventDefault(); showTab("signup"); });
+  document.getElementById("goToLogin").addEventListener("click", (e) => { e.preventDefault(); showTab("login"); });
+
+  // Pre-select tab / role from the link that brought them here
+  showTab(mode === "signup" ? "signup" : "login");
+  if (asRole) {
+    const radio = document.querySelector(`input[name="signupRole"][value="${CSS.escape(asRole)}"]`);
+    if (radio) radio.checked = true;
+  }
+  if (intent === "demo") {
+    document.getElementById("signupSub").textContent =
+      "Create your free account to lock in your demo slot.";
+  }
+
+  function showError(msg) {
+    successBox.style.display = "none";
+    errorBox.textContent = msg;
+    errorBox.style.display = "block";
+  }
+  function showSuccess(msg) {
+    errorBox.style.display = "none";
+    successBox.textContent = msg;
+    successBox.style.display = "block";
+  }
+  function goNext() {
+    window.location.href = nextUrl || "index.html";
+  }
+
+  // ---------- LOG IN ----------
+  loginForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById("loginSubmitBtn");
+    btn.disabled = true; btn.textContent = "Logging in…";
+
+    const email = document.getElementById("loginEmail").value.trim();
+    const password = document.getElementById("loginPassword").value;
+
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+
+    btn.disabled = false; btn.textContent = "Log in";
+    if (error) { showError(error.message); return; }
+    showSuccess("Logged in! Redirecting…");
+    setTimeout(goNext, 600);
+  });
+
+  // ---------- SIGN UP ----------
+  signupForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById("signupSubmitBtn");
+    btn.disabled = true; btn.textContent = "Creating account…";
+
+    const role = document.querySelector('input[name="signupRole"]:checked').value;
+    const full_name = document.getElementById("signupName").value.trim();
+    const email = document.getElementById("signupEmail").value.trim();
+    const password = document.getElementById("signupPassword").value;
+
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: { full_name, role, intent: intent || null } // saved into profiles via DB trigger
+      }
+    });
+
+    btn.disabled = false; btn.textContent = "Create free account";
+    if (error) { showError(error.message); return; }
+    showSuccess("Account created! Redirecting…");
+    setTimeout(goNext, 800);
+  });
+</script>
+</body>
+</html>
