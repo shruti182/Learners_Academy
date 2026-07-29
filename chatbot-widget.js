@@ -1,39 +1,91 @@
 // ============================================================
-// FREE CHATBOT WIDGET — Hugging Face Inference API
+// FREE CHATBOT WIDGET — Rule-based (no API key needed)
 // ============================================================
-// Setup: Get free Hugging Face token from https://huggingface.co/settings/tokens
-// No credit card required, free tier is good for testing/moderate use
+// Works instantly out of the box. No sign-up, no token, no cost.
+// It matches keywords in the student's question and returns a
+// relevant answer about Learners Academy.
+//
+// Want a smarter AI chatbot instead? You can swap the
+// `getReply()` function below for a call to Hugging Face, OpenAI,
+// or any other API later — the rest of the widget UI stays the same.
 // ============================================================
 
-const HF_API_TOKEN = 'YOUR_HUGGINGFACE_API_TOKEN_HERE'; // ← Replace with your free token
-const HF_MODEL = 'mistralai/Mistral-7B-Instruct-v0.1'; // Free, good quality model
+// Edit this list to add/change what the bot knows and says.
+const KNOWLEDGE_BASE = [
+  {
+    keywords: ['course', 'courses', 'subject', 'subjects', 'offer', 'what do you teach', 'learn'],
+    reply: "We offer two learning paths: 📚 School Path (Grades 6–12 — Maths, Science, English, Social Studies, Physics) and 💼 Career Path (Python, SQL, Data Analytics, Power BI, Tableau, Excel). Check out the Courses page for full details!"
+  },
+  {
+    keywords: ['live class', 'live classes', 'schedule', 'timing', 'timings', 'when are classes'],
+    reply: "Our Live Classes are real-time, instructor-led sessions with limited seats to keep them interactive. Visit the Live Classes page to see the current schedule and book your spot."
+  },
+  {
+    keywords: ['faculty', 'teacher', 'teachers', 'instructor', 'instructors', 'who teaches'],
+    reply: "Our Faculty page introduces our experienced teachers and industry professionals. Learners Academy was founded by Shrutika Khandelwal, an educator with 10+ years of experience."
+  },
+  {
+    keywords: ['price', 'pricing', 'cost', 'fee', 'fees', 'how much'],
+    reply: "We have free courses to get started, plus paid courses with certificates for deeper learning. Pricing details are listed on each course card in the Courses page."
+  },
+  {
+    keywords: ['certificate', 'certification', 'certified'],
+    reply: "Yes! Our paid courses come with a certificate of completion, which you can add to your resume or LinkedIn profile."
+  },
+  {
+    keywords: ['enroll', 'sign up', 'signup', 'register', 'join', 'admission', 'how to start'],
+    reply: "Getting started is easy — click 'Book a free demo' or 'Log in' at the top of the page to create your account and enroll in a course."
+  },
+  {
+    keywords: ['grade', 'class 6', 'class 7', 'class 8', 'class 9', 'class 10', 'class 11', 'class 12', 'school'],
+    reply: "Our School Path supports students from Grade 6 all the way through board exams (Grade 12), covering Maths, Science, English, Social Studies and Physics."
+  },
+  {
+    keywords: ['professional', 'career', 'job', 'data analyst', 'analytics', 'sql', 'python', 'power bi', 'tableau', 'excel'],
+    reply: "Our Career Path helps working professionals build in-demand skills like Python, SQL, Data Analytics, Power BI, Tableau and Excel — perfect for leveling up your career."
+  },
+  {
+    keywords: ['contact', 'support', 'help', 'email', 'phone', 'reach', 'talk to someone'],
+    reply: "For anything I can't help with, please reach out through our Contact page and our team will get back to you shortly."
+  },
+  {
+    keywords: ['location', 'where are you', 'based', 'address', 'city'],
+    reply: "Learners Academy is based in Jaipur, Rajasthan, and our courses are available online to students and professionals anywhere."
+  },
+  {
+    keywords: ['free', 'demo', 'trial'],
+    reply: "We offer free courses and a free demo so you can try before you commit — just click 'Book a free demo' at the top of the page!"
+  },
+  {
+    keywords: ['hi', 'hello', 'hey', 'hii', 'helo'],
+    reply: "Hi there! 👋 I'm the Learners Academy Guide. Ask me about our courses, live classes, faculty, pricing, or how to enroll!"
+  },
+  {
+    keywords: ['thank', 'thanks', 'thank you'],
+    reply: "You're welcome! 😊 Let me know if you have any other questions about Learners Academy."
+  },
+  {
+    keywords: ['bye', 'goodbye', 'see you'],
+    reply: "Goodbye! Feel free to come back anytime you have questions. Happy learning! 🎓"
+  }
+];
 
-// Context about Learners Academy for the AI
-const SYSTEM_CONTEXT = `You are a friendly student support assistant for Learners Academy, an online learning platform.
+const FALLBACK_REPLIES = [
+  "I'm not totally sure about that one — could you rephrase it, or ask about our courses, live classes, faculty, or enrollment?",
+  "Good question! For details on that, please check our Courses or Contact page, or try asking me about pricing, enrollment, or live classes.",
+];
 
-Key information about Learners Academy:
-- School Path: Grades 6-12 with subjects like Mathematics, Science, English, Social Studies, Physics
-- Career Path: Professional courses in Python, SQL, Data Analytics, Power BI, Tableau, Excel
-- Live Classes: Real-time instructor-led sessions with limited seats
-- Faculty: Experienced teachers and industry professionals
-- Free courses available, many paid courses with certificates
-- Founded by Shrutika Khandelwal, a teacher with 10+ years experience
-- Located in Jaipur, Rajasthan
+function getReply(userMessage) {
+  const text = userMessage.toLowerCase();
 
-When answering:
-1. Be helpful, friendly, and concise (max 2-3 sentences per response)
-2. Direct students to relevant pages (courses.html, live-classes.html, faculty.html, login.html)
-3. If you don't know something about our academy, suggest they contact us
-4. For technical issues, suggest contacting support
-5. Encourage free sign-ups and free courses
+  for (const entry of KNOWLEDGE_BASE) {
+    if (entry.keywords.some(k => text.includes(k))) {
+      return entry.reply;
+    }
+  }
 
-Common topics students ask about:
-- Course recommendations based on their grade or role
-- Course pricing and what's included
-- Faculty credentials
-- How to enroll and start learning
-- Certificate information
-- Live class schedules`;
+  return FALLBACK_REPLIES[Math.floor(Math.random() * FALLBACK_REPLIES.length)];
+}
 
 class LearnersAcademyChatbot {
   constructor() {
@@ -146,7 +198,8 @@ class LearnersAcademyChatbot {
       font-size: 18px;
       transition: background 0.2s;
     `;
-    sendBtn.addEventListener('hover', function() { this.style.background = '#6d28d9'; });
+    sendBtn.addEventListener('mouseenter', function() { this.style.background = '#6d28d9'; });
+    sendBtn.addEventListener('mouseleave', function() { this.style.background = '#7c3aed'; });
     inputArea.appendChild(sendBtn);
 
     chatWindow.appendChild(inputArea);
@@ -188,12 +241,16 @@ class LearnersAcademyChatbot {
       this.isOpen = !this.isOpen;
       chatWindow.style.display = this.isOpen ? 'flex' : 'none';
       if (this.isOpen) {
+        // Show a greeting the first time the chat is opened
+        if (this.messages.length === 0) {
+          this.addMessage('assistant', "Hi there! 👋 I'm the Learners Academy Guide. Ask me about our courses, live classes, faculty, pricing, or how to enroll!");
+        }
         input.focus();
         this.scrollToBottom();
       }
     });
 
-    const sendMessage = async () => {
+    const sendMessage = () => {
       const text = input.value.trim();
       if (!text || this.isLoading) return;
 
@@ -201,86 +258,21 @@ class LearnersAcademyChatbot {
       this.addMessage('user', text);
       this.isLoading = true;
       sendBtn.disabled = true;
-      sendBtn.textContent = '...';
 
-      try {
-        const reply = await this.queryHuggingFace(text);
+      // Small delay so it feels like the bot is "thinking"
+      setTimeout(() => {
+        const reply = getReply(text);
         this.addMessage('assistant', reply);
-      } catch (error) {
-        console.error('Chatbot error:', error);
-        this.addMessage('assistant', 
-          'Sorry, I\'m having trouble connecting right now. Please try again in a moment, or check out our courses and faculty pages!');
-      } finally {
         this.isLoading = false;
         sendBtn.disabled = false;
-        sendBtn.textContent = '→';
         input.focus();
-      }
+      }, 400);
     };
 
     sendBtn.addEventListener('click', sendMessage);
     input.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') sendMessage();
     });
-  }
-
-  async queryHuggingFace(userMessage) {
-    if (!HF_API_TOKEN || HF_API_TOKEN === 'YOUR_HUGGINGFACE_API_TOKEN_HERE') {
-      return '⚠️ Chatbot not configured. Please set up a free Hugging Face API token in chatbot-widget.js (line 8).';
-    }
-
-    // Build conversation history for context
-    const recentMessages = this.messages.slice(-4).map(m => 
-      `${m.role === 'user' ? 'User' : 'Assistant'}: ${m.text}`
-    ).join('\n');
-
-    const prompt = `${SYSTEM_CONTEXT}
-
-Conversation history:
-${recentMessages}
-
-User: ${userMessage}
-Assistant:`;
-
-    try {
-      const response = await fetch(
-        `https://api-inference.huggingface.co/models/${HF_MODEL}`,
-        {
-          headers: { Authorization: `Bearer ${HF_API_TOKEN}` },
-          method: 'POST',
-          body: JSON.stringify({
-            inputs: prompt,
-            parameters: {
-              max_new_tokens: 100,
-              temperature: 0.7,
-              top_p: 0.95,
-            },
-          }),
-        }
-      );
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error?.[0] || 'API error');
-      }
-
-      const result = await response.json();
-      let text = result[0].generated_text;
-
-      // Extract just the assistant's response (remove the prompt we sent)
-      const assistantStart = text.lastIndexOf('Assistant:') + 'Assistant:'.length;
-      text = text.substring(assistantStart).trim();
-
-      // Truncate if too long
-      if (text.length > 300) {
-        text = text.substring(0, 300).trim() + '...';
-      }
-
-      return text || 'I didn\'t catch that. Can you ask again?';
-    } catch (error) {
-      console.error('HF API error:', error);
-      throw error;
-    }
   }
 
   addMessage(role, text) {
@@ -319,10 +311,12 @@ Assistant:`;
     const saved = localStorage.getItem('la_chatbot_history');
     if (saved) {
       this.messages = JSON.parse(saved);
-      // Redraw messages on page load
+      // Redraw messages on page load without re-saving/duplicating
       const messagesArea = document.getElementById('chatbot-messages');
       messagesArea.innerHTML = '';
-      this.messages.forEach(msg => this.addMessage(msg.role, msg.text));
+      const toRedraw = this.messages;
+      this.messages = [];
+      toRedraw.forEach(msg => this.addMessage(msg.role, msg.text));
     }
   }
 }
