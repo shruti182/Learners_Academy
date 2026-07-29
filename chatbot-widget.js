@@ -10,7 +10,9 @@
 // answers below so students never see a broken chatbot.
 // ============================================================
 
-const HF_API_TOKEN = 'YOUR_HUGGINGFACE_API_TOKEN_HERE'; // ← paste your free token here
+// Token is loaded from chatbot-config.js (window.HF_API_TOKEN), which is
+// gitignored, so it never gets committed or pushed to GitHub.
+const HF_API_TOKEN = window.HF_API_TOKEN || '';
 const HF_MODEL = 'HuggingFaceH4/zephyr-7b-beta'; // free, good quality chat model
 
 const SYSTEM_CONTEXT = `You are a friendly student support assistant for Learners Academy, an online learning platform.
@@ -31,7 +33,7 @@ Rules for answering:
 - Never make up information not listed above.`;
 
 async function queryHuggingFace(userMessage, recentHistory) {
-  if (!HF_API_TOKEN || HF_API_TOKEN === 'YOUR_HUGGINGFACE_API_TOKEN_HERE') {
+  if (!HF_API_TOKEN || HF_API_TOKEN === 'PASTE_YOUR_TOKEN_HERE') {
     throw new Error('NO_TOKEN');
   }
 
