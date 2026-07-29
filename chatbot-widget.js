@@ -1,14 +1,90 @@
 // ============================================================
-// FREE CHATBOT WIDGET — Rule-based (no API key needed)
+// LEARNERS ACADEMY CHATBOT — Hugging Face AI + rule-based fallback
 // ============================================================
-// Works instantly out of the box. No sign-up, no token, no cost.
-// It matches keywords in the student's question and returns a
-// relevant answer about Learners Academy.
+// 1) Get a FREE token: https://huggingface.co/settings/tokens
+//    (Sign up -> New token -> "Read" access -> Create -> copy it)
+// 2) Paste it below in place of 'YOUR_HUGGINGFACE_API_TOKEN_HERE'
 //
-// Want a smarter AI chatbot instead? You can swap the
-// `getReply()` function below for a call to Hugging Face, OpenAI,
-// or any other API later — the rest of the widget UI stays the same.
+// If no token is set, or the API call fails for any reason, the
+// widget automatically falls back to the built-in rule-based
+// answers below so students never see a broken chatbot.
 // ============================================================
+
+const HF_API_TOKEN = 'YOUR_HUGGINGFACE_API_TOKEN_HERE'; // ← paste your free token here
+const HF_MODEL = 'HuggingFaceH4/zephyr-7b-beta'; // free, good quality chat model
+
+const SYSTEM_CONTEXT = `You are a friendly student support assistant for Learners Academy, an online learning platform.
+
+Key facts about Learners Academy:
+- School Path: Grades 6-12, subjects include Mathematics, Science, English, Social Studies, Physics
+- Career Path: Professional courses in Python, SQL, Data Analytics, Power BI, Tableau, Excel
+- Live Classes: real-time, instructor-led sessions with limited seats
+- Faculty: experienced teachers and industry professionals
+- Free courses available; paid courses include certificates
+- Founded by Shrutika Khandelwal, an educator with 10+ years of experience
+- Located in Jaipur, Rajasthan; courses available online everywhere
+
+Rules for answering:
+- Be warm, concise (2-3 sentences max), and specific.
+- Point students to relevant pages when useful (Courses, Live Classes, Faculty, Contact).
+- If you're unsure of something, say so honestly and suggest they check the Contact page.
+- Never make up information not listed above.`;
+
+async function queryHuggingFace(userMessage, recentHistory) {
+  if (!HF_API_TOKEN || HF_API_TOKEN === 'YOUR_HUGGINGFACE_API_TOKEN_HERE') {
+    throw new Error('NO_TOKEN');
+  }
+
+  const historyText = recentHistory
+    .map(m => `${m.role === 'user' ? 'User' : 'Assistant'}: ${m.text}`)
+    .join('\n');
+
+  const prompt = `${SYSTEM_CONTEXT}
+
+Conversation so far:
+${historyText}
+
+User: ${userMessage}
+Assistant:`;
+
+  const response = await fetch(
+    `https://api-inference.huggingface.co/models/${HF_MODEL}`,
+    {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${HF_API_TOKEN}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        inputs: prompt,
+        parameters: {
+          max_new_tokens: 150,
+          temperature: 0.7,
+          top_p: 0.95,
+          return_full_text: false,
+        },
+      }),
+    }
+  );
+
+  if (!response.ok) {
+    const errBody = await response.json().catch(() => ({}));
+    throw new Error(errBody.error || `HF API error (${response.status})`);
+  }
+
+  const result = await response.json();
+  let text = Array.isArray(result) ? result[0]?.generated_text : result.generated_text;
+  if (!text) throw new Error('Empty response from model');
+
+  text = text.trim();
+  // Stop at the next "User:" if the model kept generating the conversation
+  const cutIndex = text.indexOf('\nUser:');
+  if (cutIndex !== -1) text = text.substring(0, cutIndex).trim();
+
+  if (text.length > 400) text = text.substring(0, 400).trim() + '...';
+
+  return text;
+}
 
 // Edit this list to add/change what the bot knows and says.
 const KNOWLEDGE_BASE = [
@@ -23,6 +99,10 @@ const KNOWLEDGE_BASE = [
   {
     keywords: ['faculty', 'teacher', 'teachers', 'instructor', 'instructors', 'who teaches'],
     reply: "Our Faculty page introduces our experienced teachers and industry professionals. Learners Academy was founded by Shrutika Khandelwal, an educator with 10+ years of experience."
+  },
+  {
+    keywords: ['founder', 'founded', 'who started', 'who created', 'who owns', 'ceo', 'about you', 'about learners academy', 'who runs'],
+    reply: "Learners Academy was founded by Shrutika Khandelwal, an educator with 10+ years of experience, to help both school students and working professionals grow their skills on one platform."
   },
   {
     keywords: ['price', 'pricing', 'cost', 'fee', 'fees', 'how much'],
@@ -250,7 +330,7 @@ class LearnersAcademyChatbot {
       }
     });
 
-    const sendMessage = () => {
+    const sendMessage = async () => {
       const text = input.value.trim();
       if (!text || this.isLoading) return;
 
@@ -258,15 +338,24 @@ class LearnersAcademyChatbot {
       this.addMessage('user', text);
       this.isLoading = true;
       sendBtn.disabled = true;
+      sendBtn.textContent = '...';
 
-      // Small delay so it feels like the bot is "thinking"
-      setTimeout(() => {
+      try {
+        const recentHistory = this.messages.slice(-6, -1); // exclude the message just added
+        const reply = await queryHuggingFace(text, recentHistory);
+        this.addMessage('assistant', reply);
+      } catch (error) {
+        // Falls back to the rule-based knowledge base if HF isn't
+        // configured yet, or the API call fails for any reason.
+        console.warn('Falling back to rule-based reply:', error.message);
         const reply = getReply(text);
         this.addMessage('assistant', reply);
+      } finally {
         this.isLoading = false;
         sendBtn.disabled = false;
+        sendBtn.textContent = '→';
         input.focus();
-      }, 400);
+      }
     };
 
     sendBtn.addEventListener('click', sendMessage);
