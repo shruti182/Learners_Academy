@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Courses — Learners Academy</title>
+<meta name="description" content="Browse School Path (Grade 6–12) and Career Path courses on Learners Academy.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Poppins:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="road-progress" aria-hidden="true"><div class="road-progress__fill" id="roadFill"></div></div>
+
+<header class="nav" id="nav">
+  <div class="nav__inner">
+    <a href="index.html" class="nav__logo">
+      <span class="nav__logo-mark">LA</span>
+      <span class="nav__logo-text">Learners Academy</span>
+    </a>
+    <nav class="nav__links" id="navLinks">
+      <a href="index.html">Home</a>
+      <a href="courses.html" class="is-active">Courses</a>
+      <a href="live-classes.html">Live Classes</a>
+      <a href="faculty.html">Faculty</a>
+    </nav>
+    <div class="nav__actions">
+      <a href="login.html" class="btn btn--ghost">Log in</a>
+      <a href="login.html?mode=signup" class="btn btn--solid">Start free</a>
+    </div>
+    <button class="nav__burger" id="burger" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<main>
+  <section class="page-hero">
+    <span class="eyebrow eyebrow--coral">All courses</span>
+    <h1>Every subject. Every skill. Pick your path.</h1>
+    <p>Search or filter to find the right course — school syllabus on one side, career tracks on the other.</p>
+    <div class="search-bar">
+      <input type="search" id="courseSearch" placeholder="Search courses, e.g. &quot;Physics&quot; or &quot;SQL&quot;" aria-label="Search courses">
+    </div>
+  </section>
+
+  <!-- SCHOOL -->
+  <section class="section" id="school">
+    <div class="section__head">
+      <span class="eyebrow eyebrow--coral">School Path, Grade 6–12</span>
+      <h2>CBSE &amp; ICSE Courses</h2>
+      <p>Syllabus-aligned lessons with quizzes and live classes.</p>
+    </div>
+
+    <div class="chip-row" data-filter-group="school">
+      <span class="chip chip--active" data-subject="all">All</span>
+      <span class="chip" data-subject="Mathematics">Mathematics</span>
+      <span class="chip" data-subject="Science">Science</span>
+      <span class="chip" data-subject="English">English</span>
+      <span class="chip" data-subject="Social Studies">Social Studies</span>
+      <span class="chip" data-subject="Physics">Physics</span>
+    </div>
+
+    <div class="course-grid course-grid--wide" id="schoolGrid">
+      <article class="course-card" data-subject="Mathematics" data-name="Mathematics Masterclass Grade 10">
+        <div class="course-card__top course-card__top--coral">Popular</div>
+        <h4>Mathematics Masterclass — Grade 10</h4>
+        <p class="course-card__meta">★ 4.8 · 32 video lessons</p>
+        <p class="course-card__price">₹999</p>
+      </article>
+      <article class="course-card" data-subject="Science" data-name="Science Explorer Grade 9">
+        <div class="course-card__top course-card__top--coral">Popular</div>
+        <h4>Science Explorer — Grade 9</h4>
+        <p class="course-card__meta">★ 4.7 · 28 video lessons</p>
+        <p class="course-card__price">₹799</p>
+      </article>
+      <article class="course-card" data-subject="English" data-name="English Literature Grammar Grade 12">
+        <div class="course-card__top">New</div>
+        <h4>English Literature &amp; Grammar — Grade 12</h4>
+        <p class="course-card__meta">★ 4.6 · 24 video lessons</p>
+        <p class="course-card__price">₹699</p>
+      </article>
+      <article class="course-card" data-subject="Social Studies" data-name="Social Studies Made Fun Grade 8" data-free="true">
+        <div class="course-card__top course-card__top--free">Free</div>
+        <h4>Social Studies Made Fun — Grade 8</h4>
+        <p class="course-card__meta">★ 4.5 · 20 video lessons</p>
+        <p class="course-card__price">Free</p>
+      </article>
+      <article class="course-card" data-subject="Physics" data-name="Physics Mastery Grade 11">
+        <div class="course-card__top">Popular</div>
+        <h4>Physics Mastery — Grade 11</h4>
+        <p class="course-card__meta">★ 4.7 · 30 video lessons</p>
+        <p class="course-card__price">₹1,299</p>
+      </article>
+      <article class="course-card" data-subject="Mathematics" data-name="Mathematics Foundations Grade 6">
+        <div class="course-card__top">New</div>
+        <h4>Mathematics Foundations — Grade 6</h4>
+        <p class="course-card__meta">★ 4.6 · 22 video lessons</p>
+        <p class="course-card__price">₹499</p>
+      </article>
+      <article class="course-card" data-subject="Science" data-name="Science Explorer Grade 7">
+        <div class="course-card__top">New</div>
+        <h4>Science Explorer — Grade 7</h4>
+        <p class="course-card__meta">★ 4.5 · 25 video lessons</p>
+        <p class="course-card__price">₹599</p>
+      </article>
+      <article class="course-card" data-subject="Mathematics" data-name="JEE Foundation Mathematics">
+        <div class="course-card__top course-card__top--coral">Popular</div>
+        <h4>JEE Foundation — Mathematics</h4>
+        <p class="course-card__meta">★ 4.8 · 50 video lessons</p>
+        <p class="course-card__price">₹2,199</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- CAREER -->
+  <section class="section section--dark" id="career">
+    <div class="section__head">
+      <span class="eyebrow eyebrow--teal">Career Path, Working Professionals</span>
+      <h2>Industry Skill Tracks</h2>
+      <p>Self-paced certifications that your employer will notice.</p>
+    </div>
+
+    <div class="chip-row" data-filter-group="career">
+      <span class="chip chip--active" data-subject="all">All</span>
+      <span class="chip" data-subject="Python">Python</span>
+      <span class="chip" data-subject="SQL">SQL</span>
+      <span class="chip" data-subject="Data Analytics">Data Analytics</span>
+      <span class="chip" data-subject="Power BI">Power BI</span>
+      <span class="chip" data-subject="Tableau">Tableau</span>
+      <span class="chip" data-subject="Excel">Excel</span>
+    </div>
+
+    <div class="course-grid course-grid--wide course-grid--dark" id="careerGrid">
+      <article class="course-card course-card--dark" data-subject="Tableau" data-name="Tableau Zero to Dashboard Pro">
+        <div class="course-card__top course-card__top--teal">Popular</div>
+        <h4>Tableau — From Zero to Dashboard Pro</h4>
+        <p class="course-card__meta">★ 4.9 · 36 video lessons</p>
+        <p class="course-card__price">₹1,999</p>
+      </article>
+      <article class="course-card course-card--dark" data-subject="Power BI" data-name="Power BI Business Intelligence Bootcamp">
+        <div class="course-card__top course-card__top--teal">Popular</div>
+        <h4>Power BI — Business Intelligence Bootcamp</h4>
+        <p class="course-card__meta">★ 4.8 · 38 video lessons</p>
+        <p class="course-card__price">₹2,499</p>
+      </article>
+      <article class="course-card course-card--dark" data-subject="SQL" data-name="SQL Complete Database Mastery">
+        <div class="course-card__top course-card__top--teal">Popular</div>
+        <h4>SQL — Complete Database Mastery</h4>
+        <p class="course-card__meta">★ 4.9 · 41 video lessons</p>
+        <p class="course-card__price">₹1,499</p>
+      </article>
+      <article class="course-card course-card--dark" data-subject="Python" data-name="Python for Data Science Automation">
+        <div class="course-card__top course-card__top--teal">Popular</div>
+        <h4>Python for Data Science &amp; Automation</h4>
+        <p class="course-card__meta">★ 4.8 · 45 video lessons</p>
+        <p class="course-card__price">₹1,799</p>
+      </article>
+      <article class="course-card course-card--dark" data-subject="Excel" data-name="Excel Google Sheets Power User Bootcamp">
+        <div class="course-card__top">New</div>
+        <h4>Excel &amp; Google Sheets — Power User Bootcamp</h4>
+        <p class="course-card__meta">★ 4.7 · 30 video lessons</p>
+        <p class="course-card__price">₹999</p>
+      </article>
+      <article class="course-card course-card--dark" data-subject="Data Analytics" data-name="Data Analytics Complete Career Path">
+        <div class="course-card__top course-card__top--teal">Popular</div>
+        <h4>Data Analytics — Complete Career Path</h4>
+        <p class="course-card__meta">★ 4.9 · 60 video lessons</p>
+        <p class="course-card__price">₹3,999</p>
+      </article>
+      <article class="course-card course-card--dark" data-subject="Data Analytics" data-name="Machine Learning AI Fundamentals">
+        <div class="course-card__top">New</div>
+        <h4>Machine Learning &amp; AI Fundamentals</h4>
+        <p class="course-card__meta">★ 4.8 · 42 video lessons</p>
+        <p class="course-card__price">₹2,999</p>
+      </article>
+    </div>
+  </section>
+
+  <p class="empty-state" id="emptyState" hidden>No courses match that search — try a different keyword.</p>
+
+</main>
+
+<footer class="footer">
+  <div class="footer__top">
+    <div class="footer__brand">
+      <span class="nav__logo-mark">LA</span> <span class="nav__logo-text">Learners Academy</span>
+      <p>A path from Grade 6 to your next promotion — video lessons, live classes, real certificates.</p>
+    </div>
+    <div class="footer__col">
+      <h6>School</h6>
+      <a href="courses.html?tag=grade-6">Grade 6–10</a><a href="courses.html?tag=grade-11">Grade 11–12</a><a href="courses.html?tag=board-prep">Board Exam Prep</a><a href="courses.html?tag=competitive">JEE / NEET</a>
+    </div>
+    <div class="footer__col">
+      <h6>Career Tools</h6>
+      <a href="courses.html?subject=python">Python</a><a href="courses.html?subject=sql">SQL</a><a href="courses.html?subject=power-bi">Power BI</a><a href="courses.html?subject=tableau">Tableau</a>
+    </div>
+    <div class="footer__col">
+      <h6>Company</h6>
+      <a href="#">About</a><a href="#">Teach on Learners Academy</a><a href="#">Careers</a><a href="#">Contact</a>
+    </div>
+  </div>
+  <div class="footer__bottom">
+    <span>© 2026 Learners Academy Learning. All rights reserved.</span>
+    <span class="footer__legal"><a href="#">Privacy</a><a href="#">Terms</a></span>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
