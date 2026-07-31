@@ -107,7 +107,7 @@
     </div>
 
     <div class="course-grid">
-      <article class="course-card">
+      <article class="course-card" data-course-id="math-grade-10">
         <div class="course-card__media">
           <img src="https://images.pexels.com/photos/6238050/pexels-photo-6238050.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Mathematics equations on a blackboard" loading="lazy">
           <span class="course-card__badge course-card__badge--coral">Bestseller</span>
@@ -124,7 +124,7 @@
           </div>
         </div>
       </article>
-      <article class="course-card">
+      <article class="course-card" data-course-id="science-grade-9">
         <div class="course-card__media">
           <img src="https://images.pexels.com/photos/8544960/pexels-photo-8544960.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Colourful chemistry test tubes in a lab" loading="lazy">
           <span class="course-card__badge course-card__badge--coral">Bestseller</span>
@@ -141,7 +141,7 @@
           </div>
         </div>
       </article>
-      <article class="course-card">
+      <article class="course-card" data-course-id="english-grade-12">
         <div class="course-card__media">
           <img src="https://images.pexels.com/photos/192928/pexels-photo-192928.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Stack of open books on a wooden table" loading="lazy">
           <span class="course-card__badge course-card__badge--new">New</span>
@@ -158,7 +158,7 @@
           </div>
         </div>
       </article>
-      <article class="course-card">
+      <article class="course-card" data-course-id="social-studies-grade-8">
         <div class="course-card__media">
           <img src="https://images.pexels.com/photos/5428002/pexels-photo-5428002.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Teacher pointing at a globe in class" loading="lazy">
           <span class="course-card__badge course-card__badge--free">Free</span>
@@ -190,7 +190,7 @@
     </div>
 
     <div class="course-grid course-grid--dark">
-      <article class="course-card course-card--dark">
+      <article class="course-card course-card--dark" data-course-id="sql-mastery">
         <div class="course-card__media">
           <img src="https://images.pexels.com/photos/17323801/pexels-photo-17323801.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Server room with blue lighting" loading="lazy">
           <span class="course-card__badge course-card__badge--teal">Bestseller</span>
@@ -207,7 +207,7 @@
           </div>
         </div>
       </article>
-      <article class="course-card course-card--dark">
+      <article class="course-card course-card--dark" data-course-id="powerbi-bootcamp">
         <div class="course-card__media">
           <img src="https://images.pexels.com/photos/10653886/pexels-photo-10653886.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Business data chart on a monitor" loading="lazy">
           <span class="course-card__badge course-card__badge--teal">Bestseller</span>
@@ -224,7 +224,7 @@
           </div>
         </div>
       </article>
-      <article class="course-card course-card--dark">
+      <article class="course-card course-card--dark" data-course-id="python-data-science">
         <div class="course-card__media">
           <img src="https://images.pexels.com/photos/6424590/pexels-photo-6424590.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Python programming code on a dark screen" loading="lazy">
           <span class="course-card__badge course-card__badge--teal">Bestseller</span>
@@ -241,7 +241,7 @@
           </div>
         </div>
       </article>
-      <article class="course-card course-card--dark">
+      <article class="course-card course-card--dark" data-course-id="data-analytics-career">
         <div class="course-card__media">
           <img src="https://images.pexels.com/photos/3912976/pexels-photo-3912976.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Data graph analysis on a laptop screen" loading="lazy">
           <span class="course-card__badge course-card__badge--new">New</span>
@@ -405,7 +405,7 @@
     </div>
     <div class="footer__col">
       <h6>Company</h6>
-      <a href="about.html">About</a><a href="#">Teach on Learners Academy</a><a href="#">Careers</a><a href="#">Contact</a>
+      <a href="about.html">About</a><a href="teach.html">Teach on Learners Academy</a><a href="#">Careers</a><a href="#">Contact</a>
     </div>
   </div>
   <div class="footer__bottom">
@@ -446,6 +446,45 @@
   })();
 </script>
 <script src="script.js"></script>
+<script type="module">
+  import { supabase } from "./supabase-client.js";
+
+  // Same live-price loader as courses.html — keeps homepage teaser cards
+  // in sync with whatever is set in Supabase → Table Editor → courses.
+  const { data: courses, error } = await supabase
+    .from("courses")
+    .select("id, price_now, price_old, is_free");
+
+  if (error) {
+    console.error("Could not load course prices:", error.message);
+  } else {
+    const bySlug = Object.fromEntries(courses.map(c => [c.id, c]));
+
+    document.querySelectorAll(".course-card[data-course-id]").forEach(card => {
+      const row = bySlug[card.dataset.courseId];
+      if (!row) return;
+
+      const priceEl = card.querySelector(".course-card__price");
+      if (!priceEl) return;
+
+      if (row.is_free) {
+        priceEl.innerHTML = `<span class="price-now">Free</span>`;
+        return;
+      }
+
+      const now = Number(row.price_now);
+      const old = row.price_old ? Number(row.price_old) : null;
+      const fmt = n => "₹" + n.toLocaleString("en-IN");
+
+      let html = `<span class="price-now">${fmt(now)}</span>`;
+      if (old && old > now) {
+        const off = Math.round(((old - now) / old) * 100);
+        html += `<span class="price-old">${fmt(old)}</span><span class="price-off">-${off}%</span>`;
+      }
+      priceEl.innerHTML = html;
+    });
+  }
+</script>
 <script>
   (function () {
     var modal = document.getElementById('demoModal');

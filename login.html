@@ -91,6 +91,10 @@
         <input type="text" id="signupName" required autocomplete="name">
       </label>
       <label>
+        Phone number
+        <input type="tel" id="signupPhone" required autocomplete="tel" pattern="[0-9]{10}" placeholder="10-digit mobile number">
+      </label>
+      <label>
         Email
         <input type="email" id="signupEmail" required autocomplete="email">
       </label>
@@ -203,6 +207,7 @@
 
     const role = document.querySelector('input[name="signupRole"]:checked').value;
     const full_name = document.getElementById("signupName").value.trim();
+    const phone = document.getElementById("signupPhone").value.trim();
     const email = document.getElementById("signupEmail").value.trim();
     const password = document.getElementById("signupPassword").value;
 
@@ -210,7 +215,7 @@
       email,
       password,
       options: {
-        data: { full_name, role, intent: intent || null } // saved into profiles via DB trigger
+        data: { full_name, phone, role, intent: intent || null } // saved into profiles via DB trigger
       }
     });
 

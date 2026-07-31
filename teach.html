@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Teach on Learners Academy</title>
+<meta name="description" content="Apply to teach on Learners Academy — School Path or Career Path.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Poppins:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="road-progress" aria-hidden="true"><div class="road-progress__fill" id="roadFill"></div></div>
+
+<header class="nav" id="nav">
+  <div class="nav__inner">
+    <a href="index.html" class="nav__logo">
+      <span class="nav__logo-mark">LA</span>
+      <span class="nav__logo-text">Learners Academy</span>
+    </a>
+    <nav class="nav__links" id="navLinks">
+      <a href="index.html">Home</a>
+      <a href="courses.html">Courses</a>
+      <a href="live-classes.html">Live Classes</a>
+      <a href="faculty.html">Faculty</a>
+    </nav>
+    <div class="nav__actions">
+      <a href="login.html" class="btn btn--ghost">Log in</a>
+      <a href="login.html?mode=signup" class="btn btn--solid">Start free</a>
+    </div>
+    <button class="nav__burger" id="burger" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<main class="auth-wrap">
+  <div class="auth-card" style="max-width:560px;">
+
+    <div id="formError" class="auth-note" style="display:none;color:#D8501C;font-style:normal;"></div>
+    <div id="formSuccess" class="auth-note" style="display:none;color:var(--green);font-style:normal;"></div>
+
+    <form class="auth-form" id="teachForm">
+      <h1>Teach on Learners Academy</h1>
+      <p class="auth-sub">Tell us about yourself and what you'd like to teach. We'll reach out to take things forward.</p>
+
+      <label>
+        Full name
+        <input type="text" id="fullName" required autocomplete="name">
+      </label>
+      <label>
+        Email
+        <input type="email" id="email" required autocomplete="email">
+      </label>
+      <label>
+        Phone number
+        <input type="tel" id="phone" required autocomplete="tel" pattern="[0-9]{10}" placeholder="10-digit mobile number">
+      </label>
+      <label>
+        What can you teach?
+        <input type="text" id="subjects" required placeholder="e.g. Physics &amp; Maths, Grade 9–12">
+      </label>
+      <label>
+        Years of teaching / industry experience
+        <input type="number" id="experience" min="0" step="1" placeholder="e.g. 5">
+      </label>
+      <label>
+        Anything else you'd like us to know?
+        <textarea id="message" rows="3" style="padding:12px 16px;border-radius:var(--radius-sm);border:2px solid var(--line);font-family:var(--body);font-size:0.95rem;background:var(--bg);resize:vertical;"></textarea>
+      </label>
+      <label>
+        Aadhaar number
+        <input type="text" id="aadhar" required inputmode="numeric" pattern="[0-9]{12}" maxlength="12" placeholder="12-digit Aadhaar number">
+      </label>
+      <p class="auth-note" style="margin-top:-8px;">
+        Used only to verify your identity before onboarding. Kept private — never shown publicly or shared with other applicants.
+      </p>
+
+      <button type="submit" class="btn btn--solid auth-submit" id="teachSubmitBtn">Submit application</button>
+    </form>
+
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="footer__top">
+    <div class="footer__brand">
+      <span class="nav__logo-mark">LA</span> <span class="nav__logo-text">Learners Academy</span>
+      <p>A path from Grade 6 to your next promotion — video lessons, live classes, real certificates.</p>
+    </div>
+    <div class="footer__col">
+      <h6>School</h6>
+      <a href="courses.html?tag=grade-6">Grade 6–10</a><a href="courses.html?tag=grade-11">Grade 11–12</a><a href="courses.html?tag=board-prep">Board Exam Prep</a><a href="courses.html?tag=competitive">JEE / NEET</a>
+    </div>
+    <div class="footer__col">
+      <h6>Career Tools</h6>
+      <a href="courses.html?subject=python">Python</a><a href="courses.html?subject=sql">SQL</a><a href="courses.html?subject=power-bi">Power BI</a><a href="courses.html?subject=tableau">Tableau</a>
+    </div>
+    <div class="footer__col">
+      <h6>Company</h6>
+      <a href="about.html">About</a><a href="teach.html">Teach on Learners Academy</a><a href="#">Careers</a><a href="#">Contact</a>
+    </div>
+  </div>
+  <div class="footer__bottom">
+    <span>© 2026 Learners Academy Learning. All rights reserved.</span>
+    <span class="footer__legal"><a href="#">Privacy</a><a href="#">Terms</a></span>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+<script type="module">
+  import { supabase } from "./supabase-client.js";
+
+  const form = document.getElementById("teachForm");
+  const errorBox = document.getElementById("formError");
+  const successBox = document.getElementById("formSuccess");
+
+  function showError(msg) {
+    successBox.style.display = "none";
+    errorBox.textContent = msg;
+    errorBox.style.display = "block";
+  }
+  function showSuccess(msg) {
+    errorBox.style.display = "none";
+    successBox.textContent = msg;
+    successBox.style.display = "block";
+  }
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById("teachSubmitBtn");
+    btn.disabled = true; btn.textContent = "Submitting…";
+
+    const full_name = document.getElementById("fullName").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const phone = document.getElementById("phone").value.trim();
+    const subjects = document.getElementById("subjects").value.trim();
+    const experience_years = document.getElementById("experience").value
+      ? parseInt(document.getElementById("experience").value, 10)
+      : null;
+    const message = document.getElementById("message").value.trim();
+    const aadhar_number = document.getElementById("aadhar").value.trim();
+
+    const { error } = await supabase.from("teacher_applications").insert({
+      full_name, email, phone, subjects, experience_years, message, aadhar_number
+    });
+
+    btn.disabled = false; btn.textContent = "Submit application";
+    if (error) { showError("Something went wrong: " + error.message); return; }
+
+    showSuccess("Thanks! Your application has been submitted — we'll reach out soon.");
+    form.reset();
+  });
+</script>
+</body>
+</html>
