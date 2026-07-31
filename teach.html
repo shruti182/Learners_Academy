@@ -70,13 +70,6 @@
         Anything else you'd like us to know?
         <textarea id="message" rows="3" style="padding:12px 16px;border-radius:var(--radius-sm);border:2px solid var(--line);font-family:var(--body);font-size:0.95rem;background:var(--bg);resize:vertical;"></textarea>
       </label>
-      <label>
-        Aadhaar number
-        <input type="text" id="aadhar" required inputmode="numeric" pattern="[0-9]{12}" maxlength="12" placeholder="12-digit Aadhaar number">
-      </label>
-      <p class="auth-note" style="margin-top:-8px;">
-        Used only to verify your identity before onboarding. Kept private — never shown publicly or shared with other applicants.
-      </p>
 
       <button type="submit" class="btn btn--solid auth-submit" id="teachSubmitBtn">Submit application</button>
     </form>
@@ -141,10 +134,9 @@
       ? parseInt(document.getElementById("experience").value, 10)
       : null;
     const message = document.getElementById("message").value.trim();
-    const aadhar_number = document.getElementById("aadhar").value.trim();
 
     const { error } = await supabase.from("teacher_applications").insert({
-      full_name, email, phone, subjects, experience_years, message, aadhar_number
+      full_name, email, phone, subjects, experience_years, message
     });
 
     btn.disabled = false; btn.textContent = "Submit application";
