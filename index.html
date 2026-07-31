@@ -434,6 +434,17 @@
   </div>
 </div>
 
+<script>
+  // Safety net: if a Supabase password-recovery link ever lands here by mistake
+  // (e.g. Redirect URL allow-list / Site URL misconfigured), forward the visitor
+  // straight to reset-password.html instead of stranding them on the homepage.
+  (function () {
+    var hash = window.location.hash || "";
+    if (hash.includes("type=recovery") && hash.includes("access_token=")) {
+      window.location.replace("reset-password.html" + hash);
+    }
+  })();
+</script>
 <script src="script.js"></script>
 <script>
   (function () {
