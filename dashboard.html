@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Dashboard — Learners Academy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Poppins:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  .dash-wrap{max-width:900px;margin:0 auto;padding:50px 24px 80px;}
+  .dash-head{margin-bottom:36px;}
+  .dash-head h1{font-size:1.9rem;color:var(--ink);}
+  .dash-head p{margin-top:6px;}
+  .dash-section{background:var(--panel);border:2px solid var(--line);border-radius:var(--radius);padding:28px 30px;margin-bottom:24px;}
+  .dash-section h2{font-size:1.2rem;color:var(--ink);margin-bottom:18px;}
+  .dash-row{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 0;border-bottom:1px solid var(--line);}
+  .dash-row:last-child{border-bottom:none;}
+  .dash-row__name{font-weight:600;color:var(--ink);font-size:0.95rem;}
+  .dash-row__meta{font-size:0.8rem;color:var(--text-soft);margin-top:2px;}
+  .dash-row__price{font-family:var(--display);font-weight:700;color:var(--purple);font-size:1.05rem;white-space:nowrap;}
+  .dash-remove{background:none;border:none;color:var(--orange-d);font-size:0.8rem;font-weight:600;cursor:pointer;padding:4px 8px;}
+  .dash-total{display:flex;justify-content:space-between;align-items:center;margin-top:18px;padding-top:18px;border-top:2px dashed var(--line);}
+  .dash-total__label{font-weight:700;color:var(--ink);}
+  .dash-total__amount{font-family:var(--display);font-size:1.5rem;font-weight:800;color:var(--purple);}
+  .dash-empty{color:var(--text-soft);font-size:0.9rem;padding:10px 0;}
+  .status-pill{display:inline-block;padding:4px 12px;border-radius:999px;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.02em;}
+  .status-pill--pending{background:#FFF1E8;color:var(--orange-d);}
+  .status-pill--paid{background:#E8F9F3;color:var(--green);}
+  .order-block{border:2px solid var(--line);border-radius:var(--radius-sm);padding:18px 20px;margin-bottom:14px;}
+  .order-block__top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+  .order-block__date{font-size:0.8rem;color:var(--text-soft);}
+</style>
+</head>
+<body>
+
+<header class="nav" id="nav">
+  <div class="nav__inner">
+    <a href="index.html" class="nav__logo">
+      <span class="nav__logo-mark">LA</span>
+      <span class="nav__logo-text">Learners Academy</span>
+    </a>
+    <nav class="nav__links" id="navLinks">
+      <a href="index.html">Home</a>
+      <a href="courses.html">Courses</a>
+      <a href="live-classes.html">Live Classes</a>
+      <a href="faculty.html">Faculty</a>
+    </nav>
+  </div>
+</header>
+
+<main class="dash-wrap">
+  <div class="dash-head">
+    <h1 id="greeting">Your dashboard</h1>
+    <p>See what's in your cart and everything you've purchased so far.</p>
+  </div>
+
+  <!-- CART -->
+  <section class="dash-section">
+    <h2>Your cart</h2>
+    <div id="cartList"><p class="dash-empty">Loading…</p></div>
+    <div class="dash-total" id="cartTotalRow" style="display:none;">
+      <span class="dash-total__label">Total</span>
+      <span class="dash-total__amount" id="cartTotal">₹0</span>
+    </div>
+    <button class="btn btn--solid auth-submit" id="checkoutBtn" style="display:none;margin-top:18px;">
+      Proceed — we'll contact you about payment
+    </button>
+    <div id="checkoutNote" class="auth-note" style="display:none;margin-top:14px;"></div>
+  </section>
+
+  <!-- PURCHASE HISTORY -->
+  <section class="dash-section">
+    <h2>Purchase history</h2>
+    <div id="orderList"><p class="dash-empty">Loading…</p></div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="footer__bottom">
+    <span>© 2026 Learners Academy Learning. All rights reserved.</span>
+  </div>
+</footer>
+
+<script type="module">
+  import { supabase } from "./supabase-client.js";
+
+  const cartList = document.getElementById("cartList");
+  const cartTotalRow = document.getElementById("cartTotalRow");
+  const cartTotalEl = document.getElementById("cartTotal");
+  const checkoutBtn = document.getElementById("checkoutBtn");
+  const checkoutNote = document.getElementById("checkoutNote");
+  const orderList = document.getElementById("orderList");
+  const greeting = document.getElementById("greeting");
+
+  const fmt = n => "₹" + Number(n).toLocaleString("en-IN");
+
+  // ---------- Require login ----------
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
+    window.location.href = "login.html?next=dashboard.html";
+  } else {
+    if (user.user_metadata?.full_name) {
+      greeting.textContent = `Welcome back, ${user.user_metadata.full_name.split(" ")[0]}`;
+    }
+    loadCart();
+    loadOrders();
+  }
+
+  // ---------- CART ----------
+  async function loadCart() {
+    const { data: items, error } = await supabase
+      .from("cart_items")
+      .select("id, course_id, courses(name, price_now, is_free)")
+      .eq("user_id", user.id);
+
+    if (error) {
+      cartList.innerHTML = `<p class="dash-empty">Couldn't load your cart right now.</p>`;
+      return;
+    }
+
+    if (!items.length) {
+      cartList.innerHTML = `<p class="dash-empty">Your cart is empty. <a href="courses.html" style="color:var(--purple);font-weight:600;">Browse courses →</a></p>`;
+      cartTotalRow.style.display = "none";
+      checkoutBtn.style.display = "none";
+      return;
+    }
+
+    let total = 0;
+    cartList.innerHTML = items.map(item => {
+      const course = item.courses;
+      const price = course?.is_free ? 0 : Number(course?.price_now || 0);
+      total += price;
+      return `
+        <div class="dash-row">
+          <div>
+            <div class="dash-row__name">${course?.name || item.course_id}</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:14px;">
+            <span class="dash-row__price">${course?.is_free ? "Free" : fmt(price)}</span>
+            <button class="dash-remove" data-remove="${item.id}">Remove</button>
+          </div>
+        </div>`;
+    }).join("");
+
+    cartTotalEl.textContent = fmt(total);
+    cartTotalRow.style.display = "flex";
+    checkoutBtn.style.display = "inline-flex";
+    checkoutBtn.dataset.total = total;
+
+    cartList.querySelectorAll("[data-remove]").forEach(btn => {
+      btn.addEventListener("click", async () => {
+        btn.disabled = true;
+        await supabase.from("cart_items").delete().eq("id", btn.dataset.remove);
+        loadCart();
+      });
+    });
+  }
+
+  checkoutBtn.addEventListener("click", async () => {
+    checkoutBtn.disabled = true;
+    checkoutBtn.textContent = "Submitting…";
+
+    const { data: items } = await supabase
+      .from("cart_items")
+      .select("id, course_id, courses(price_now, is_free)")
+      .eq("user_id", user.id);
+
+    if (!items || !items.length) {
+      checkoutBtn.disabled = false;
+      checkoutBtn.textContent = "Proceed — we'll contact you about payment";
+      return;
+    }
+
+    const total = items.reduce((sum, i) => sum + (i.courses?.is_free ? 0 : Number(i.courses?.price_now || 0)), 0);
+
+    const { data: order, error: orderErr } = await supabase
+      .from("orders")
+      .insert({ user_id: user.id, total_amount: total, status: "pending" })
+      .select()
+      .single();
+
+    if (orderErr) {
+      checkoutNote.style.display = "block";
+      checkoutNote.style.color = "#D8501C";
+      checkoutNote.textContent = "Something went wrong submitting your order. Please try again.";
+      checkoutBtn.disabled = false;
+      checkoutBtn.textContent = "Proceed — we'll contact you about payment";
+      return;
+    }
+
+    const orderItems = items.map(i => ({
+      order_id: order.id,
+      course_id: i.course_id,
+      price: i.courses?.is_free ? 0 : Number(i.courses?.price_now || 0)
+    }));
+    await supabase.from("order_items").insert(orderItems);
+    await supabase.from("cart_items").delete().eq("user_id", user.id);
+
+    checkoutNote.style.display = "block";
+    checkoutNote.style.color = "var(--green)";
+    checkoutNote.style.fontStyle = "normal";
+    checkoutNote.textContent = "Order submitted! We'll reach out shortly with payment details.";
+    checkoutBtn.style.display = "none";
+
+    loadCart();
+    loadOrders();
+  });
+
+  // ---------- ORDERS ----------
+  async function loadOrders() {
+    const { data: orders, error } = await supabase
+      .from("orders")
+      .select("id, status, total_amount, created_at, order_items(course_id, price, courses(name))")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      orderList.innerHTML = `<p class="dash-empty">Couldn't load your purchase history right now.</p>`;
+      return;
+    }
+
+    if (!orders.length) {
+      orderList.innerHTML = `<p class="dash-empty">No purchases yet.</p>`;
+      return;
+    }
+
+    orderList.innerHTML = orders.map(order => {
+      const date = new Date(order.created_at).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
+      const pillClass = order.status === "paid" ? "status-pill--paid" : "status-pill--pending";
+      const courseLines = order.order_items.map(oi =>
+        `<div class="dash-row"><span class="dash-row__name">${oi.courses?.name || oi.course_id}</span><span class="dash-row__price">${fmt(oi.price)}</span></div>`
+      ).join("");
+
+      return `
+        <div class="order-block">
+          <div class="order-block__top">
+            <span class="order-block__date">${date}</span>
+            <span class="status-pill ${pillClass}">${order.status}</span>
+          </div>
+          ${courseLines}
+          <div class="dash-total" style="margin-top:10px;padding-top:10px;">
+            <span class="dash-total__label" style="font-size:0.85rem;">Order total</span>
+            <span class="dash-total__amount" style="font-size:1.1rem;">${fmt(order.total_amount)}</span>
+          </div>
+        </div>`;
+    }).join("");
+  }
+</script>
+</body>
+</html>
