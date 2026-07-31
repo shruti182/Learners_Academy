@@ -95,6 +95,10 @@
         <input type="email" id="signupEmail" required autocomplete="email">
       </label>
       <label>
+        Mobile number
+        <input type="tel" id="signupPhone" required inputmode="numeric" pattern="[6-9][0-9]{9}" maxlength="10" placeholder="10-digit mobile number" autocomplete="tel">
+      </label>
+      <label>
         Password
         <input type="password" id="signupPassword" required minlength="6" autocomplete="new-password">
       </label>
@@ -204,13 +208,22 @@
     const role = document.querySelector('input[name="signupRole"]:checked').value;
     const full_name = document.getElementById("signupName").value.trim();
     const email = document.getElementById("signupEmail").value.trim();
+    const phoneRaw = document.getElementById("signupPhone").value.trim();
     const password = document.getElementById("signupPassword").value;
+
+    // Basic 10-digit Indian mobile number check (starts 6-9)
+    if (!/^[6-9]\d{9}$/.test(phoneRaw)) {
+      btn.disabled = false; btn.textContent = "Create free account";
+      showError("Please enter a valid 10-digit mobile number.");
+      return;
+    }
+    const phone = `+91${phoneRaw}`;
 
     const { error } = await supabase.auth.signUp({
       email,
       password,
       options: {
-        data: { full_name, role, intent: intent || null } // saved into profiles via DB trigger
+        data: { full_name, role, phone, intent: intent || null } // saved into profiles via DB trigger
       }
     });
 
