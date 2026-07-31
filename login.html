@@ -231,8 +231,8 @@
     // Supabase sends the actual reset email itself (via its built-in / configured SMTP).
     // redirectTo must be listed as an allowed Redirect URL in Supabase Auth settings.
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}${window.location.pathname.replace(/login\.html$/, "")}reset-password.html`
-    });
+  redirectTo: `${window.location.origin}/reset-password.html`
+});
 
     btn.disabled = false; btn.textContent = "Send reset link";
     if (error) { showError(error.message); return; }
