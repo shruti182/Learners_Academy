@@ -52,7 +52,24 @@
       </label>
 
       <button type="submit" class="btn btn--solid auth-submit" id="loginSubmitBtn">Log in</button>
+      <p class="auth-note">
+        <a href="#" id="goToForgot" style="color:var(--purple);font-weight:600;">Forgot password?</a>
+      </p>
       <p class="auth-note">No account yet? <a href="#" id="goToSignup" style="color:var(--purple);font-weight:600;">Sign up free</a></p>
+    </form>
+
+    <!-- FORGOT PASSWORD -->
+    <form class="auth-form" id="forgotForm" style="display:none;">
+      <h1>Reset your password</h1>
+      <p class="auth-sub">Enter the email on your account and we'll send you a link to reset your password.</p>
+
+      <label>
+        Email
+        <input type="email" id="forgotEmail" required autocomplete="email">
+      </label>
+
+      <button type="submit" class="btn btn--solid auth-submit" id="forgotSubmitBtn">Send reset link</button>
+      <p class="auth-note">Remembered it? <a href="#" id="goToLoginFromForgot" style="color:var(--purple);font-weight:600;">Back to log in</a></p>
     </form>
 
     <!-- SIGN UP -->
@@ -109,15 +126,22 @@
   const tabSignup = document.getElementById("tabSignup");
   const loginForm = document.getElementById("loginForm");
   const signupForm = document.getElementById("signupForm");
+  const forgotForm = document.getElementById("forgotForm");
   const errorBox = document.getElementById("formError");
   const successBox = document.getElementById("formSuccess");
 
   function showTab(tab) {
+    // tab: "login" | "signup" | "forgot"
     const isSignup = tab === "signup";
-    tabLogin.classList.toggle("is-active", !isSignup);
+    const isForgot = tab === "forgot";
+
+    tabLogin.classList.toggle("is-active", !isSignup && !isForgot);
     tabSignup.classList.toggle("is-active", isSignup);
-    loginForm.style.display = isSignup ? "none" : "block";
+
+    loginForm.style.display = (!isSignup && !isForgot) ? "block" : "none";
     signupForm.style.display = isSignup ? "block" : "none";
+    forgotForm.style.display = isForgot ? "block" : "none";
+
     errorBox.style.display = "none";
     successBox.style.display = "none";
   }
@@ -126,6 +150,8 @@
   tabSignup.addEventListener("click", () => showTab("signup"));
   document.getElementById("goToSignup").addEventListener("click", (e) => { e.preventDefault(); showTab("signup"); });
   document.getElementById("goToLogin").addEventListener("click", (e) => { e.preventDefault(); showTab("login"); });
+  document.getElementById("goToForgot").addEventListener("click", (e) => { e.preventDefault(); showTab("forgot"); });
+  document.getElementById("goToLoginFromForgot").addEventListener("click", (e) => { e.preventDefault(); showTab("login"); });
 
   // Pre-select tab / role from the link that brought them here
   showTab(mode === "signup" ? "signup" : "login");
@@ -192,6 +218,29 @@
     if (error) { showError(error.message); return; }
     showSuccess("Account created! Redirecting…");
     setTimeout(goNext, 800);
+  });
+
+  // ---------- FORGOT PASSWORD ----------
+  forgotForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById("forgotSubmitBtn");
+    btn.disabled = true; btn.textContent = "Sending…";
+
+    const email = document.getElementById("forgotEmail").value.trim();
+
+    // Supabase sends the actual reset email itself (via its built-in / configured SMTP).
+    // redirectTo must be listed as an allowed Redirect URL in Supabase Auth settings.
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}${window.location.pathname.replace(/login\.html$/, "")}reset-password.html`
+    });
+
+    btn.disabled = false; btn.textContent = "Send reset link";
+    if (error) { showError(error.message); return; }
+
+    // Generic message regardless of whether the email is actually registered,
+    // so this form can't be used to check which emails have accounts.
+    showSuccess("If an account exists for that email, a reset link is on its way. Check your inbox (and spam folder).");
+    forgotForm.reset();
   });
 </script>
 </body>
