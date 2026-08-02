@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lessons — Learners Academy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Poppins:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  .lesson-wrap{max-width:820px;margin:0 auto;padding:96px 24px;}
+  .lesson-head{margin-bottom:36px;}
+  .lesson-head .eyebrow{margin-bottom:10px;}
+  .lesson-head h1{font-family:var(--display);font-size:clamp(1.8rem,3.2vw,2.4rem);color:var(--ink);margin-bottom:8px;}
+  .lesson-head p{color:var(--text-soft);}
+  .lesson-empty{border:1px dashed var(--line);border-radius:20px;padding:48px 24px;text-align:center;color:var(--text-soft);}
+  .lesson-card{display:flex;gap:16px;align-items:center;padding:16px;border:1px solid var(--line);border-radius:18px;margin-bottom:14px;background:var(--panel);cursor:pointer;transition:box-shadow .2s ease,transform .2s ease;}
+  .lesson-card:hover{box-shadow:0 12px 28px rgba(33,26,51,0.08);transform:translateY(-2px);}
+  .lesson-card__thumb{width:96px;height:64px;border-radius:12px;background:var(--ink);flex-shrink:0;object-fit:cover;display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.3rem;}
+  .lesson-card__body{flex:1;min-width:0;}
+  .lesson-card__title{font-weight:600;color:var(--ink);margin-bottom:4px;}
+  .lesson-card__meta{font-size:0.82rem;color:var(--text-soft);}
+  .lesson-card__play{flex-shrink:0;width:40px;height:40px;border-radius:50%;background:var(--purple);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1rem;}
+
+  .lesson-modal{position:fixed;inset:0;background:rgba(21,15,46,0.75);display:none;align-items:center;justify-content:center;z-index:999;padding:24px;}
+  .lesson-modal.is-open{display:flex;}
+  .lesson-modal__inner{background:#000;border-radius:18px;width:100%;max-width:900px;position:relative;overflow:hidden;}
+  .lesson-modal__inner video{width:100%;display:block;max-height:80vh;}
+  .lesson-modal__close{position:absolute;top:12px;right:12px;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.15);color:#fff;border:none;font-size:1.1rem;cursor:pointer;z-index:2;}
+
+  .config-note{max-width:820px;margin:0 auto 8px;padding:12px 18px;border-radius:14px;background:rgba(76,140,255,0.08);border:1px solid rgba(76,140,255,0.25);font-size:0.82rem;color:var(--ink);}
+</style>
+</head>
+<body>
+
+<header class="nav" id="nav">
+  <div class="nav__inner">
+    <a href="index.html" class="nav__logo">
+      <span class="nav__logo-mark">LA</span>
+      <span class="nav__logo-text">Learners Academy</span>
+    </a>
+    <nav class="nav__links" id="navLinks">
+      <a href="index.html">Home</a>
+      <a href="courses.html" class="is-active">Courses</a>
+      <a href="live-classes.html">Live Classes</a>
+      <a href="faculty.html">Faculty</a>
+      <a href="dashboard.html">Dashboard</a>
+    </nav>
+    <div class="nav__actions">
+      <a href="admin-upload.html" class="btn btn--ghost" style="opacity:0.7;">Admin</a>
+      <a href="login.html" class="btn btn--ghost">Log in</a>
+      <a href="login.html?mode=signup" class="btn btn--solid">Start free</a>
+    </div>
+    <button class="nav__burger" id="burger" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<main>
+  <div class="lesson-wrap">
+    <div class="lesson-head">
+      <span class="eyebrow eyebrow--teal" id="courseTrackLabel">Course</span>
+      <h1 id="courseTitle">Loading…</h1>
+      <p id="courseSub">Fetching lessons for this course.</p>
+    </div>
+
+    <div id="configNote" class="config-note" hidden>
+      Metadata storage isn't connected to Supabase yet, so this page is showing lessons saved to <strong>this browser only</strong>. Once Supabase is connected in <code>admin-upload.html</code>, lessons uploaded from any device will appear here for everyone.
+    </div>
+
+    <div id="lessonList"></div>
+  </div>
+</main>
+
+<div class="lesson-modal" id="lessonModal">
+  <div class="lesson-modal__inner">
+    <button class="lesson-modal__close" id="lessonModalClose">✕</button>
+    <video id="lessonVideo" controls></video>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="script.js"></script>
+<script>
+/* Keep these in sync with admin-upload.html */
+const SUPABASE_URL = 'YOUR_SUPABASE_PROJECT_URL';
+const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+const supabaseReady = SUPABASE_URL.startsWith('https://') && SUPABASE_ANON_KEY.length > 20;
+const sb = supabaseReady ? supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+
+/* Course catalog — mirrors courses.html data-course-id + admin-upload.html dropdown */
+const COURSES = {
+  'math-grade-6':          { name: 'Mathematics Foundations — Grade 6', track: 'School' },
+  'science-grade-7':       { name: 'Science Explorer — Grade 7', track: 'School' },
+  'social-studies-grade-8':{ name: 'Social Studies Made Fun — Grade 8', track: 'School' },
+  'science-grade-9':       { name: 'Science Explorer — Grade 9', track: 'School' },
+  'math-grade-10':         { name: 'Mathematics Masterclass — Grade 10', track: 'School' },
+  'physics-grade-11':      { name: 'Physics Mastery — Grade 11', track: 'School' },
+  'english-grade-12':      { name: 'English Literature & Grammar — Grade 12', track: 'School' },
+  'jee-foundation-math':   { name: 'JEE Foundation — Mathematics', track: 'School' },
+  'python-data-science':   { name: 'Python for Data Science & Automation', track: 'Career' },
+  'sql-mastery':           { name: 'SQL — Complete Database Mastery', track: 'Career' },
+  'powerbi-bootcamp':      { name: 'Power BI — Business Intelligence Bootcamp', track: 'Career' },
+  'tableau-dashboard-pro': { name: 'Tableau — From Zero to Dashboard Pro', track: 'Career' },
+  'excel-sheets-bootcamp': { name: 'Excel & Google Sheets — Power User Bootcamp', track: 'Career' },
+  'data-analytics-career': { name: 'Data Analytics — Complete Career Path', track: 'Career' },
+  'ml-ai-fundamentals':    { name: 'Machine Learning & AI Fundamentals', track: 'Career' }
+};
+
+const params = new URLSearchParams(window.location.search);
+const courseId = params.get('course');
+const course = COURSES[courseId];
+
+document.getElementById('configNote').hidden = supabaseReady;
+
+if (course) {
+  document.getElementById('courseTrackLabel').textContent = course.track;
+  document.getElementById('courseTitle').textContent = course.name;
+  document.getElementById('courseSub').textContent = 'All recorded lessons uploaded for this course.';
+} else {
+  document.getElementById('courseTrackLabel').textContent = 'Course';
+  document.getElementById('courseTitle').textContent = 'Course not found';
+  document.getElementById('courseSub').textContent = 'This link is missing a valid course id.';
+}
+
+async function fetchVideosForCourse(id) {
+  if (supabaseReady) {
+    const { data, error } = await sb.from('videos').select('*').eq('course_id', id).order('uploaded_at', { ascending: false });
+    if (!error) return data;
+    console.error('Supabase fetch failed, falling back to localStorage:', error);
+  }
+  const all = JSON.parse(localStorage.getItem('la_videos') || '[]');
+  return all.filter(v => v.course_id === id);
+}
+
+async function renderLessons() {
+  const list = document.getElementById('lessonList');
+  if (!course) {
+    list.innerHTML = '<div class="lesson-empty">Go back to <a href="courses.html">Courses</a> and pick a valid course.</div>';
+    return;
+  }
+  const videos = await fetchVideosForCourse(courseId);
+  if (!videos.length) {
+    list.innerHTML = '<div class="lesson-empty">No lessons uploaded yet for this course. Check back soon!</div>';
+    return;
+  }
+  list.innerHTML = videos.map((v, i) => `
+    <div class="lesson-card" data-video-url="${v.video_url}">
+      ${v.thumb_url
+        ? `<img class="lesson-card__thumb" src="${v.thumb_url}" alt="">`
+        : `<div class="lesson-card__thumb">🎬</div>`}
+      <div class="lesson-card__body">
+        <div class="lesson-card__title">${v.title}</div>
+        <div class="lesson-card__meta">${new Date(v.uploaded_at).toLocaleDateString()}</div>
+      </div>
+      <div class="lesson-card__play">▶</div>
+    </div>
+  `).join('');
+
+  list.querySelectorAll('.lesson-card').forEach(card => {
+    card.addEventListener('click', () => openLesson(card.dataset.videoUrl));
+  });
+}
+
+const modal = document.getElementById('lessonModal');
+const videoEl = document.getElementById('lessonVideo');
+function openLesson(url) {
+  videoEl.src = url;
+  modal.classList.add('is-open');
+  videoEl.play();
+}
+function closeLesson() {
+  modal.classList.remove('is-open');
+  videoEl.pause();
+  videoEl.src = '';
+}
+document.getElementById('lessonModalClose').addEventListener('click', closeLesson);
+modal.addEventListener('click', (e) => { if (e.target === modal) closeLesson(); });
+
+renderLessons();
+</script>
+
+</body>
+</html>
