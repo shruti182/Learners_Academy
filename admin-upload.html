@@ -15,7 +15,11 @@
   .upload-group__title{font-family:var(--display);font-size:1.05rem;margin-bottom:10px;color:var(--ink);}
   .upload-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 18px;border:1px solid var(--line);border-radius:14px;margin-bottom:10px;font-size:0.9rem;}
   .upload-row__meta{opacity:0.65;font-size:0.8rem;}
-  .upload-row a{color:var(--purple);font-weight:600;}
+  .upload-row__actions{display:flex;gap:8px;align-items:center;}
+  .upload-row a{color:var(--purple);font-weight:600;text-decoration:none;transition:color 0.2s ease;}
+  .upload-row a:hover{color:var(--blue);}
+  .upload-row__delete{padding:6px 12px;background:rgba(231,76,60,0.1);color:#e74c3c;border:1px solid rgba(231,76,60,0.3);border-radius:6px;font-size:0.85rem;font-weight:600;cursor:pointer;transition:all 0.2s ease;font-family:inherit;}
+  .upload-row__delete:hover{background:#e74c3c;color:#fff;border-color:#e74c3c;}
   #adminGate{max-width:400px;margin:80px auto;text-align:center;}
   #adminGate input{width:100%;padding:12px 14px;border:2px solid var(--line);border-radius:12px;margin:16px 0;font-size:1rem;}
   .auth-form select{width:100%;padding:12px 14px;border:2px solid var(--line);border-radius:12px;font-size:0.95rem;font-family:var(--body);background:#fff;}
@@ -40,7 +44,23 @@
       <a href="faculty.html">Faculty</a>
     </nav>
     <div class="nav__actions">
-      <a href="login.html" class="btn btn--ghost">Log in</a>
+      <div id="authContainer">
+        <!-- Login button (shown when not logged in) -->
+        <div id="authButtons">
+          <a href="login.html" class="btn btn--ghost">Log in</a>
+        </div>
+        <!-- User menu (shown when logged in) -->
+        <div class="user-menu" id="userMenu" hidden>
+          <button type="button" class="user-menu__trigger" id="userMenuTrigger">
+            <span class="user-menu__trigger-avatar" id="userAvatar">U</span>
+            <span id="userName">User</span>
+          </button>
+          <div class="user-menu__dropdown">
+            <a href="dashboard.html" class="user-menu__item">Dashboard</a>
+            <button type="button" class="user-menu__item user-menu__item--logout" id="logoutBtn">Sign out</button>
+          </div>
+        </div>
+      </div>
     </div>
     <button class="nav__burger" id="burger" aria-label="Toggle menu" aria-expanded="false">
       <span></span><span></span><span></span>
@@ -119,6 +139,21 @@
 
 </main>
 
+<!-- Delete confirmation modal -->
+<div class="lesson-modal" id="deleteConfirmModal">
+  <div class="lesson-modal__inner" style="max-width:400px;">
+    <button class="lesson-modal__close" id="deleteConfirmClose">✕</button>
+    <div style="padding:40px 32px;text-align:center;">
+      <h3 style="margin-bottom:16px;color:var(--ink);">Delete this video?</h3>
+      <p style="color:var(--text-soft);margin-bottom:24px;font-size:0.95rem;">This action cannot be undone. The video will be removed from all courses.</p>
+      <div style="display:flex;gap:12px;justify-content:center;">
+        <button type="button" id="deleteConfirmCancel" class="btn btn--ghost">Cancel</button>
+        <button type="button" id="deleteConfirmSubmit" class="btn btn--solid" style="background:#e74c3c;border-color:#e74c3c;">Delete Video</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script src="https://upload-widget.cloudinary.com/global/all.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="script.js"></script>
@@ -184,9 +219,13 @@ document.getElementById('adminUnlock').addEventListener('click', () => {
           on videos for insert
           with check (true);
 
-      (The insert policy is intentionally open here because this admin
+        create policy "Anyone with the anon key can delete videos"
+          on videos for delete
+          using (true);
+
+      (The insert and delete policies are intentionally open here because this admin
       page is only gated by the passcode above, matching that page's
-      current "placeholder" security level. Tighten this policy once
+      current "placeholder" security level. Tighten these policies once
       you wire up real admin auth.)
 
    c) In Supabase → Project Settings → API, copy your Project URL and
@@ -317,6 +356,52 @@ async function fetchVideos() {
   return JSON.parse(localStorage.getItem('la_videos') || '[]');
 }
 
+/* ===== Delete video from Supabase or localStorage ===== */
+let videoToDelete = null;
+
+function showDeleteConfirm(videoId) {
+  videoToDelete = videoId;
+  document.getElementById('deleteConfirmModal').classList.add('is-open');
+}
+
+function closeDeleteConfirm() {
+  videoToDelete = null;
+  document.getElementById('deleteConfirmModal').classList.remove('is-open');
+}
+
+async function deleteVideo(videoId) {
+  if (supabaseReady) {
+    const { error } = await sb.from('videos').delete().eq('id', videoId);
+    if (error) {
+      console.error('Supabase delete failed:', error);
+      alert('Failed to delete video. Trying local storage...');
+      deleteFromLocalStorage(videoId);
+    }
+  } else {
+    deleteFromLocalStorage(videoId);
+  }
+  renderUploadList();
+  closeDeleteConfirm();
+}
+
+function deleteFromLocalStorage(videoId) {
+  const list = JSON.parse(localStorage.getItem('la_videos') || '[]');
+  const filtered = list.filter(v => v.id !== videoId && v.video_url !== videoId);
+  localStorage.setItem('la_videos', JSON.stringify(filtered));
+}
+
+/* Delete modal handlers */
+document.getElementById('deleteConfirmClose').addEventListener('click', closeDeleteConfirm);
+document.getElementById('deleteConfirmCancel').addEventListener('click', closeDeleteConfirm);
+document.getElementById('deleteConfirmSubmit').addEventListener('click', () => {
+  if (videoToDelete) {
+    deleteVideo(videoToDelete);
+  }
+});
+document.getElementById('deleteConfirmModal').addEventListener('click', (e) => {
+  if (e.target.id === 'deleteConfirmModal') closeDeleteConfirm();
+});
+
 async function renderUploadList() {
   const list = await fetchVideos();
   const container = document.getElementById('uploadList');
@@ -345,12 +430,180 @@ async function renderUploadList() {
             <strong>${v.title}</strong>
             <div class="upload-row__meta">${v.track === 'school' ? 'School' : v.track === 'career' ? 'Career' : 'Other'} · ${new Date(v.uploaded_at).toLocaleDateString()}</div>
           </div>
-          <a href="${v.video_url}" target="_blank" rel="noopener">Open ↗</a>
+          <div class="upload-row__actions">
+            <a href="${v.video_url}" target="_blank" rel="noopener">Open ↗</a>
+            <button type="button" class="upload-row__delete" data-delete-id="${v.id || v.video_url}">Delete</button>
+          </div>
         </div>
       `).join('')}
     </div>
   `).join('');
+
+  // Attach delete handlers
+  container.querySelectorAll('.upload-row__delete').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const videoId = e.target.dataset.deleteId;
+      showDeleteConfirm(videoId);
+    });
+  });
 }
+</script>
+
+<!-- Inline styles for delete modal (add to head if needed) -->
+<style>
+  .lesson-modal{position:fixed;inset:0;background:rgba(21,15,46,0.75);display:none;align-items:center;justify-content:center;z-index:999;padding:24px;}
+  .lesson-modal.is-open{display:flex;}
+  .lesson-modal__inner{background:#fff;border-radius:18px;width:100%;max-width:900px;position:relative;overflow:hidden;}
+  .lesson-modal__close{position:absolute;top:12px;right:12px;width:36px;height:36px;border-radius:50%;background:rgba(15,42,74,0.1);color:var(--ink);border:none;font-size:1.1rem;cursor:pointer;z-index:2;transition:background 0.2s ease;}
+  .lesson-modal__close:hover{background:rgba(15,42,74,0.15);}
+</style>
+
+<!-- User menu styles (same as index.html) -->
+<style>
+  .user-menu{
+    position:relative;
+    display:inline-block;
+  }
+  .user-menu__trigger{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:8px 12px;
+    background:transparent;
+    border:none;
+    cursor:pointer;
+    font-family:inherit;
+    font-weight:600;
+    color:var(--text);
+    border-radius:8px;
+    transition:background 0.2s ease;
+  }
+  .user-menu__trigger:hover{
+    background:rgba(15,42,74,0.08);
+  }
+  .user-menu__trigger-avatar{
+    width:32px;
+    height:32px;
+    border-radius:50%;
+    background:var(--purple);
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:700;
+    font-size:0.9rem;
+  }
+  .user-menu__dropdown{
+    position:absolute;
+    top:100%;
+    right:0;
+    margin-top:8px;
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:12px;
+    box-shadow:0 12px 28px rgba(33,26,51,0.12);
+    min-width:180px;
+    z-index:100;
+    opacity:0;
+    visibility:hidden;
+    transform:translateY(-8px);
+    transition:opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
+  }
+  .user-menu.is-open .user-menu__dropdown{
+    opacity:1;
+    visibility:visible;
+    transform:translateY(0);
+  }
+  .user-menu__item{
+    display:block;
+    width:100%;
+    padding:12px 16px;
+    text-align:left;
+    font-family:inherit;
+    font-size:0.95rem;
+    color:var(--text);
+    background:none;
+    border:none;
+    cursor:pointer;
+    transition:background 0.2s ease;
+    text-decoration:none;
+  }
+  .user-menu__item:first-child{
+    border-top-left-radius:12px;
+    border-top-right-radius:12px;
+  }
+  .user-menu__item:last-child{
+    border-bottom-left-radius:12px;
+    border-bottom-right-radius:12px;
+  }
+  .user-menu__item:hover{
+    background:rgba(15,42,74,0.05);
+  }
+  .user-menu__item--logout{
+    color:#e74c3c;
+    border-top:1px solid var(--line);
+  }
+  .user-menu__item--logout:hover{
+    background:rgba(231,76,60,0.08);
+  }
+</style>
+
+<!-- Authentication state management for navbar -->
+<script>
+(function() {
+  const authContainer = document.getElementById('authContainer');
+  const authButtons = document.getElementById('authButtons');
+  const userMenu = document.getElementById('userMenu');
+  const userMenuTrigger = document.getElementById('userMenuTrigger');
+  const userNameEl = document.getElementById('userName');
+  const userAvatarEl = document.getElementById('userAvatar');
+  const logoutBtn = document.getElementById('logoutBtn');
+
+  // Check if user is logged in (from localStorage, session, or auth provider)
+  function checkAuthStatus() {
+    // This is a placeholder — wire it to your actual auth system
+    const isLoggedIn = localStorage.getItem('la_user_loggedIn') === 'true';
+    const userName = localStorage.getItem('la_user_name') || 'User';
+    
+    if (isLoggedIn) {
+      authButtons.hidden = true;
+      userMenu.hidden = false;
+      userNameEl.textContent = userName;
+      // Set avatar to first letter
+      const initials = userName.split(' ').map(n => n[0]).join('').toUpperCase();
+      userAvatarEl.textContent = initials || 'U';
+    } else {
+      authButtons.hidden = false;
+      userMenu.hidden = true;
+    }
+  }
+
+  // Toggle user menu dropdown
+  userMenuTrigger.addEventListener('click', (e) => {
+    e.stopPropagation();
+    userMenu.classList.toggle('is-open');
+  });
+
+  // Close dropdown when clicking outside
+  document.addEventListener('click', () => {
+    userMenu.classList.remove('is-open');
+  });
+
+  // Logout handler
+  logoutBtn.addEventListener('click', () => {
+    // Clear auth data
+    localStorage.removeItem('la_user_loggedIn');
+    localStorage.removeItem('la_user_name');
+    localStorage.removeItem('la_user_id');
+    
+    // Show message and redirect
+    alert('You have been logged out.');
+    location.reload();
+  });
+
+  // Initialize auth state on page load
+  checkAuthStatus();
+})();
 </script>
 
 </body>
