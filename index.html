@@ -9,6 +9,97 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Poppins:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
+<style>
+  /* ===== Hero vision split (right-hand illustration) ===== */
+  .hero .hero__inner.vision-split{
+    display:grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    align-items:center;
+    gap:48px;
+    max-width:1240px;
+    margin:0 auto;
+    text-align:left;
+  }
+  .vision-split__content{ min-width:0; }
+  .vision-split__content .hero__eyebrow,
+  .vision-split__content .hero__title,
+  .vision-split__content .hero__sub{ text-align:left; }
+  .vision-split__content .hero__paths{ justify-content:flex-start; }
+
+  .vision-split__visual{
+    position:relative;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    min-height:420px;
+  }
+  .vs-glow{
+    position:absolute;
+    inset:0;
+    background: radial-gradient(circle at 55% 45%, rgba(20,184,166,0.18), rgba(15,42,74,0.06) 55%, transparent 75%);
+    filter:blur(4px);
+    border-radius:50%;
+    z-index:0;
+  }
+  .vs-illustration{
+    position:relative;
+    z-index:1;
+    width:100%;
+    max-width:400px;
+    height:auto;
+    filter: drop-shadow(0 18px 34px rgba(15,42,74,0.18));
+  }
+  .vs-badge{
+    position:absolute;
+    z-index:2;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    background:#ffffff;
+    border:1px solid #e2e9ef;
+    border-radius:999px;
+    padding:9px 16px 9px 10px;
+    font-family:'Poppins', sans-serif;
+    font-size:13px;
+    font-weight:600;
+    color:#0f2a4a;
+    box-shadow:0 10px 24px rgba(15,42,74,0.14);
+    white-space:nowrap;
+    animation: vsFloat 4.5s ease-in-out infinite;
+  }
+  .vs-badge__icon{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:26px;
+    height:26px;
+    border-radius:50%;
+    background:#eef6f4;
+    font-size:14px;
+  }
+  .vs-badge--top{ top:6%; right:2%; animation-delay:0s; }
+  .vs-badge--mid{ top:46%; left:-4%; animation-delay:0.6s; }
+  .vs-badge--bottom{ bottom:8%; right:4%; animation-delay:1.2s; }
+
+  @keyframes vsFloat{
+    0%, 100%{ transform:translateY(0); }
+    50%{ transform:translateY(-8px); }
+  }
+
+  @media (max-width: 980px){
+    .hero .hero__inner.vision-split{
+      grid-template-columns:1fr;
+      text-align:center;
+    }
+    .vision-split__content .hero__eyebrow,
+    .vision-split__content .hero__title,
+    .vision-split__content .hero__sub{ text-align:center; }
+    .vision-split__content .hero__paths{ justify-content:center; }
+    .vision-split__visual{ order:-1; min-height:340px; }
+    .vs-badge{ font-size:12px; padding:7px 12px 7px 8px; }
+    .vs-badge--mid{ left:2%; }
+  }
+</style>
 </head>
 <body>
 
@@ -41,39 +132,131 @@
 
   <!-- HERO -->
   <section class="hero">
-    <div class="hero__eyebrow">
-      <span class="dot"></span> Built for two journeys, one platform
-    </div>
-    <h1 class="hero__title">
-      Every grade.<br>
-      Every skill.<br>
-      <em>One path forward.</em>
-    </h1>
-    <p class="hero__sub">
-      Learners Academy carries school students from Grade 6 through their board exams,
-      and carries professionals from their first Python script to their next
-      promotion — with video lessons, live doubt-clearing, and certificates
-      that hold up in the real world.
-    </p>
+    <div class="hero__inner vision-split">
 
-    <div class="hero__paths">
-      <a href="courses.html?track=school" class="path-card path-card--school">
-        <span class="path-card__km">MILESTONE 06 → 12</span>
-        <h3>School Path</h3>
-        <p>CBSE &amp; ICSE aligned lessons, chapter quizzes, and live doubt sessions for Grade 6–12.</p>
-        <span class="path-card__go">Explore subjects →</span>
-      </a>
-      <a href="courses.html?track=career" class="path-card path-card--career">
-        <span class="path-card__km">MILESTONE FIRST JOB → NEXT ROLE</span>
-        <h3>Career Path</h3>
-        <p>Python, SQL, Power BI and Data Analytics tracks with certificates employers recognise.</p>
-        <span class="path-card__go">Explore tracks →</span>
-      </a>
-    </div>
+      <div class="vision-split__content">
+        <div class="hero__eyebrow">
+          <span class="dot"></span> Built for two journeys, one platform
+        </div>
+        <h1 class="hero__title">
+          Every grade.<br>
+          Every skill.<br>
+          <em>One path forward.</em>
+        </h1>
+        <p class="hero__sub">
+          Learners Academy onboards verified tutors and delivers live, online
+          tuitions for school students of Class 6th–12th — plus career-track
+          courses for working professionals. One platform, two journeys,
+          100% online.
+        </p>
 
-    <svg class="hero__road" viewBox="0 0 1200 140" preserveAspectRatio="none" aria-hidden="true">
-      <path d="M0,90 C 200,20 350,140 600,70 S 1000,10 1200,60" stroke="var(--yellow)" stroke-width="3" stroke-dasharray="2 14" stroke-linecap="round" fill="none"/>
-    </svg>
+        <div class="hero__paths">
+          <a href="courses.html?track=school" class="path-card path-card--school">
+            <span class="path-card__km">MILESTONE 06 → 12</span>
+            <h3>School Path</h3>
+            <p>CBSE &amp; ICSE aligned lessons, chapter quizzes, and live doubt sessions for Grade 6–12.</p>
+            <span class="path-card__go">Explore subjects →</span>
+          </a>
+          <a href="courses.html?track=career" class="path-card path-card--career">
+            <span class="path-card__km">MILESTONE FIRST JOB → NEXT ROLE</span>
+            <h3>Career Path</h3>
+            <p>Python, SQL, Power BI and Data Analytics tracks with certificates employers recognise.</p>
+            <span class="path-card__go">Explore tracks →</span>
+          </a>
+        </div>
+
+        <svg class="hero__road" viewBox="0 0 1200 140" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M0,90 C 200,20 350,140 600,70 S 1000,10 1200,60" stroke="var(--yellow)" stroke-width="3" stroke-dasharray="2 14" stroke-linecap="round" fill="none"/>
+        </svg>
+      </div>
+
+      <!-- VISION VISUAL -->
+      <div class="vision-split__visual" aria-hidden="true">
+        <div class="vs-glow"></div>
+
+        <svg class="vs-illustration" viewBox="0 0 480 520" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="vsScreen" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#0f2a4a"/>
+              <stop offset="100%" stop-color="#0a1b30"/>
+            </linearGradient>
+            <linearGradient id="vsBoard" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#14b8a6"/>
+              <stop offset="100%" stop-color="#0f766e"/>
+            </linearGradient>
+          </defs>
+
+          <!-- blob backdrop -->
+          <path d="M240 40c90 0 168 62 190 148 20 78-14 176-92 220-70 40-166 44-232-4-64-46-96-134-78-214C46 108 128 40 240 40Z" fill="#eef6f4"/>
+
+          <!-- laptop / online class -->
+          <rect x="90" y="120" width="300" height="190" rx="14" fill="url(#vsScreen)"/>
+          <rect x="108" y="138" width="264" height="140" rx="6" fill="#132f52"/>
+
+          <!-- tutor on screen (video call) -->
+          <circle cx="188" cy="200" r="30" fill="#fbbf24"/>
+          <circle cx="188" cy="190" r="13" fill="#0a1b30"/>
+          <path d="M158 226c6-18 22-26 30-26s24 8 30 26" fill="#0a1b30"/>
+
+          <!-- student tiles -->
+          <rect x="252" y="152" width="52" height="40" rx="6" fill="#1e4a78"/>
+          <circle cx="278" cy="168" r="8" fill="#7dd3fc"/>
+          <rect x="312" y="152" width="52" height="40" rx="6" fill="#1e4a78"/>
+          <circle cx="338" cy="168" r="8" fill="#f9a8d4"/>
+          <rect x="252" y="200" width="52" height="40" rx="6" fill="#1e4a78"/>
+          <circle cx="278" cy="216" r="8" fill="#86efac"/>
+          <rect x="312" y="200" width="52" height="40" rx="6" fill="#1e4a78"/>
+          <circle cx="338" cy="216" r="8" fill="#fca5a5"/>
+
+          <!-- "LIVE" badge -->
+          <rect x="108" y="138" width="52" height="22" rx="11" fill="#ef4444"/>
+          <text x="134" y="153" text-anchor="middle" font-family="Poppins, sans-serif" font-size="11" font-weight="700" fill="#fff">LIVE</text>
+
+          <!-- laptop base -->
+          <path d="M78 310h324l14 26a10 10 0 0 1-10 14H74a10 10 0 0 1-10-14z" fill="#d9e4ee"/>
+          <rect x="200" y="316" width="80" height="6" rx="3" fill="#a9bacb"/>
+
+          <!-- stack of books, class 6-12 -->
+          <rect x="60" y="380" width="120" height="18" rx="3" fill="#fbbf24"/>
+          <rect x="66" y="362" width="108" height="18" rx="3" fill="#f97316"/>
+          <rect x="72" y="344" width="96" height="18" rx="3" fill="#14b8a6"/>
+          <text x="120" y="358" text-anchor="middle" font-family="Poppins, sans-serif" font-size="12" font-weight="700" fill="#0a1b30">Class 6–12</text>
+
+          <!-- grad cap -->
+          <g transform="translate(300 350)">
+            <path d="M40 0 L80 16 L40 32 L0 16 Z" fill="#0f2a4a"/>
+            <path d="M16 22 v18 c0 8 48 8 48 0 v-18" fill="none" stroke="#0f2a4a" stroke-width="4"/>
+            <circle cx="80" cy="16" r="3" fill="#fbbf24"/>
+            <line x1="80" y1="16" x2="80" y2="40" stroke="#fbbf24" stroke-width="2"/>
+          </g>
+
+          <!-- career / growth chart card -->
+          <rect x="252" y="392" width="150" height="86" rx="12" fill="#ffffff" stroke="#dbe4ea" stroke-width="1.5"/>
+          <text x="270" y="412" font-family="Poppins, sans-serif" font-size="11" font-weight="700" fill="#0f2a4a">For Professionals</text>
+          <polyline points="268,462 292,442 312,452 336,424 384,406" fill="none" stroke="url(#vsBoard)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="384" cy="406" r="5" fill="#0f766e"/>
+
+          <!-- online / wifi rays over laptop -->
+          <path d="M228 96c10-10 24-16 40-16s30 6 40 16" fill="none" stroke="#14b8a6" stroke-width="4" stroke-linecap="round"/>
+          <path d="M240 106c7-7 16-11 28-11s21 4 28 11" fill="none" stroke="#14b8a6" stroke-width="4" stroke-linecap="round"/>
+          <circle cx="268" cy="118" r="5" fill="#14b8a6"/>
+        </svg>
+
+        <div class="vs-badge vs-badge--top">
+          <span class="vs-badge__icon">🎓</span>
+          <span>Verified Tutors Onboarding</span>
+        </div>
+        <div class="vs-badge vs-badge--mid">
+          <span class="vs-badge__icon">💻</span>
+          <span>100% Online Tuitions</span>
+        </div>
+        <div class="vs-badge vs-badge--bottom">
+          <span class="vs-badge__icon">📚</span>
+          <span>Class 6th – 12th</span>
+        </div>
+      </div>
+
+    </div>
   </section>
 
   <!-- STATS -->
