@@ -334,11 +334,7 @@ async function renderUploadList() {
 
   container.innerHTML = Object.entries(groups).map(([courseName, videos]) => `
     <div class="upload-group">
-      <div class="upload-group__title">${courseName} <span style="opacity:.5;font-weight:400;">(${videos.length})</span>
-        ${videos[0].course_id && videos[0].course_id !== 'custom'
-          ? `<a href="course-detail.html?course=${videos[0].course_id}" target="_blank" style="font-size:0.78rem;font-weight:600;margin-left:8px;">View on site ↗</a>`
-          : ''}
-      </div>
+      <div class="upload-group__title">${courseName} <span style="opacity:.5;font-weight:400;">(${videos.length})</span></div>
       ${videos.map(v => `
         <div class="upload-row">
           <div>

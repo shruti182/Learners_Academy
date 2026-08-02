@@ -523,9 +523,6 @@ ul{margin:0;padding:0;list-style:none;}
 
 /* ===== Add to Cart button on course cards ===== */
 .btn--cart{width:100%;margin-top:12px;padding:10px 20px;font-size:0.88rem;}
-.course-card__lessons{display:block;text-align:center;margin-top:8px;font-size:0.85rem;font-weight:600;color:var(--purple);text-decoration:none;}
-.course-card__lessons:hover{text-decoration:underline;}
-.course-card--dark .course-card__lessons{color:var(--yellow);}
 .auth-form input:focus{outline:2px solid var(--purple);outline-offset:1px;}
 .auth-submit{width:100%;margin-top:6px;}
 .auth-note{margin-top:16px;font-size:0.78rem;font-style:italic;opacity:0.7;line-height:1.5;}
