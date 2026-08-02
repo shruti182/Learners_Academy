@@ -11,11 +11,18 @@
 <link rel="stylesheet" href="style.css">
 <style>
   .upload-list{max-width:640px;margin:32px auto 0;}
+  .upload-group{max-width:640px;margin:0 auto 28px;}
+  .upload-group__title{font-family:var(--display);font-size:1.05rem;margin-bottom:10px;color:var(--ink);}
   .upload-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 18px;border:1px solid var(--line);border-radius:14px;margin-bottom:10px;font-size:0.9rem;}
   .upload-row__meta{opacity:0.65;font-size:0.8rem;}
   .upload-row a{color:var(--purple);font-weight:600;}
   #adminGate{max-width:400px;margin:80px auto;text-align:center;}
   #adminGate input{width:100%;padding:12px 14px;border:2px solid var(--line);border-radius:12px;margin:16px 0;font-size:1rem;}
+  .auth-form select{width:100%;padding:12px 14px;border:2px solid var(--line);border-radius:12px;font-size:0.95rem;font-family:var(--body);background:#fff;}
+  .storage-note{max-width:520px;margin:0 auto 24px;padding:14px 18px;border-radius:14px;background:rgba(76,140,255,0.08);border:1px solid rgba(76,140,255,0.25);font-size:0.85rem;line-height:1.55;color:var(--ink);}
+  .storage-note strong{color:var(--blue);}
+  .config-banner{max-width:520px;margin:0 auto 20px;padding:14px 18px;border-radius:14px;background:rgba(255,122,69,0.10);border:1px solid rgba(255,122,69,0.3);font-size:0.85rem;line-height:1.55;color:var(--ink);}
+  .config-banner strong{color:var(--orange-d);}
 </style>
 </head>
 <body>
@@ -57,31 +64,63 @@
     <div class="section__head">
       <span class="eyebrow eyebrow--teal">Admin</span>
       <h2>Upload a lesson video</h2>
-      <p>Videos upload directly to Cloudinary. Once done, copy the link into your course/live-class page, or keep a running list below.</p>
+      <p>Pick the subject/course this recording belongs to, then upload. The video file itself is stored on Cloudinary; its details (title, course, link) are saved to Supabase so the list is safe, shared, and visible from any device — not just this browser.</p>
+    </div>
+
+    <div id="configBanner" class="config-banner" hidden>
+      <strong>Metadata storage isn't connected yet.</strong> Videos will still upload to Cloudinary fine, but the "which course it belongs to" list is only being saved in this browser's local storage right now — it'll be lost if you clear your browser data or open this page on another device. See the setup note in the file comments (or ask me) to connect Supabase in a few minutes.
     </div>
 
     <div class="auth-card" style="max-width:520px;margin:0 auto;">
       <form class="auth-form" id="videoMetaForm" onsubmit="return false;">
-        <label>Course / Class name
-          <input type="text" id="videoTitle" placeholder="e.g. Mathematics Masterclass — Grade 10, Lesson 3" required>
-        </label>
-        <label>Track
-          <select id="videoTrack" style="padding:12px 14px;border:2px solid var(--line);border-radius:12px;font-size:0.95rem;">
-            <option value="school">School (Grade 6–12)</option>
-            <option value="career">Career / Professional</option>
+        <label>Subject / Course
+          <select id="videoCourse" required>
+            <option value="" disabled selected>Choose a subject or course…</option>
+            <optgroup label="School — Grade 6–12">
+              <option value="math-grade-6">Mathematics Foundations — Grade 6</option>
+              <option value="science-grade-7">Science Explorer — Grade 7</option>
+              <option value="social-studies-grade-8">Social Studies Made Fun — Grade 8</option>
+              <option value="science-grade-9">Science Explorer — Grade 9</option>
+              <option value="math-grade-10">Mathematics Masterclass — Grade 10</option>
+              <option value="physics-grade-11">Physics Mastery — Grade 11</option>
+              <option value="english-grade-12">English Literature &amp; Grammar — Grade 12</option>
+              <option value="jee-foundation-math">JEE Foundation — Mathematics</option>
+            </optgroup>
+            <optgroup label="Career / Professional">
+              <option value="python-data-science">Python for Data Science &amp; Automation</option>
+              <option value="sql-mastery">SQL — Complete Database Mastery</option>
+              <option value="powerbi-bootcamp">Power BI — Business Intelligence Bootcamp</option>
+              <option value="tableau-dashboard-pro">Tableau — From Zero to Dashboard Pro</option>
+              <option value="excel-sheets-bootcamp">Excel &amp; Google Sheets — Power User Bootcamp</option>
+              <option value="data-analytics-career">Data Analytics — Complete Career Path</option>
+              <option value="ml-ai-fundamentals">Machine Learning &amp; AI Fundamentals</option>
+            </optgroup>
+            <optgroup label="Other">
+              <option value="__custom__">Something not listed yet…</option>
+            </optgroup>
           </select>
         </label>
+
+        <label id="customCourseWrap" hidden>Custom course name
+          <input type="text" id="customCourseName" placeholder="e.g. Vedic Maths — Level 1">
+        </label>
+
+        <label>Lesson title
+          <input type="text" id="videoTitle" placeholder="e.g. Lesson 3 — Trigonometry basics" required>
+        </label>
+
         <button type="button" class="btn btn--solid btn--lg auth-submit" id="uploadBtn">Choose &amp; upload video</button>
         <p class="auth-note" id="uploadStatus">No video selected yet.</p>
       </form>
     </div>
 
-    <div class="upload-list" id="uploadList"></div>
+    <div id="uploadList"></div>
   </section>
 
 </main>
 
 <script src="https://upload-widget.cloudinary.com/global/all.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="script.js"></script>
 <script>
 /* ===== Placeholder admin gate — swap for real auth ===== */
@@ -91,15 +130,102 @@ document.getElementById('adminUnlock').addEventListener('click', () => {
   if (val === 'learners2026') {
     document.getElementById('adminGate').hidden = true;
     document.getElementById('uploadPanel').hidden = false;
+    checkSupabaseConfig();
     renderUploadList();
   } else {
     alert('Incorrect passcode.');
   }
 });
 
-/* ===== Cloudinary config — fill these in ===== */
-const CLOUD_NAME = 'rdh4ed2g';               // your Cloudinary cloud name
-const UPLOAD_PRESET = 'shrutika';           // your unsigned Cloudinary upload preset
+/* ===================================================================
+   WHERE VIDEOS ARE STORED — READ THIS
+
+   1) THE VIDEO FILE ITSELF -> Cloudinary
+      Cloudinary is a media hosting/CDN service built specifically for
+      video: it stores the file safely, generates thumbnails, and
+      streams it efficiently to students. This part below is already
+      wired up and does not need Supabase.
+
+   2) THE "WHICH COURSE DOES THIS VIDEO BELONG TO" LIST -> Supabase
+      This is the part that was previously ONLY saved to this browser's
+      localStorage, which is NOT safe: it lives only on this one device,
+      in this one browser, and disappears if storage is cleared. That is
+      the gap you were asking about.
+
+      Supabase is a small hosted Postgres database (free tier is plenty
+      for this) that stores that list centrally, so:
+        - you can upload from your laptop and see the list on your phone
+        - the list survives clearing your browser / switching devices
+        - later, your public Courses page could pull real lesson lists
+          from this same table instead of hardcoded HTML
+
+   ---- 5-MINUTE SETUP ----
+   a) Create a free project at https://supabase.com
+   b) In the SQL editor, run:
+
+        create table videos (
+          id uuid primary key default gen_random_uuid(),
+          title text not null,
+          track text not null,
+          course_id text not null,
+          course_name text not null,
+          video_url text not null,
+          thumb_url text,
+          uploaded_at timestamptz not null default now()
+        );
+
+        alter table videos enable row level security;
+
+        create policy "Public can read videos"
+          on videos for select
+          using (true);
+
+        create policy "Anyone with the anon key can insert videos"
+          on videos for insert
+          with check (true);
+
+      (The insert policy is intentionally open here because this admin
+      page is only gated by the passcode above, matching that page's
+      current "placeholder" security level. Tighten this policy once
+      you wire up real admin auth.)
+
+   c) In Supabase → Project Settings → API, copy your Project URL and
+      anon public key into the two constants below.
+
+   Until you do this, uploads still work — the video goes to Cloudinary
+   fine — but the list falls back to localStorage on this browser only,
+   and you'll see a banner reminding you it isn't centrally saved yet.
+=================================================================== */
+
+const SUPABASE_URL = 'YOUR_SUPABASE_PROJECT_URL';       // e.g. https://xxxxx.supabase.co
+const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';     // Settings → API → anon public key
+
+const supabaseReady = SUPABASE_URL.startsWith('https://') && SUPABASE_ANON_KEY.length > 20;
+const sb = supabaseReady ? supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+
+function checkSupabaseConfig() {
+  document.getElementById('configBanner').hidden = supabaseReady;
+}
+
+/* ===== Course catalog (mirrors courses.html data-course-id values) ===== */
+const COURSE_TRACK = {
+  'math-grade-6': 'school', 'science-grade-7': 'school', 'social-studies-grade-8': 'school',
+  'science-grade-9': 'school', 'math-grade-10': 'school', 'physics-grade-11': 'school',
+  'english-grade-12': 'school', 'jee-foundation-math': 'school',
+  'python-data-science': 'career', 'sql-mastery': 'career', 'powerbi-bootcamp': 'career',
+  'tableau-dashboard-pro': 'career', 'excel-sheets-bootcamp': 'career',
+  'data-analytics-career': 'career', 'ml-ai-fundamentals': 'career'
+};
+
+const courseSelect = document.getElementById('videoCourse');
+const customWrap = document.getElementById('customCourseWrap');
+courseSelect.addEventListener('change', () => {
+  customWrap.hidden = courseSelect.value !== '__custom__';
+});
+
+/* ===== Cloudinary config ===== */
+const CLOUD_NAME = 'rdh4ed2g';
+const UPLOAD_PRESET = 'shrutika';
 
 const uploadStatus = document.getElementById('uploadStatus');
 
@@ -110,7 +236,7 @@ const widget = cloudinary.createUploadWidget(
     resourceType: 'video',
     sources: ['local'],
     multiple: false,
-    maxFileSize: 500000000 // 500MB, matches the preset limit set in step 4
+    maxFileSize: 500000000 // 500MB, matches the preset limit
   },
   (error, result) => {
     if (error) {
@@ -119,14 +245,25 @@ const widget = cloudinary.createUploadWidget(
       return;
     }
     if (result.event === 'success') {
+      const courseId = courseSelect.value;
+      const isCustom = courseId === '__custom__';
+      const courseName = isCustom
+        ? (document.getElementById('customCourseName').value || 'Untitled course')
+        : courseSelect.options[courseSelect.selectedIndex].text;
+      const track = isCustom ? 'other' : (COURSE_TRACK[courseId] || 'other');
       const title = document.getElementById('videoTitle').value || 'Untitled lesson';
-      const track = document.getElementById('videoTrack').value;
       const videoUrl = result.info.secure_url;
       const thumbUrl = result.info.thumbnail_url || '';
 
-      saveVideoRecord({ title, track, videoUrl, thumbUrl, uploadedAt: new Date().toISOString() });
-      uploadStatus.textContent = 'Uploaded! Link saved below.';
-      renderUploadList();
+      saveVideoRecord({
+        title, track,
+        course_id: isCustom ? 'custom' : courseId,
+        course_name: courseName,
+        video_url: videoUrl,
+        thumb_url: thumbUrl,
+        uploaded_at: new Date().toISOString()
+      });
+      uploadStatus.textContent = 'Uploaded! Saved under ' + courseName + '.';
     }
     if (result.event === 'queues-start') {
       uploadStatus.textContent = 'Uploading…';
@@ -135,37 +272,80 @@ const widget = cloudinary.createUploadWidget(
 );
 
 document.getElementById('uploadBtn').addEventListener('click', () => {
+  if (!courseSelect.value) {
+    alert('Choose a subject/course first.');
+    return;
+  }
+  if (courseSelect.value === '__custom__' && !document.getElementById('customCourseName').value) {
+    alert('Enter the custom course name first.');
+    return;
+  }
   if (!document.getElementById('videoTitle').value) {
-    alert('Add a course/class name first.');
+    alert('Add a lesson title first.');
     return;
   }
   widget.open();
 });
 
-/* ===== Local record-keeping so you can see + copy past uploads =====
-   NOTE: localStorage only persists on this browser/device. For a shared
-   list visible to everyone, log each upload to your existing Google
-   Sheets integration instead (send title, track, videoUrl there). */
-function saveVideoRecord(record) {
+/* ===== Save + list, with Supabase as source of truth and
+   localStorage as an offline/not-yet-configured fallback ===== */
+async function saveVideoRecord(record) {
+  if (supabaseReady) {
+    const { error } = await sb.from('videos').insert(record);
+    if (error) {
+      console.error('Supabase insert failed, falling back to localStorage:', error);
+      saveToLocalStorage(record);
+    }
+  } else {
+    saveToLocalStorage(record);
+  }
+  renderUploadList();
+}
+
+function saveToLocalStorage(record) {
   const list = JSON.parse(localStorage.getItem('la_videos') || '[]');
   list.unshift(record);
   localStorage.setItem('la_videos', JSON.stringify(list));
 }
 
-function renderUploadList() {
-  const list = JSON.parse(localStorage.getItem('la_videos') || '[]');
+async function fetchVideos() {
+  if (supabaseReady) {
+    const { data, error } = await sb.from('videos').select('*').order('uploaded_at', { ascending: false });
+    if (!error) return data;
+    console.error('Supabase fetch failed, falling back to localStorage:', error);
+  }
+  return JSON.parse(localStorage.getItem('la_videos') || '[]');
+}
+
+async function renderUploadList() {
+  const list = await fetchVideos();
   const container = document.getElementById('uploadList');
-  container.innerHTML = list.length
-    ? list.map(v => `
-      <div class="upload-row">
-        <div>
-          <strong>${v.title}</strong>
-          <div class="upload-row__meta">${v.track === 'school' ? 'School' : 'Career'} · ${new Date(v.uploadedAt).toLocaleDateString()}</div>
+
+  if (!list.length) {
+    container.innerHTML = '<p class="auth-note" style="text-align:center;">No videos uploaded yet.</p>';
+    return;
+  }
+
+  const groups = {};
+  list.forEach(v => {
+    const key = v.course_name || 'Uncategorised';
+    (groups[key] = groups[key] || []).push(v);
+  });
+
+  container.innerHTML = Object.entries(groups).map(([courseName, videos]) => `
+    <div class="upload-group">
+      <div class="upload-group__title">${courseName} <span style="opacity:.5;font-weight:400;">(${videos.length})</span></div>
+      ${videos.map(v => `
+        <div class="upload-row">
+          <div>
+            <strong>${v.title}</strong>
+            <div class="upload-row__meta">${v.track === 'school' ? 'School' : v.track === 'career' ? 'Career' : 'Other'} · ${new Date(v.uploaded_at).toLocaleDateString()}</div>
+          </div>
+          <a href="${v.video_url}" target="_blank" rel="noopener">Open ↗</a>
         </div>
-        <a href="${v.videoUrl}" target="_blank" rel="noopener">Open ↗</a>
-      </div>
-    `).join('')
-    : '<p class="auth-note">No videos uploaded yet on this device.</p>';
+      `).join('')}
+    </div>
+  `).join('');
 }
 </script>
 
