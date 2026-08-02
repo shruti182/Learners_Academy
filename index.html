@@ -86,93 +86,6 @@
     50%{ transform:translateY(-8px); }
   }
 
-  /* User menu dropdown */
-  .user-menu{
-    position:relative;
-    display:inline-block;
-  }
-  .user-menu__trigger{
-    display:flex;
-    align-items:center;
-    gap:8px;
-    padding:8px 12px;
-    background:transparent;
-    border:none;
-    cursor:pointer;
-    font-family:inherit;
-    font-weight:600;
-    color:var(--text);
-    border-radius:8px;
-    transition:background 0.2s ease;
-  }
-  .user-menu__trigger:hover{
-    background:rgba(15,42,74,0.08);
-  }
-  .user-menu__trigger-avatar{
-    width:32px;
-    height:32px;
-    border-radius:50%;
-    background:var(--purple);
-    color:#fff;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-weight:700;
-    font-size:0.9rem;
-  }
-  .user-menu__dropdown{
-    position:absolute;
-    top:100%;
-    right:0;
-    margin-top:8px;
-    background:#fff;
-    border:1px solid var(--line);
-    border-radius:12px;
-    box-shadow:0 12px 28px rgba(33,26,51,0.12);
-    min-width:180px;
-    z-index:100;
-    opacity:0;
-    visibility:hidden;
-    transform:translateY(-8px);
-    transition:opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
-  }
-  .user-menu.is-open .user-menu__dropdown{
-    opacity:1;
-    visibility:visible;
-    transform:translateY(0);
-  }
-  .user-menu__item{
-    display:block;
-    width:100%;
-    padding:12px 16px;
-    text-align:left;
-    font-family:inherit;
-    font-size:0.95rem;
-    color:var(--text);
-    background:none;
-    border:none;
-    cursor:pointer;
-    transition:background 0.2s ease;
-  }
-  .user-menu__item:first-child{
-    border-top-left-radius:12px;
-    border-top-right-radius:12px;
-  }
-  .user-menu__item:last-child{
-    border-bottom-left-radius:12px;
-    border-bottom-right-radius:12px;
-  }
-  .user-menu__item:hover{
-    background:rgba(15,42,74,0.05);
-  }
-  .user-menu__item--logout{
-    color:#e74c3c;
-    border-top:1px solid var(--line);
-  }
-  .user-menu__item--logout:hover{
-    background:rgba(231,76,60,0.08);
-  }
-
   @media (max-width: 980px){
     .hero .hero__inner.vision-split{
       grid-template-columns:1fr;
@@ -208,22 +121,15 @@
     <div class="nav__actions">
       <a href="admin-upload.html" class="btn btn--ghost" style="opacity:0.7;">Admin</a>
       <div id="authContainer">
-        <!-- Login buttons (shown when not logged in) -->
+        <!-- Login buttons (shown when NOT logged in) -->
         <div id="authButtons">
           <a href="login.html" class="btn btn--ghost">Log in</a>
           <button type="button" class="btn btn--solid" id="demoOpenBtn">Book a free demo</button>
         </div>
-        <!-- User menu (shown when logged in) -->
-        <div class="user-menu" id="userMenu" hidden>
-          <button type="button" class="user-menu__trigger" id="userMenuTrigger">
-            <span class="user-menu__trigger-avatar" id="userAvatar">U</span>
-            <span id="userName">User</span>
-          </button>
-          <div class="user-menu__dropdown">
-            <a href="dashboard.html" class="user-menu__item">Dashboard</a>
-            <a href="my-courses.html" class="user-menu__item">My Courses</a>
-            <button type="button" class="user-menu__item user-menu__item--logout" id="logoutBtn">Sign out</button>
-          </div>
+        <!-- User name + Logout button (shown when logged in) -->
+        <div id="userPanel" hidden style="display:flex;align-items:center;gap:12px;">
+          <span id="userName" style="font-weight:600;color:var(--text);">User</span>
+          <button type="button" id="logoutBtn" class="btn btn--ghost">Sign out</button>
         </div>
       </div>
     </div>
@@ -308,29 +214,304 @@
           <circle cx="278" cy="168" r="8" fill="#7dd3fc"/>
           <rect x="312" y="152" width="52" height="40" rx="6" fill="#1e4a78"/>
           <circle cx="338" cy="168" r="8" fill="#f9a8d4"/>
+          <rect x="252" y="200" width="52" height="40" rx="6" fill="#1e4a78"/>
+          <circle cx="278" cy="216" r="8" fill="#86efac"/>
+          <rect x="312" y="200" width="52" height="40" rx="6" fill="#1e4a78"/>
+          <circle cx="338" cy="216" r="8" fill="#fca5a5"/>
 
-          <!-- laptop keyboard -->
-          <rect x="90" y="310" width="300" height="14" rx="2" fill="#0f2a4a"/>
-          <circle cx="130" cy="318" r="2" fill="#1e4a78"/>
-          <circle cx="155" cy="318" r="2" fill="#1e4a78"/>
-          <circle cx="240" cy="318" r="2" fill="#1e4a78"/>
-          <circle cx="325" cy="318" r="2" fill="#1e4a78"/>
+          <!-- "LIVE" badge -->
+          <rect x="108" y="138" width="52" height="22" rx="11" fill="#ef4444"/>
+          <text x="134" y="153" text-anchor="middle" font-family="Poppins, sans-serif" font-size="11" font-weight="700" fill="#fff">LIVE</text>
 
-          <!-- mouse -->
-          <ellipse cx="364" cy="300" rx="8" ry="14" fill="#0f2a4a"/>
+          <!-- laptop base -->
+          <path d="M78 310h324l14 26a10 10 0 0 1-10 14H74a10 10 0 0 1-10-14z" fill="#d9e4ee"/>
+          <rect x="200" y="316" width="80" height="6" rx="3" fill="#a9bacb"/>
+
+          <!-- stack of books, class 6-12 -->
+          <rect x="60" y="380" width="120" height="18" rx="3" fill="#fbbf24"/>
+          <rect x="66" y="362" width="108" height="18" rx="3" fill="#f97316"/>
+          <rect x="72" y="344" width="96" height="18" rx="3" fill="#14b8a6"/>
+          <text x="120" y="358" text-anchor="middle" font-family="Poppins, sans-serif" font-size="12" font-weight="700" fill="#0a1b30">Class 6–12</text>
+
+          <!-- grad cap -->
+          <g transform="translate(300 350)">
+            <path d="M40 0 L80 16 L40 32 L0 16 Z" fill="#0f2a4a"/>
+            <path d="M16 22 v18 c0 8 48 8 48 0 v-18" fill="none" stroke="#0f2a4a" stroke-width="4"/>
+            <circle cx="80" cy="16" r="3" fill="#fbbf24"/>
+            <line x1="80" y1="16" x2="80" y2="40" stroke="#fbbf24" stroke-width="2"/>
+          </g>
+
+          <!-- career / growth chart card -->
+          <rect x="252" y="392" width="150" height="86" rx="12" fill="#ffffff" stroke="#dbe4ea" stroke-width="1.5"/>
+          <text x="270" y="412" font-family="Poppins, sans-serif" font-size="11" font-weight="700" fill="#0f2a4a">For Professionals</text>
+          <polyline points="268,462 292,442 312,452 336,424 384,406" fill="none" stroke="url(#vsBoard)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="384" cy="406" r="5" fill="#0f766e"/>
+
+          <!-- online / wifi rays over laptop -->
+          <path d="M228 96c10-10 24-16 40-16s30 6 40 16" fill="none" stroke="#14b8a6" stroke-width="4" stroke-linecap="round"/>
+          <path d="M240 106c7-7 16-11 28-11s21 4 28 11" fill="none" stroke="#14b8a6" stroke-width="4" stroke-linecap="round"/>
+          <circle cx="268" cy="118" r="5" fill="#14b8a6"/>
         </svg>
+
+        <div class="vs-badge vs-badge--top">
+          <span class="vs-badge__icon">🎓</span>
+          <span>Verified Tutors Onboarding</span>
+        </div>
+        <div class="vs-badge vs-badge--mid">
+          <span class="vs-badge__icon">💻</span>
+          <span>100% Online Tuitions</span>
+        </div>
+        <div class="vs-badge vs-badge--bottom">
+          <span class="vs-badge__icon">📚</span>
+          <span>Class 6th – 12th</span>
+        </div>
       </div>
+
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section class="stats">
+    <div class="stat">
+      <span class="stat__num" data-count="18400">0</span>
+      <span class="stat__label">Learners on the path</span>
+    </div>
+    <div class="stat">
+      <span class="stat__num" data-count="64">0</span>
+      <span class="stat__label">Video courses</span>
+    </div>
+    <div class="stat">
+      <span class="stat__num" data-count="47" data-decimal="1">0</span>
+      <span class="stat__label">Average rating ×10</span>
+    </div>
+    <div class="stat">
+      <span class="stat__num-static">100%</span>
+      <span class="stat__label">Verifiable certificates</span>
+    </div>
+  </section>
+
+  <!-- SCHOOL PATH TEASER -->
+  <section class="section" id="school">
+    <div class="section__head section__head--row">
+      <div>
+        <span class="eyebrow eyebrow--coral">School Path, Grade 6–12</span>
+        <h2>Built around the syllabus, not around us</h2>
+        <p>Every chapter matches what's taught in class — so revision feels familiar, not like starting over.</p>
+      </div>
+      <a href="courses.html?track=school" class="btn btn--ghost">See all →</a>
+    </div>
+
+    <div class="course-grid">
+      <article class="course-card" data-course-id="math-grade-10">
+        <div class="course-card__media">
+          <img src="https://images.pexels.com/photos/6238050/pexels-photo-6238050.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Mathematics equations on a blackboard" loading="lazy">
+          <span class="course-card__badge course-card__badge--coral">Bestseller</span>
+          <span class="course-card__level">Intermediate</span>
+        </div>
+        <div class="course-card__body">
+          <p class="course-card__cat">Mathematics · Grade 10</p>
+          <h4>Mathematics Masterclass — Grade 10</h4>
+          <p class="course-card__instructor"><span class="course-card__avatar">DP</span> Dr. Priya Sharma</p>
+          <p class="course-card__rating"><span class="star">★</span> 4.8 <span>(1,240)</span></p>
+          <div class="course-card__footer">
+            <p class="course-card__price"><span class="price-now">₹999</span><span class="price-old">₹2,999</span><span class="price-off">-67%</span></p>
+            <span class="course-card__cert">🎓 Certificate</span>
+          </div>
+        </div>
+      </article>
+      <article class="course-card" data-course-id="science-grade-9">
+        <div class="course-card__media">
+          <img src="https://images.pexels.com/photos/8544960/pexels-photo-8544960.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Colourful chemistry test tubes in a lab" loading="lazy">
+          <span class="course-card__badge course-card__badge--coral">Bestseller</span>
+          <span class="course-card__level">Beginner</span>
+        </div>
+        <div class="course-card__body">
+          <p class="course-card__cat">Science · Grade 9</p>
+          <h4>Science Explorer — Grade 9</h4>
+          <p class="course-card__instructor"><span class="course-card__avatar">PR</span> Prof. Rajesh Kumar</p>
+          <p class="course-card__rating"><span class="star">★</span> 4.7 <span>(890)</span></p>
+          <div class="course-card__footer">
+            <p class="course-card__price"><span class="price-now">₹799</span><span class="price-old">₹2,499</span><span class="price-off">-68%</span></p>
+            <span class="course-card__cert">🎓 Certificate</span>
+          </div>
+        </div>
+      </article>
+      <article class="course-card" data-course-id="english-grade-12">
+        <div class="course-card__media">
+          <img src="https://images.pexels.com/photos/192928/pexels-photo-192928.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Stack of open books on a wooden table" loading="lazy">
+          <span class="course-card__badge course-card__badge--new">New</span>
+          <span class="course-card__level">Intermediate</span>
+        </div>
+        <div class="course-card__body">
+          <p class="course-card__cat">English · Grade 12</p>
+          <h4>English Literature &amp; Grammar — Grade 12</h4>
+          <p class="course-card__instructor"><span class="course-card__avatar">AR</span> Ms. Ananya Rao</p>
+          <p class="course-card__rating"><span class="star">★</span> 4.6 <span>(540)</span></p>
+          <div class="course-card__footer">
+            <p class="course-card__price"><span class="price-now">₹699</span><span class="price-old">₹1,999</span><span class="price-off">-65%</span></p>
+            <span class="course-card__cert">🎓 Certificate</span>
+          </div>
+        </div>
+      </article>
+      <article class="course-card" data-course-id="social-studies-grade-8">
+        <div class="course-card__media">
+          <img src="https://images.pexels.com/photos/5428002/pexels-photo-5428002.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Teacher pointing at a globe in class" loading="lazy">
+          <span class="course-card__badge course-card__badge--free">Free</span>
+          <span class="course-card__level">Beginner</span>
+        </div>
+        <div class="course-card__body">
+          <p class="course-card__cat">Social Studies · Grade 8</p>
+          <h4>Social Studies Made Fun — Grade 8</h4>
+          <p class="course-card__instructor"><span class="course-card__avatar">KM</span> Mr. Karan Mehta</p>
+          <p class="course-card__rating"><span class="star">★</span> 4.5 <span>(410)</span></p>
+          <div class="course-card__footer">
+            <p class="course-card__price"><span class="price-now">Free</span></p>
+            <span class="course-card__cert">🎓 Certificate</span>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- CAREER PATH TEASER -->
+  <section class="section section--dark" id="career">
+    <div class="section__head section__head--row">
+      <div>
+        <span class="eyebrow eyebrow--teal">Career Path, Working Professionals</span>
+        <h2>Skills your manager will actually notice</h2>
+        <p>Self-paced tracks built on real datasets, so what you practice is what you'll ship at work.</p>
+      </div>
+      <a href="courses.html?track=career" class="btn btn--outline">See all →</a>
+    </div>
+
+    <div class="course-grid course-grid--dark">
+      <article class="course-card course-card--dark" data-course-id="sql-mastery">
+        <div class="course-card__media">
+          <img src="https://images.pexels.com/photos/17323801/pexels-photo-17323801.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Server room with blue lighting" loading="lazy">
+          <span class="course-card__badge course-card__badge--teal">Bestseller</span>
+          <span class="course-card__level">Beginner</span>
+        </div>
+        <div class="course-card__body">
+          <p class="course-card__cat">SQL · Career Path</p>
+          <h4>SQL — Complete Database Mastery</h4>
+          <p class="course-card__instructor"><span class="course-card__avatar">VS</span> Mr. Vikram Singh</p>
+          <p class="course-card__rating"><span class="star">★</span> 4.9 <span>(3,200)</span></p>
+          <div class="course-card__footer">
+            <p class="course-card__price"><span class="price-now">₹1,499</span><span class="price-old">₹4,499</span><span class="price-off">-67%</span></p>
+            <span class="course-card__cert">🎓 Certificate</span>
+          </div>
+        </div>
+      </article>
+      <article class="course-card course-card--dark" data-course-id="powerbi-bootcamp">
+        <div class="course-card__media">
+          <img src="https://images.pexels.com/photos/10653886/pexels-photo-10653886.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Business data chart on a monitor" loading="lazy">
+          <span class="course-card__badge course-card__badge--teal">Bestseller</span>
+          <span class="course-card__level">Intermediate</span>
+        </div>
+        <div class="course-card__body">
+          <p class="course-card__cat">Power BI · Career Path</p>
+          <h4>Power BI — Business Intelligence Bootcamp</h4>
+          <p class="course-card__instructor"><span class="course-card__avatar">AV</span> Mr. Arjun Verma</p>
+          <p class="course-card__rating"><span class="star">★</span> 4.8 <span>(1,870)</span></p>
+          <div class="course-card__footer">
+            <p class="course-card__price"><span class="price-now">₹2,499</span><span class="price-old">₹6,999</span><span class="price-off">-64%</span></p>
+            <span class="course-card__cert">🎓 Certificate</span>
+          </div>
+        </div>
+      </article>
+      <article class="course-card course-card--dark" data-course-id="python-data-science">
+        <div class="course-card__media">
+          <img src="https://images.pexels.com/photos/6424590/pexels-photo-6424590.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Python programming code on a dark screen" loading="lazy">
+          <span class="course-card__badge course-card__badge--teal">Bestseller</span>
+          <span class="course-card__level">Beginner</span>
+        </div>
+        <div class="course-card__body">
+          <p class="course-card__cat">Python · Career Path</p>
+          <h4>Python for Data Science &amp; Automation</h4>
+          <p class="course-card__instructor"><span class="course-card__avatar">NG</span> Ms. Neha Gupta</p>
+          <p class="course-card__rating"><span class="star">★</span> 4.8 <span>(2,640)</span></p>
+          <div class="course-card__footer">
+            <p class="course-card__price"><span class="price-now">₹1,799</span><span class="price-old">₹4,999</span><span class="price-off">-64%</span></p>
+            <span class="course-card__cert">🎓 Certificate</span>
+          </div>
+        </div>
+      </article>
+      <article class="course-card course-card--dark" data-course-id="data-analytics-career">
+        <div class="course-card__media">
+          <img src="https://images.pexels.com/photos/3912976/pexels-photo-3912976.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Data graph analysis on a laptop screen" loading="lazy">
+          <span class="course-card__badge course-card__badge--new">New</span>
+          <span class="course-card__level">Advanced</span>
+        </div>
+        <div class="course-card__body">
+          <p class="course-card__cat">Data Analytics · Career Path</p>
+          <h4>Data Analytics — Complete Career Path</h4>
+          <p class="course-card__instructor"><span class="course-card__avatar">SI</span> Ms. Sneha Iyer</p>
+          <p class="course-card__rating"><span class="star">★</span> 4.9 <span>(3,980)</span></p>
+          <div class="course-card__footer">
+            <p class="course-card__price"><span class="price-now">₹3,999</span><span class="price-old">₹9,999</span><span class="price-off">-60%</span></p>
+            <span class="course-card__cert">🎓 Certificate</span>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- 100% FREE -->
+  <section class="section section--free">
+    <div class="free-banner">
+      <div>
+        <span class="eyebrow eyebrow--coral">100% Free</span>
+        <h2>Start for free</h2>
+        <p>No signup needed. No credit card. Just learn.</p>
+      </div>
+      <a href="courses.html?filter=free" class="btn btn--solid">All free courses</a>
+    </div>
+  </section>
+
+  <!-- LIVE CLASSES TEASER -->
+  <section class="section section--live" id="live">
+    <div class="section__head section__head--row">
+      <div>
+        <span class="eyebrow eyebrow--marigold">Happening soon</span>
+        <h2>Learn live, not just on-demand</h2>
+        <p>Seats are limited on purpose — small enough that your question gets answered.</p>
+      </div>
+      <a href="live-classes.html" class="btn btn--ghost">All live classes →</a>
+    </div>
+
+    <div class="live-grid">
+      <article class="live-card">
+        <span class="live-card__pill">LIVE · FREE</span>
+        <h4>Trigonometry Problem-Solving Marathon</h4>
+        <p class="live-card__meta">Wed · 4:00 PM IST · 90 min</p>
+        <p class="live-card__seats">44 seats left</p>
+      </article>
+      <article class="live-card">
+        <span class="live-card__pill live-card__pill--paid">LIVE · ₹299</span>
+        <h4>Power BI DAX Formulas Workshop</h4>
+        <p class="live-card__meta">Fri · 7:00 PM IST · 120 min</p>
+        <p class="live-card__seats">18 seats left</p>
+      </article>
+      <article class="live-card">
+        <span class="live-card__pill">LIVE · FREE</span>
+        <h4>Physics — Newton's Laws Deep Dive</h4>
+        <p class="live-card__meta">Sun · 5:00 PM IST · 90 min</p>
+        <p class="live-card__seats">91 seats left</p>
+      </article>
     </div>
   </section>
 
   <!-- TESTIMONIALS -->
-  <section class="section">
-    <span class="eyebrow eyebrow--coral">From students and professionals</span>
-    <h2>Teachers who teach what they actually do</h2>
+  <section class="section" id="stories">
+    <div class="section__head">
+      <span class="eyebrow">On the record</span>
+      <h2>Two kinds of learners, one platform</h2>
+    </div>
+
     <div class="quote-grid">
       <blockquote class="quote-card">
-        <p>"Physics finally clicked when I saw the real-world experiment, not just the formula. JEE prep became less stressful."</p>
-        <footer><span class="quote-card__avatar">AJ</span> Arjun Joshi · Grade 11</footer>
+        <p>"I stopped dreading maths once I could pause a video and rewatch the one step I didn't get. My marks followed."</p>
+        <footer><span class="quote-card__avatar">AV</span> Aditi Verma · Grade 10</footer>
       </blockquote>
       <blockquote class="quote-card">
         <p>"The SQL track used our exact kind of messy data — window functions finally clicked at my actual job, not just in theory."</p>
@@ -460,70 +641,6 @@
   })();
 </script>
 <script src="script.js"></script>
-
-<!-- Authentication state management for navbar -->
-<script>
-(function() {
-  const authContainer = document.getElementById('authContainer');
-  const authButtons = document.getElementById('authButtons');
-  const userMenu = document.getElementById('userMenu');
-  const userMenuTrigger = document.getElementById('userMenuTrigger');
-  const userNameEl = document.getElementById('userName');
-  const userAvatarEl = document.getElementById('userAvatar');
-  const logoutBtn = document.getElementById('logoutBtn');
-
-  // Check if user is logged in (from localStorage, session, or auth provider)
-  function checkAuthStatus() {
-    // This is a placeholder — wire it to your actual auth system
-    const isLoggedIn = localStorage.getItem('la_user_loggedIn') === 'true';
-    const userName = localStorage.getItem('la_user_name') || 'User';
-    
-    if (isLoggedIn) {
-      authButtons.hidden = true;
-      userMenu.hidden = false;
-      userNameEl.textContent = userName;
-      // Set avatar to first letter
-      const initials = userName.split(' ').map(n => n[0]).join('').toUpperCase();
-      userAvatarEl.textContent = initials || 'U';
-    } else {
-      authButtons.hidden = false;
-      userMenu.hidden = true;
-    }
-  }
-
-  // Toggle user menu dropdown
-  userMenuTrigger.addEventListener('click', (e) => {
-    e.stopPropagation();
-    userMenu.classList.toggle('is-open');
-  });
-
-  // Close dropdown when clicking outside
-  document.addEventListener('click', () => {
-    userMenu.classList.remove('is-open');
-  });
-
-  // Logout handler
-  logoutBtn.addEventListener('click', () => {
-    // Clear auth data
-    localStorage.removeItem('la_user_loggedIn');
-    localStorage.removeItem('la_user_name');
-    localStorage.removeItem('la_user_id');
-    
-    // Show message and redirect
-    alert('You have been logged out.');
-    location.reload();
-  });
-
-  // Initialize auth state on page load
-  checkAuthStatus();
-
-  // You can simulate login for testing by running in console:
-  // localStorage.setItem('la_user_loggedIn', 'true');
-  // localStorage.setItem('la_user_name', 'Jane Doe');
-  // location.reload();
-})();
-</script>
-
 <script type="module">
   import { supabase } from "./supabase-client.js";
 
@@ -597,6 +714,39 @@
      or https://aistudio.google.com/apikey (Google Gemini) -->
 <script src="chatbot-widget.js"></script>
 <!-- To use Gemini instead, replace above with: <script src="chatbot-widget-gemini.js"></script> -->
+
+<!-- Authentication state management for navbar -->
+<script>
+(function() {
+  const authButtons = document.getElementById('authButtons');
+  const userPanel = document.getElementById('userPanel');
+  const userNameEl = document.getElementById('userName');
+  const logoutBtn = document.getElementById('logoutBtn');
+
+  function checkAuthStatus() {
+    const isLoggedIn = localStorage.getItem('la_user_loggedIn') === 'true';
+    const userName = localStorage.getItem('la_user_name') || 'User';
+    
+    if (isLoggedIn) {
+      authButtons.hidden = true;
+      userPanel.hidden = false;
+      userNameEl.textContent = userName;
+    } else {
+      authButtons.hidden = false;
+      userPanel.hidden = true;
+    }
+  }
+
+  logoutBtn.addEventListener('click', () => {
+    localStorage.removeItem('la_user_loggedIn');
+    localStorage.removeItem('la_user_name');
+    localStorage.removeItem('la_user_id');
+    window.location.href = 'index.html';
+  });
+
+  checkAuthStatus();
+})();
+</script>
 
 </body>
 </html>
