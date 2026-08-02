@@ -120,18 +120,8 @@
     </nav>
     <div class="nav__actions">
       <a href="admin-upload.html" class="btn btn--ghost" style="opacity:0.7;">Admin</a>
-      <div id="authContainer">
-        <!-- Login buttons (shown when NOT logged in) -->
-        <div id="authButtons">
-          <a href="login.html" class="btn btn--ghost">Log in</a>
-          <button type="button" class="btn btn--solid" id="demoOpenBtn">Book a free demo</button>
-        </div>
-        <!-- User name + Logout button (shown when logged in) -->
-        <div id="userPanel" hidden style="display:flex;align-items:center;gap:12px;">
-          <span id="userName" style="font-weight:600;color:var(--text);">User</span>
-          <button type="button" id="logoutBtn" class="btn btn--ghost">Sign out</button>
-        </div>
-      </div>
+      <a href="login.html" class="btn btn--ghost">Log in</a>
+      <button type="button" class="btn btn--solid" id="demoOpenBtn">Book a free demo</button>
     </div>
     <button class="nav__burger" id="burger" aria-label="Toggle menu" aria-expanded="false">
       <span></span><span></span><span></span>
@@ -587,7 +577,7 @@
       <p class="footer__contact">
         <a href="mailto:khandelwalshrutika@gmail.com">khandelwalshrutika@gmail.com</a><br>
         <a href="tel:+917409859114">+91 74098 59114</a><br>
-        India
+        Jaipur, Rajasthan
       </p>
     </div>
     <div class="footer__col">
@@ -714,39 +704,6 @@
      or https://aistudio.google.com/apikey (Google Gemini) -->
 <script src="chatbot-widget.js"></script>
 <!-- To use Gemini instead, replace above with: <script src="chatbot-widget-gemini.js"></script> -->
-
-<!-- Authentication state management for navbar -->
-<script>
-(function() {
-  const authButtons = document.getElementById('authButtons');
-  const userPanel = document.getElementById('userPanel');
-  const userNameEl = document.getElementById('userName');
-  const logoutBtn = document.getElementById('logoutBtn');
-
-  function checkAuthStatus() {
-    const isLoggedIn = localStorage.getItem('la_user_loggedIn') === 'true';
-    const userName = localStorage.getItem('la_user_name') || 'User';
-    
-    if (isLoggedIn) {
-      authButtons.hidden = true;
-      userPanel.hidden = false;
-      userNameEl.textContent = userName;
-    } else {
-      authButtons.hidden = false;
-      userPanel.hidden = true;
-    }
-  }
-
-  logoutBtn.addEventListener('click', () => {
-    localStorage.removeItem('la_user_loggedIn');
-    localStorage.removeItem('la_user_name');
-    localStorage.removeItem('la_user_id');
-    window.location.href = 'index.html';
-  });
-
-  checkAuthStatus();
-})();
-</script>
 
 </body>
 </html>

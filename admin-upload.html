@@ -16,8 +16,6 @@
   .upload-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 18px;border:1px solid var(--line);border-radius:14px;margin-bottom:10px;font-size:0.9rem;}
   .upload-row__meta{opacity:0.65;font-size:0.8rem;}
   .upload-row a{color:var(--purple);font-weight:600;}
-  .upload-row__delete{padding:6px 12px;background:rgba(231,76,60,0.1);color:#e74c3c;border:1px solid rgba(231,76,60,0.3);border-radius:6px;font-size:0.85rem;font-weight:600;cursor:pointer;transition:all 0.2s ease;font-family:inherit;}
-  .upload-row__delete:hover{background:#e74c3c;color:#fff;border-color:#e74c3c;}
   #adminGate{max-width:400px;margin:80px auto;text-align:center;}
   #adminGate input{width:100%;padding:12px 14px;border:2px solid var(--line);border-radius:12px;margin:16px 0;font-size:1rem;}
   .auth-form select{width:100%;padding:12px 14px;border:2px solid var(--line);border-radius:12px;font-size:0.95rem;font-family:var(--body);background:#fff;}
@@ -42,17 +40,7 @@
       <a href="faculty.html">Faculty</a>
     </nav>
     <div class="nav__actions">
-      <div id="authContainer">
-        <!-- Login button (shown when NOT logged in) -->
-        <div id="authButtons">
-          <a href="login.html" class="btn btn--ghost">Log in</a>
-        </div>
-        <!-- User name + Logout button (shown when logged in) -->
-        <div id="userPanel" hidden style="display:flex;align-items:center;gap:12px;">
-          <span id="userName" style="font-weight:600;color:var(--text);">User</span>
-          <button type="button" id="logoutBtn" class="btn btn--ghost">Sign out</button>
-        </div>
-      </div>
+      <a href="login.html" class="btn btn--ghost">Log in</a>
     </div>
     <button class="nav__burger" id="burger" aria-label="Toggle menu" aria-expanded="false">
       <span></span><span></span><span></span>
@@ -130,21 +118,6 @@
   </section>
 
 </main>
-
-<!-- Delete confirmation modal -->
-<div class="lesson-modal" id="deleteConfirmModal">
-  <div class="lesson-modal__inner" style="max-width:400px;">
-    <button class="lesson-modal__close" id="deleteConfirmClose">✕</button>
-    <div style="padding:40px 32px;text-align:center;">
-      <h3 style="margin-bottom:16px;color:var(--ink);">Delete this video?</h3>
-      <p style="color:var(--text-soft);margin-bottom:24px;font-size:0.95rem;">This action cannot be undone. The video will be removed from all courses.</p>
-      <div style="display:flex;gap:12px;justify-content:center;">
-        <button type="button" id="deleteConfirmCancel" class="btn btn--ghost">Cancel</button>
-        <button type="button" id="deleteConfirmSubmit" class="btn btn--solid" style="background:#e74c3c;border-color:#e74c3c;">Delete Video</button>
-      </div>
-    </div>
-  </div>
-</div>
 
 <script src="https://upload-widget.cloudinary.com/global/all.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
@@ -344,53 +317,6 @@ async function fetchVideos() {
   return JSON.parse(localStorage.getItem('la_videos') || '[]');
 }
 
-
-/* ===== Delete video from Supabase or localStorage ===== */
-let videoToDelete = null;
-
-function showDeleteConfirm(videoId) {
-  videoToDelete = videoId;
-  document.getElementById('deleteConfirmModal').classList.add('is-open');
-}
-
-function closeDeleteConfirm() {
-  videoToDelete = null;
-  document.getElementById('deleteConfirmModal').classList.remove('is-open');
-}
-
-async function deleteVideo(videoId) {
-  if (supabaseReady) {
-    const { error } = await sb.from('videos').delete().eq('id', videoId);
-    if (error) {
-      console.error('Supabase delete failed:', error);
-      alert('Failed to delete video. Trying local storage...');
-      deleteFromLocalStorage(videoId);
-    }
-  } else {
-    deleteFromLocalStorage(videoId);
-  }
-  renderUploadList();
-  closeDeleteConfirm();
-}
-
-function deleteFromLocalStorage(videoId) {
-  const list = JSON.parse(localStorage.getItem('la_videos') || '[]');
-  const filtered = list.filter(v => v.id !== videoId && v.video_url !== videoId);
-  localStorage.setItem('la_videos', JSON.stringify(filtered));
-}
-
-/* Delete modal handlers */
-document.getElementById('deleteConfirmClose').addEventListener('click', closeDeleteConfirm);
-document.getElementById('deleteConfirmCancel').addEventListener('click', closeDeleteConfirm);
-document.getElementById('deleteConfirmSubmit').addEventListener('click', () => {
-  if (videoToDelete) {
-    deleteVideo(videoToDelete);
-  }
-});
-document.getElementById('deleteConfirmModal').addEventListener('click', (e) => {
-  if (e.target.id === 'deleteConfirmModal') closeDeleteConfirm();
-});
-
 async function renderUploadList() {
   const list = await fetchVideos();
   const container = document.getElementById('uploadList');
@@ -420,46 +346,11 @@ async function renderUploadList() {
             <div class="upload-row__meta">${v.track === 'school' ? 'School' : v.track === 'career' ? 'Career' : 'Other'} · ${new Date(v.uploaded_at).toLocaleDateString()}</div>
           </div>
           <a href="${v.video_url}" target="_blank" rel="noopener">Open ↗</a>
-          <button type="button" class="upload-row__delete" data-delete-id="${v.id || v.video_url}">Delete</button>
         </div>
       `).join('')}
     </div>
   `).join('');
 }
-</script>
-
-
-<!-- Authentication state management for navbar -->
-<script>
-(function() {
-  const authButtons = document.getElementById('authButtons');
-  const userPanel = document.getElementById('userPanel');
-  const userNameEl = document.getElementById('userName');
-  const logoutBtn = document.getElementById('logoutBtn');
-
-  function checkAuthStatus() {
-    const isLoggedIn = localStorage.getItem('la_user_loggedIn') === 'true';
-    const userName = localStorage.getItem('la_user_name') || 'User';
-    
-    if (isLoggedIn) {
-      authButtons.hidden = true;
-      userPanel.hidden = false;
-      userNameEl.textContent = userName;
-    } else {
-      authButtons.hidden = false;
-      userPanel.hidden = true;
-    }
-  }
-
-  logoutBtn.addEventListener('click', () => {
-    localStorage.removeItem('la_user_loggedIn');
-    localStorage.removeItem('la_user_name');
-    localStorage.removeItem('la_user_id');
-    window.location.href = 'index.html';
-  });
-
-  checkAuthStatus();
-})();
 </script>
 
 </body>
