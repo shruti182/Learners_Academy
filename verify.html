@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verify Certificate — Learners Academy</title>
+<meta name="description" content="Verify the authenticity of a Learners Academy course completion certificate.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Poppins:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  .verify-wrap{
+    max-width:560px;
+    margin:0 auto;
+    padding:64px 24px 96px;
+  }
+  .verify-form{
+    display:flex;
+    gap:12px;
+    margin-top:24px;
+  }
+  .verify-form input{
+    flex:1;
+    font-family:"Space Mono",monospace;
+    font-size:15px;
+    letter-spacing:0.5px;
+    padding:12px 14px;
+    border-radius:10px;
+    border:1px solid rgba(0,0,0,0.15);
+    box-sizing:border-box;
+  }
+  .verify-result{
+    margin-top:32px;
+    padding:24px;
+    border-radius:14px;
+    display:none;
+  }
+  .verify-result.is-visible{ display:block; }
+  .verify-result.is-valid{
+    background:#eafaf1;
+    border:1px solid #b7e9cc;
+  }
+  .verify-result.is-invalid{
+    background:#fdecea;
+    border:1px solid #f5c2bc;
+  }
+  .verify-result__badge{
+    font-family:"Poppins",sans-serif;
+    font-weight:700;
+    font-size:14px;
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    margin-bottom:14px;
+  }
+  .is-valid .verify-result__badge{ color:#1a7f4e; }
+  .is-invalid .verify-result__badge{ color:#c0392b; }
+  .verify-result dl{
+    display:grid;
+    grid-template-columns:auto 1fr;
+    gap:8px 16px;
+    font-family:"Poppins",sans-serif;
+    font-size:15px;
+    margin:0;
+  }
+  .verify-result dt{ font-weight:600; opacity:0.7; }
+  .verify-result dd{ margin:0; }
+  .verify-loading{
+    margin-top:24px;
+    font-family:"Poppins",sans-serif;
+    font-size:14px;
+    opacity:0.6;
+    display:none;
+  }
+  .verify-loading.is-visible{ display:block; }
+</style>
+</head>
+<body>
+
+<header class="nav" id="nav">
+  <div class="nav__inner">
+    <a href="index.html" class="nav__logo">
+      <span class="nav__logo-mark">LA</span>
+      <span class="nav__logo-text">Learners Academy</span>
+    </a>
+    <nav class="nav__links" id="navLinks">
+      <a href="index.html">Home</a>
+      <a href="courses.html">Courses</a>
+      <a href="live-classes.html">Live Classes</a>
+      <a href="faculty.html">Faculty</a>
+      <a href="dashboard.html">Dashboard</a>
+    </nav>
+    <div class="nav__actions">
+      <a href="login.html" class="btn btn--ghost">Log in</a>
+    </div>
+    <button class="nav__burger" id="burger" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<main>
+  <div class="verify-wrap">
+    <span class="eyebrow">Certificate verification</span>
+    <h2>Verify a certificate</h2>
+    <p>Enter the certificate ID printed on the certificate (or scan its QR code, which links here automatically) to confirm it's genuine.</p>
+
+    <form class="verify-form" id="verifyForm">
+      <input type="text" id="certId" name="certId" placeholder="e.g. LA-2026-0001" required maxlength="40" autocapitalize="characters">
+      <button type="submit" class="btn btn--solid">Verify</button>
+    </form>
+
+    <p class="verify-loading" id="verifyLoading">Checking…</p>
+
+    <div class="verify-result" id="verifyResult"></div>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="footer__bottom">
+    <span>© 2026 Learners Academy Learning. All rights reserved.</span>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+<script type="module">
+  import { supabase } from "./supabase-client.js";
+
+  const form = document.getElementById("verifyForm");
+  const loadingEl = document.getElementById("verifyLoading");
+  const resultEl = document.getElementById("verifyResult");
+  const input = document.getElementById("certId");
+
+  function fmtDate(iso) {
+    return new Date(iso).toLocaleDateString("en-IN", { year: "numeric", month: "long", day: "numeric" });
+  }
+
+  function showValid(cert) {
+    resultEl.className = "verify-result is-visible is-valid";
+    resultEl.innerHTML = `
+      <div class="verify-result__badge">✅ Certificate verified</div>
+      <dl>
+        <dt>Student</dt><dd>${cert.student_name}</dd>
+        <dt>Course</dt><dd>${cert.course_name}</dd>
+        <dt>Completed</dt><dd>${fmtDate(cert.completed_at)}</dd>
+        <dt>Certificate ID</dt><dd>${cert.certificate_id}</dd>
+      </dl>
+    `;
+  }
+
+  function showInvalid() {
+    resultEl.className = "verify-result is-visible is-invalid";
+    resultEl.innerHTML = `
+      <div class="verify-result__badge">❌ Not found</div>
+      <p style="font-family:'Poppins',sans-serif;font-size:14px;margin:0;">
+        No certificate matches that ID. Double-check it against the certificate,
+        or contact us if you believe this is an error.
+      </p>
+    `;
+  }
+
+  async function verify(rawId) {
+    const certId = rawId.trim().toUpperCase();
+    if (!certId) return;
+
+    resultEl.className = "verify-result";
+    loadingEl.classList.add("is-visible");
+
+    const { data, error } = await supabase
+      .from("certificates")
+      .select("certificate_id, student_name, course_name, completed_at")
+      .eq("certificate_id", certId)
+      .maybeSingle();
+
+    loadingEl.classList.remove("is-visible");
+
+    if (error) {
+      console.error("Verify lookup failed:", error.message);
+      showInvalid();
+      return;
+    }
+
+    if (data) {
+      showValid(data);
+    } else {
+      showInvalid();
+    }
+  }
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    verify(input.value);
+  });
+
+  // Support direct QR-code links like verify.html?id=LA-2026-0001
+  const params = new URLSearchParams(window.location.search);
+  const idFromUrl = params.get("id");
+  if (idFromUrl) {
+    input.value = idFromUrl;
+    verify(idFromUrl);
+  }
+</script>
+
+</body>
+</html>
