@@ -506,7 +506,7 @@
       <h2>Two kinds of learners, one platform</h2>
     </div>
 
-    <div class="quote-grid">
+    <div class="quote-grid" id="quoteGrid">
       <blockquote class="quote-card">
         <p>"I stopped dreading maths once I could pause a video and rewatch the one step I didn't get. My marks followed."</p>
         <footer><span class="quote-card__avatar">AV</span> Aditi Verma · Grade 10</footer>
@@ -520,6 +520,9 @@
         <footer><span class="quote-card__avatar">SK</span> Simran Kaur · Grade 8</footer>
       </blockquote>
     </div>
+    <p style="text-align:center;margin-top:24px;">
+      <a href="feedback.html" class="btn btn--ghost">Share your feedback →</a>
+    </p>
   </section>
 
   <!-- FACULTY TEASER -->
@@ -675,6 +678,33 @@
         html += `<span class="price-old">${fmt(old)}</span><span class="price-off">-${off}%</span>`;
       }
       priceEl.innerHTML = html;
+    });
+  }
+
+  // Approved student/professional feedback (submitted via feedback.html,
+  // reviewed in Supabase → Table Editor → testimonials → status column).
+  const { data: testimonials, error: testimonialsError } = await supabase
+    .from("testimonials")
+    .select("name, role_label, message")
+    .eq("status", "approved")
+    .order("created_at", { ascending: false })
+    .limit(6);
+
+  if (testimonialsError) {
+    console.error("Could not load testimonials:", testimonialsError.message);
+  } else if (testimonials && testimonials.length) {
+    const grid = document.getElementById("quoteGrid");
+    const initials = (name) =>
+      name.trim().split(/\s+/).map(w => w[0]).join("").slice(0, 2).toUpperCase();
+
+    testimonials.forEach(t => {
+      const card = document.createElement("blockquote");
+      card.className = "quote-card";
+      card.innerHTML = `
+        <p>"${t.message}"</p>
+        <footer><span class="quote-card__avatar">${initials(t.name)}</span> ${t.name} · ${t.role_label}</footer>
+      `;
+      grid.appendChild(card);
     });
   }
 </script>
