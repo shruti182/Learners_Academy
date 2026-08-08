@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vedic Maths Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Work+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#14213D;
+    --paper:#FBF6E9;
+    --paper-dim:#F1E8CE;
+    --marigold:#E8A33D;
+    --vermillion:#C1432D;
+    --peacock:#1F6F5C;
+    --charcoal:#2A2A2A;
+    --line: rgba(20,33,61,0.14);
+  }
+  *{box-sizing:border-box;}
+  html{-webkit-tap-highlight-color:transparent;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--charcoal);
+    font-family:'Work Sans', sans-serif;
+    line-height:1.5;
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(20,33,61,0.07) 1px, transparent 0);
+    background-size: 22px 22px;
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important;}
+  }
+
+  /* ---------- Hero ---------- */
+  header.hero{
+    position:relative;
+    padding:64px 24px 48px;
+    text-align:center;
+    background:
+      radial-gradient(circle at 12% 20%, rgba(232,163,61,0.18), transparent 40%),
+      radial-gradient(circle at 88% 15%, rgba(31,111,89,0.16), transparent 42%),
+      var(--ink);
+    color:var(--paper);
+    overflow:hidden;
+  }
+  header.hero::before, header.hero::after{
+    content:"";
+    position:absolute;
+    top:0; bottom:0; width:1px;
+    background:repeating-linear-gradient(180deg, rgba(251,246,233,0.18) 0 6px, transparent 6px 14px);
+  }
+  header.hero::before{ left:28px; }
+  header.hero::after{ right:28px; }
+  .eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--marigold);
+    margin-bottom:14px;
+  }
+  header.hero h1{
+    font-family:'Fraunces', serif;
+    font-weight:700;
+    font-size:clamp(34px, 6vw, 58px);
+    margin:0 0 12px;
+    letter-spacing:-0.01em;
+  }
+  header.hero .tagline{
+    font-size:16px;
+    max-width:480px;
+    margin:0 auto 36px;
+    color:rgba(251,246,233,0.78);
+  }
+  .hero-demo{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:clamp(22px, 4.5vw, 34px);
+    font-weight:600;
+    min-height:52px;
+    flex-wrap:wrap;
+  }
+  .hero-demo .op{ color:rgba(251,246,233,0.5); }
+  .hero-demo .digit{
+    display:inline-block;
+    opacity:0;
+    transform:translateY(6px);
+    animation:riseIn 0.4s ease forwards;
+  }
+  .hero-demo .result-digit{ color:var(--marigold); }
+  @keyframes riseIn{ to{ opacity:1; transform:translateY(0); } }
+
+  /* ---------- Tabs ---------- */
+  nav.tabs{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    justify-content:center;
+    padding:22px 16px;
+    max-width:960px;
+    margin:0 auto;
+  }
+  nav.tabs button{
+    font-family:'Work Sans', sans-serif;
+    font-size:14px;
+    font-weight:600;
+    padding:9px 16px;
+    border-radius:999px;
+    border:1px solid var(--line);
+    background:#fff;
+    color:var(--ink);
+    cursor:pointer;
+    transition: all 0.18s ease;
+  }
+  nav.tabs button:hover{ border-color:var(--marigold); }
+  nav.tabs button.active{
+    background:var(--ink);
+    color:var(--paper);
+    border-color:var(--ink);
+  }
+  nav.tabs button:focus-visible, .reveal-btn:focus-visible, input:focus-visible{
+    outline:3px solid var(--peacock);
+    outline-offset:2px;
+  }
+
+  /* ---------- Panels ---------- */
+  main{ max-width:760px; margin:0 auto; padding:8px 20px 80px; }
+  .panel{ display:none; animation:fadeUp 0.35s ease; }
+  .panel.active{ display:block; }
+  @keyframes fadeUp{ from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);} }
+
+  .panel-head h2{
+    font-family:'Fraunces', serif;
+    font-size:26px;
+    font-weight:600;
+    margin:28px 0 4px;
+    display:flex;
+    align-items:baseline;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  .sutra{
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    font-weight:500;
+    font-size:15px;
+    color:var(--peacock);
+  }
+  .panel-head p{
+    color:#555;
+    font-size:15px;
+    max-width:58ch;
+  }
+
+  .workspace{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:22px;
+    margin-top:16px;
+    position:relative;
+  }
+  .workspace::before{
+    content:"";
+    position:absolute;
+    top:0; left:22px; right:22px; height:3px;
+    background:linear-gradient(90deg, var(--marigold), var(--vermillion), var(--peacock));
+    border-radius:0 0 3px 3px;
+  }
+  .field-row{
+    display:flex;
+    gap:14px;
+    flex-wrap:wrap;
+    align-items:flex-end;
+    margin-bottom:16px;
+  }
+  .field-row label{
+    font-size:13px;
+    font-weight:600;
+    color:var(--ink);
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+  }
+  .field-row input{
+    font-family:'JetBrains Mono', monospace;
+    font-size:18px;
+    padding:9px 12px;
+    border:1.5px solid var(--line);
+    border-radius:8px;
+    width:150px;
+    background:var(--paper-dim);
+    color:var(--ink);
+  }
+  .field-row input:focus{ border-color:var(--marigold); outline:none; }
+
+  .reveal-btn{
+    font-family:'Work Sans', sans-serif;
+    font-weight:600;
+    font-size:14px;
+    padding:10px 18px;
+    border-radius:8px;
+    border:none;
+    background:var(--vermillion);
+    color:#fff;
+    cursor:pointer;
+    transition:transform 0.12s ease, background 0.18s ease;
+  }
+  .reveal-btn:hover{ background:#a53523; }
+  .reveal-btn:active{ transform:scale(0.97); }
+
+  .steps{ margin-top:20px; display:flex; flex-direction:column; gap:0; }
+  .step{
+    display:flex;
+    gap:14px;
+    align-items:flex-start;
+    padding:12px 0;
+    border-bottom:1px dashed var(--line);
+    opacity:0;
+    transform:translateX(-8px);
+  }
+  .step.show{ animation:stepIn 0.4s ease forwards; }
+  @keyframes stepIn{ to{opacity:1; transform:translateX(0);} }
+  .step:last-child{ border-bottom:none; }
+  .step-marker{
+    flex:0 0 auto;
+    width:26px; height:26px;
+    border-radius:50%;
+    background:var(--paper-dim);
+    border:1.5px solid var(--marigold);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    font-weight:600;
+    color:var(--ink);
+  }
+  .step-body .label{ font-size:13px; font-weight:600; color:var(--ink); margin-bottom:2px; }
+  .step-body .detail{ font-family:'JetBrains Mono', monospace; font-size:15px; color:var(--charcoal); }
+  .step-body .detail .muted{ color:#999; }
+
+  .answer{
+    margin-top:18px;
+    padding:16px 18px;
+    border-radius:10px;
+    background:var(--ink);
+    color:var(--paper);
+    font-family:'JetBrains Mono', monospace;
+    font-size:22px;
+    font-weight:600;
+    display:none;
+    align-items:center;
+    justify-content:space-between;
+    opacity:0;
+  }
+  .answer.show{ display:flex; animation:fadeUp 0.4s ease forwards; }
+  .answer .tag{
+    font-family:'Work Sans', sans-serif;
+    font-size:11px;
+    font-weight:600;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--marigold);
+  }
+  .note{
+    font-size:13px;
+    color:var(--vermillion);
+    margin-top:12px;
+    display:none;
+  }
+  .note.show{ display:block; }
+
+  footer{
+    text-align:center;
+    padding:28px 20px 40px;
+    font-size:13px;
+    color:#888;
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="eyebrow">Learners Academy · Number Sense</div>
+  <h1>Vedic Maths Lab</h1>
+  <p class="tagline">Sixteen sutras from ancient India, still the fastest mental-math shortcuts around. Pick a trick, feed it a number, watch it unfold.</p>
+  <div class="hero-demo" id="heroDemo"></div>
+</header>
+
+<nav class="tabs" role="tablist">
+  <button class="active" data-tab="mul11">× 11 shortcut</button>
+  <button data-tab="square5">Squares ending in 5</button>
+  <button data-tab="nikhilam">Nikhilam (near a base)</button>
+  <button data-tab="crisscross">Criss-cross ×</button>
+  <button data-tab="subtract">Instant subtraction</button>
+</nav>
+
+<main>
+
+  <section class="panel active" data-panel="mul11">
+    <div class="panel-head">
+      <h2>Multiplying by 11 <span class="sutra">Ekādhikena Pūrveṇa</span></h2>
+      <p>Write the outer digits, then slot in the sum of every pair of neighbours. Carries ripple left, exactly like column addition — but there's nothing to carry <em>through</em>.</p>
+    </div>
+    <div class="workspace">
+      <div class="field-row">
+        <label>Number (up to 6 digits)
+          <input type="number" id="mul11-input" value="47" min="0" max="999999" step="1">
+        </label>
+        <button class="reveal-btn" data-target="mul11">Reveal the trick</button>
+      </div>
+      <div class="steps" id="mul11-steps"></div>
+      <div class="answer" id="mul11-answer"></div>
+      <div class="note" id="mul11-note"></div>
+    </div>
+  </section>
+
+  <section class="panel" data-panel="square5">
+    <div class="panel-head">
+      <h2>Squaring numbers ending in 5 <span class="sutra">Antyayor Daśake'pi</span></h2>
+      <p>Drop the 5. Multiply what's left by "one more than itself." Stick <strong>25</strong> on the end. Done — no long multiplication required.</p>
+    </div>
+    <div class="workspace">
+      <div class="field-row">
+        <label>Number ending in 5
+          <input type="number" id="square5-input" value="65" min="5" max="999995" step="10">
+        </label>
+        <button class="reveal-btn" data-target="square5">Reveal the trick</button>
+      </div>
+      <div class="steps" id="square5-steps"></div>
+      <div class="answer" id="square5-answer"></div>
+      <div class="note" id="square5-note"></div>
+    </div>
+  </section>
+
+  <section class="panel" data-panel="nikhilam">
+    <div class="panel-head">
+      <h2>Nikhilam multiplication <span class="sutra">Nikhilaṁ Navataścaramaṁ Daśataḥ</span></h2>
+      <p>Works best when both numbers hug a round base like 100 or 1000. Measure each number's distance from the base, cross-add for the left half, multiply the distances for the right half.</p>
+    </div>
+    <div class="workspace">
+      <div class="field-row">
+        <label>First number
+          <input type="number" id="nikhilam-x" value="96" min="1" max="999999">
+        </label>
+        <label>Second number
+          <input type="number" id="nikhilam-y" value="97" min="1" max="999999">
+        </label>
+        <button class="reveal-btn" data-target="nikhilam">Reveal the trick</button>
+      </div>
+      <div class="steps" id="nikhilam-steps"></div>
+      <div class="answer" id="nikhilam-answer"></div>
+      <div class="note" id="nikhilam-note"></div>
+    </div>
+  </section>
+
+  <section class="panel" data-panel="crisscross">
+    <div class="panel-head">
+      <h2>Criss-cross multiplication <span class="sutra">Ūrdhva-Tiryagbhyām</span></h2>
+      <p>Any two 2-digit numbers, three diagonal sweeps, no partial-products written out. Units straight down, tens crossed, hundreds straight down.</p>
+    </div>
+    <div class="workspace">
+      <div class="field-row">
+        <label>First number (10–99)
+          <input type="number" id="crisscross-x" value="23" min="10" max="99">
+        </label>
+        <label>Second number (10–99)
+          <input type="number" id="crisscross-y" value="45" min="10" max="99">
+        </label>
+        <button class="reveal-btn" data-target="crisscross">Reveal the trick</button>
+      </div>
+      <div class="steps" id="crisscross-steps"></div>
+      <div class="answer" id="crisscross-answer"></div>
+      <div class="note" id="crisscross-note"></div>
+    </div>
+  </section>
+
+  <section class="panel" data-panel="subtract">
+    <div class="panel-head">
+      <h2>Instant subtraction from a base <span class="sutra">Sarvataḥ / Sarvaṁ Daśataḥ</span></h2>
+      <p>Subtracting from 100, 1000, or any round number? Take every digit from 9, except the last one — take that from 10. No borrowing, ever.</p>
+    </div>
+    <div class="workspace">
+      <div class="field-row">
+        <label>Number to subtract from its nearest round base
+          <input type="number" id="subtract-input" value="456" min="1" max="999999">
+        </label>
+        <button class="reveal-btn" data-target="subtract">Reveal the trick</button>
+      </div>
+      <div class="steps" id="subtract-steps"></div>
+      <div class="answer" id="subtract-answer"></div>
+      <div class="note" id="subtract-note"></div>
+    </div>
+  </section>
+
+</main>
+
+<footer>Built for Learners Academy — a self-contained page, ready to drop into your course library.</footer>
+
+<script>
+/* ---------------- Tab switching ---------------- */
+document.querySelectorAll('nav.tabs button').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('nav.tabs button').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelector(`.panel[data-panel="${btn.dataset.tab}"]`).classList.add('active');
+  });
+});
+
+/* ---------------- Step rendering helper ---------------- */
+function renderSteps(containerId, answerId, noteId, steps, answerText, answerTag){
+  const stepsEl = document.getElementById(containerId);
+  const answerEl = document.getElementById(answerId);
+  const noteEl = document.getElementById(noteId);
+  stepsEl.innerHTML = '';
+  answerEl.classList.remove('show');
+  noteEl.classList.remove('show');
+  noteEl.textContent = '';
+
+  steps.forEach((s, i)=>{
+    const div = document.createElement('div');
+    div.className = 'step';
+    div.innerHTML = `<div class="step-marker">${i+1}</div>
+      <div class="step-body">
+        <div class="label">${s.label}</div>
+        <div class="detail">${s.detail}</div>
+      </div>`;
+    stepsEl.appendChild(div);
+    setTimeout(()=>div.classList.add('show'), i*260);
+  });
+
+  setTimeout(()=>{
+    answerEl.innerHTML = `<span class="tag">${answerTag||'Answer'}</span><span>${answerText}</span>`;
+    answerEl.classList.add('show');
+  }, steps.length*260 + 150);
+}
+
+function showNote(noteId, msg){
+  const noteEl = document.getElementById(noteId);
+  noteEl.textContent = msg;
+  noteEl.classList.add('show');
+  document.getElementById(noteId.replace('-note','-steps')).innerHTML = '';
+  document.getElementById(noteId.replace('-note','-answer')).classList.remove('show');
+}
+
+/* ---------------- 1. Multiply by 11 ---------------- */
+function mul11(numStr){
+  const digits = numStr.split('').map(Number);
+  const n = digits.length;
+  const slots = [];
+  slots.push(digits[0]);
+  for(let i=1;i<n;i++) slots.push(digits[i-1]+digits[i]);
+  slots.push(digits[n-1]);
+
+  let carry = 0;
+  const resRev = [];
+  for(let i=slots.length-1;i>=0;i--){
+    const v = slots[i] + carry;
+    resRev.push(v % 10);
+    carry = Math.floor(v/10);
+  }
+  while(carry>0){ resRev.push(carry%10); carry = Math.floor(carry/10); }
+  const answer = resRev.reverse().join('').replace(/^0+(?=\d)/,'');
+  return { slots, answer };
+}
+
+document.querySelector('[data-target="mul11"]').addEventListener('click', ()=>{
+  const raw = document.getElementById('mul11-input').value;
+  const n = Math.max(0, Math.min(999999, Math.floor(Number(raw)||0)));
+  const numStr = String(n);
+  const { slots, answer } = mul11(numStr);
+
+  const steps = [
+    { label:'Write the number', detail:`${numStr.split('').join(' &nbsp; ')}` },
+    { label:'Slot in neighbour sums', detail:`${slots.join(' &nbsp; ')} <span class="muted">(outer digits stay, each middle slot = sum of the pair beside it)</span>` },
+    { label:'Resolve carries, right to left', detail:`Any slot ≥ 10 sends its leading 1 into the slot on its left.` }
+  ];
+  renderSteps('mul11-steps','mul11-answer','mul11-note', steps, `${numStr} × 11 = ${answer}`, 'Answer');
+});
+
+/* ---------------- 2. Square ending in 5 ---------------- */
+document.querySelector('[data-target="square5"]').addEventListener('click', ()=>{
+  const raw = document.getElementById('square5-input').value;
+  let n = Math.floor(Number(raw)||0);
+  if(n<0) n = -n;
+  const numStr = String(n);
+  if(!numStr.endsWith('5')){
+    showNote('square5-note', 'This trick only works on numbers ending in 5 — try 25, 65, 105, 995…');
+    return;
+  }
+  const aStr = numStr.slice(0, -1);
+  const a = aStr === '' ? 0 : Number(aStr);
+  const front = a*(a+1);
+  const answer = String(Number(String(front)+'25'));
+
+  const steps = [
+    { label:'Split off the 5', detail:`${numStr} → <strong>${aStr===''?'(nothing)':aStr}</strong> and 5` },
+    { label:'Multiply the front part by one more than itself', detail:`${a} × ${a+1} = ${front}` },
+    { label:'Append 25', detail:`${front} → ${front}25` }
+  ];
+  renderSteps('square5-steps','square5-answer','square5-note', steps, `${numStr}² = ${answer}`, 'Answer');
+});
+
+/* ---------------- 3. Nikhilam ---------------- */
+document.querySelector('[data-target="nikhilam"]').addEventListener('click', ()=>{
+  const x = Math.floor(Number(document.getElementById('nikhilam-x').value)||0);
+  const y = Math.floor(Number(document.getElementById('nikhilam-y').value)||0);
+
+  if(x<=0 || y<=0){ showNote('nikhilam-note','Enter two positive numbers.'); return; }
+
+  const baseFor = v => Math.pow(10, Math.round(Math.log10(v)));
+  const baseX = baseFor(x), baseY = baseFor(y);
+
+  if(baseX !== baseY){
+    showNote('nikhilam-note', `Nikhilam works best when both numbers hug the same round base. ${x} sits near ${baseX}, but ${y} sits near ${baseY} — try numbers closer together, like 96 & 97, or 103 & 104.`);
+    return;
+  }
+  const base = baseX;
+  const k = Math.round(Math.log10(base));
+  const devX = x - base, devY = y - base;
+  let left = x + devY;
+  let product = devX * devY;
+  const pow = Math.pow(10,k);
+
+  if(product < 0){ left -= 1; product += pow; }
+  const carry = Math.floor(product/pow);
+  left += carry;
+  const rightRemainder = product - carry*pow;
+  const rightStr = String(rightRemainder).padStart(k,'0');
+  const answer = String(Number(String(left)+rightStr));
+
+  const fmt = d => (d>=0? '+'+d : String(d));
+  const steps = [
+    { label:`Pick the base`, detail:`Both numbers sit close to <strong>${base}</strong>.` },
+    { label:'Measure the deviations', detail:`${x} = ${base} ${fmt(devX)} &nbsp;·&nbsp; ${y} = ${base} ${fmt(devY)}` },
+    { label:'Cross-add for the left part', detail:`${x} ${fmt(devY)} = ${y} ${fmt(devX)} = ${left - carry}${carry?` <span class="muted">(+${carry} carried in)</span>`:''}` },
+    { label:'Multiply the deviations for the right part', detail:`(${devX}) × (${devY}) = ${devX*devY}${product!==devX*devY? ` → ${rightStr} <span class="muted">(padded/borrowed to ${k} digits)</span>`:` → ${rightStr}`}` }
+  ];
+  renderSteps('nikhilam-steps','nikhilam-answer','nikhilam-note', steps, `${x} × ${y} = ${answer}`, 'Answer');
+});
+
+/* ---------------- 4. Criss-cross ---------------- */
+document.querySelector('[data-target="crisscross"]').addEventListener('click', ()=>{
+  const x = Math.floor(Number(document.getElementById('crisscross-x').value)||0);
+  const y = Math.floor(Number(document.getElementById('crisscross-y').value)||0);
+  if(x<10||x>99||y<10||y>99){ showNote('crisscross-note','Both numbers need to be two digits — between 10 and 99.'); return; }
+
+  const a = Math.floor(x/10), b = x%10;
+  const c = Math.floor(y/10), d = y%10;
+
+  const u = b*d, unitsDigit = u%10, carry1 = Math.floor(u/10);
+  const cross = a*d + b*c + carry1, tensDigit = cross%10, carry2 = Math.floor(cross/10);
+  const left = a*c + carry2;
+  const answer = String(left*100 + tensDigit*10 + unitsDigit);
+
+  const steps = [
+    { label:'Units: straight down', detail:`${b} × ${d} = ${u} &nbsp; → write ${unitsDigit}${carry1?`, carry ${carry1}`:''}` },
+    { label:'Tens: cross-multiply and add', detail:`(${a}×${d}) + (${b}×${c})${carry1?` + carry ${carry1}`:''} = ${cross} &nbsp; → write ${tensDigit}${carry2?`, carry ${carry2}`:''}` },
+    { label:'Hundreds: straight down', detail:`${a} × ${c}${carry2?` + carry ${carry2}`:''} = ${left}` }
+  ];
+  renderSteps('crisscross-steps','crisscross-answer','crisscross-note', steps, `${x} × ${y} = ${answer}`, 'Answer');
+});
+
+/* ---------------- 5. Subtraction from base ---------------- */
+document.querySelector('[data-target="subtract"]').addEventListener('click', ()=>{
+  let n = Math.floor(Number(document.getElementById('subtract-input').value)||0);
+  if(n<=0){ showNote('subtract-note','Enter a positive number.'); return; }
+  const str = String(n);
+  const k = str.length;
+  const base = Math.pow(10,k);
+
+  const trailingMatch = str.match(/0+$/);
+  const trailing = trailingMatch ? trailingMatch[0].length : 0;
+  const core = trailing < str.length ? str.slice(0, str.length-trailing) : str;
+
+  const coreDigits = core.split('').map(Number);
+  const resultDigits = coreDigits.map((dg,i)=> i<coreDigits.length-1 ? 9-dg : 10-dg);
+  const coreResult = resultDigits.join('');
+  const answer = String(Number(coreResult + '0'.repeat(trailing)));
+
+  const steps = [
+    { label:'Choose the nearest round base', detail:`${n} → base <strong>${base}</strong>` },
+    { label:trailing? `Set aside ${trailing} trailing zero${trailing>1?'s':''}` : 'All digits, 9 minus each — except the last', detail: trailing
+        ? `${str} → work with ${core}, reattach ${'0'.repeat(trailing)} at the end`
+        : `${coreDigits.slice(0,-1).map(d=>`9−${d}=${9-d}`).join(', ') || '(single digit)'}, last digit: 10−${coreDigits[coreDigits.length-1]}=${10-coreDigits[coreDigits.length-1]}` },
+    { label:'Assemble the result', detail:`${coreResult}${trailing? ' + ' + '0'.repeat(trailing) : ''} = ${answer}` }
+  ];
+  renderSteps('subtract-steps','subtract-answer','subtract-note', steps, `${base} − ${n} = ${answer}`, 'Answer');
+});
+
+/* ---------------- Hero auto-demo ---------------- */
+const heroExamples = [ ['47','11'], ['68','11'], ['523','11'] ];
+let heroIdx = 0;
+function playHeroDemo(){
+  const [numStr, elevenStr] = heroExamples[heroIdx % heroExamples.length];
+  heroIdx++;
+  const { answer } = mul11(numStr);
+  const el = document.getElementById('heroDemo');
+  el.innerHTML = '';
+  const parts = [
+    ...numStr.split('').map(ch=>({ch, cls:''})),
+    {ch:'×', cls:'op'}, {ch:'1', cls:''}, {ch:'1', cls:''},
+    {ch:'=', cls:'op'},
+    ...answer.split('').map(ch=>({ch, cls:'result-digit'}))
+  ];
+  parts.forEach((p,i)=>{
+    const span = document.createElement('span');
+    span.textContent = p.ch;
+    span.className = 'digit ' + p.cls;
+    span.style.animationDelay = (i*70) + 'ms';
+    el.appendChild(span);
+  });
+}
+playHeroDemo();
+setInterval(playHeroDemo, 3600);
+</script>
+
+</body>
+</html>
