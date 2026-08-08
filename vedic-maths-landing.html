@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Advanced Vedic Maths — Try Free Lab + Enroll</title>
+<meta name="description" content="Try our free interactive Vedic Maths lab. Master ancient techniques for mental math. Then enroll for the complete course with certificates.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Poppins:wght@400;500;600;700&family=Space+Mono:wght@400;700&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Work+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  :root {
+    --marigold: #E8A33D;
+    --vermillion: #C1432D;
+    --peacock: #1F6F5C;
+    --ink: #14213D;
+    --paper: #FBF6E9;
+    --paper-dim: #F1E8CE;
+    --line: rgba(20, 33, 61, 0.14);
+  }
+
+  body { background: var(--paper); }
+  
+  /* Lab Wrapper */
+  .vedic-lab-wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0;
+  }
+
+  /* Header Hero with Lab Embed */
+  .vedic-hero {
+    background: linear-gradient(135deg, var(--ink) 0%, #1a2d4d 100%);
+    color: #fff;
+    padding: 48px 24px;
+    text-align: center;
+  }
+  
+  .vedic-hero h1 {
+    font-family: 'Baloo 2', sans-serif;
+    font-size: clamp(28px, 5vw, 42px);
+    font-weight: 700;
+    margin: 0 0 12px;
+  }
+  
+  .vedic-hero p {
+    font-size: 16px;
+    opacity: 0.9;
+    max-width: 600px;
+    margin: 0 auto 8px;
+  }
+  
+  .trial-badge {
+    display: inline-block;
+    background: var(--marigold);
+    color: var(--ink);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /* Lab Container */
+  .lab-section {
+    background: var(--paper);
+    padding: 32px 24px;
+    border-top: 3px solid var(--marigold);
+  }
+
+  .lab-section iframe {
+    width: 100%;
+    height: 1200px;
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(20, 33, 61, 0.12);
+  }
+
+  /* Course Benefits Section */
+  .benefits-section {
+    background: #fff;
+    padding: 56px 24px;
+    border-top: 1px solid var(--line);
+  }
+
+  .benefits-inner {
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .benefits-head {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+
+  .benefits-head h2 {
+    font-family: 'Baloo 2', sans-serif;
+    font-size: clamp(24px, 4vw, 32px);
+    font-weight: 700;
+    color: var(--ink);
+    margin: 0 0 12px;
+  }
+
+  .benefits-head p {
+    font-size: 16px;
+    color: #666;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  .benefits-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 24px;
+    margin-bottom: 48px;
+  }
+
+  .benefit-card {
+    background: #f9f7f3;
+    padding: 24px;
+    border-radius: 12px;
+    border-left: 4px solid var(--marigold);
+  }
+
+  .benefit-card h3 {
+    font-family: 'Baloo 2', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--ink);
+    margin: 0 0 8px;
+  }
+
+  .benefit-card p {
+    font-size: 14px;
+    color: #666;
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  .benefit-icon {
+    font-size: 24px;
+    margin-bottom: 12px;
+  }
+
+  /* Enrollment CTA Section */
+  .enrollment-cta {
+    background: linear-gradient(135deg, var(--marigold) 0%, var(--vermillion) 100%);
+    color: #fff;
+    padding: 56px 24px;
+    text-align: center;
+    border-radius: 0;
+  }
+
+  .enrollment-cta h2 {
+    font-family: 'Baloo 2', sans-serif;
+    font-size: clamp(24px, 4vw, 36px);
+    font-weight: 700;
+    margin: 0 0 16px;
+  }
+
+  .course-info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    max-width: 900px;
+    margin: 32px auto;
+  }
+
+  .info-stat {
+    background: rgba(255, 255, 255, 0.15);
+    padding: 20px;
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+  }
+
+  .info-stat-value {
+    font-size: 24px;
+    font-weight: 700;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .info-stat-label {
+    font-size: 12px;
+    opacity: 0.9;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .price-display {
+    margin: 32px 0;
+  }
+
+  .price-now {
+    font-size: 48px;
+    font-weight: 700;
+    display: block;
+  }
+
+  .price-old {
+    font-size: 18px;
+    opacity: 0.8;
+    text-decoration: line-through;
+    display: inline-block;
+    margin-right: 12px;
+  }
+
+  .price-off {
+    background: rgba(255, 255, 255, 0.25);
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .enroll-btn {
+    display: inline-block;
+    background: #fff;
+    color: var(--vermillion);
+    padding: 16px 48px;
+    border-radius: 8px;
+    border: none;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    margin: 0 8px;
+  }
+
+  .enroll-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2);
+  }
+
+  .enroll-btn.secondary {
+    background: transparent;
+    color: #fff;
+    border: 2px solid #fff;
+  }
+
+  .enroll-btn.secondary:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  /* Course Highlights */
+  .highlights-section {
+    background: #fff;
+    padding: 48px 24px;
+    border-top: 1px solid var(--line);
+  }
+
+  .highlights-inner {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .highlights-head {
+    text-align: center;
+    margin-bottom: 36px;
+  }
+
+  .highlights-head h2 {
+    font-family: 'Baloo 2', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--ink);
+    margin: 0 0 12px;
+  }
+
+  .highlights-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+  }
+
+  .highlight-item {
+    padding: 20px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: #fafafa;
+  }
+
+  .highlight-item h3 {
+    font-family: 'Baloo 2', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ink);
+    margin: 0 0 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .highlight-item p {
+    font-size: 13px;
+    color: #666;
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  /* FAQ Section */
+  .faq-section {
+    background: var(--paper);
+    padding: 48px 24px;
+    border-top: 1px solid var(--line);
+  }
+
+  .faq-inner {
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  .faq-head {
+    text-align: center;
+    margin-bottom: 36px;
+  }
+
+  .faq-head h2 {
+    font-family: 'Baloo 2', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--ink);
+    margin: 0;
+  }
+
+  .faq-item {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    margin-bottom: 12px;
+    overflow: hidden;
+  }
+
+  .faq-question {
+    padding: 20px;
+    cursor: pointer;
+    background: #fff;
+    border: none;
+    width: 100%;
+    text-align: left;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background 0.2s ease;
+  }
+
+  .faq-question:hover {
+    background: #f9f7f3;
+  }
+
+  .faq-question::after {
+    content: '▼';
+    font-size: 12px;
+    transition: transform 0.3s ease;
+  }
+
+  .faq-item.open .faq-question::after {
+    transform: rotate(180deg);
+  }
+
+  .faq-answer {
+    padding: 0 20px 20px;
+    display: none;
+    font-size: 14px;
+    color: #666;
+    line-height: 1.6;
+    border-top: 1px solid var(--line);
+  }
+
+  .faq-item.open .faq-answer {
+    display: block;
+  }
+
+  /* Rating Card */
+  .rating-card {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 24px;
+    margin: 32px 0;
+    text-align: center;
+  }
+
+  .rating-stars {
+    font-size: 24px;
+    color: var(--marigold);
+    margin-bottom: 8px;
+  }
+
+  .rating-text {
+    font-size: 14px;
+    color: #666;
+    margin: 0;
+  }
+
+  /* Footer CTA */
+  .footer-cta {
+    background: var(--ink);
+    color: #fff;
+    padding: 48px 24px;
+    text-align: center;
+  }
+
+  .footer-cta h2 {
+    font-family: 'Baloo 2', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0 0 16px;
+  }
+
+  .footer-cta p {
+    font-size: 16px;
+    margin: 0 0 24px;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+    opacity: 0.9;
+  }
+
+  .footer-cta .enroll-btn {
+    background: var(--marigold);
+    color: var(--ink);
+  }
+
+  .footer-cta .enroll-btn:hover {
+    background: #f0b345;
+  }
+
+  @media (max-width: 768px) {
+    .lab-section iframe {
+      height: 800px;
+    }
+
+    .course-info-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .price-now {
+      font-size: 36px;
+    }
+
+    .enroll-btn {
+      display: block;
+      width: 100%;
+      margin: 12px 0;
+    }
+  }
+</style>
+</head>
+<body>
+
+<header class="nav" id="nav">
+  <div class="nav__inner">
+    <a href="index.html" class="nav__logo">
+      <span class="nav__logo-mark">LA</span>
+      <span class="nav__logo-text">Learners Academy</span>
+    </a>
+    <nav class="nav__links" id="navLinks">
+      <a href="index.html">Home</a>
+      <a href="courses.html">Courses</a>
+      <a href="live-classes.html">Live Classes</a>
+      <a href="faculty.html">Faculty</a>
+    </nav>
+    <div class="nav__actions">
+      <a href="login.html" class="btn btn--ghost">Log in</a>
+      <a href="login.html?mode=signup" class="btn btn--solid">Enroll Now</a>
+    </div>
+    <button class="nav__burger" id="burger" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<main class="vedic-lab-wrapper">
+
+  <!-- Hero Section -->
+  <section class="vedic-hero">
+    <span class="trial-badge">✨ Free Interactive Lab</span>
+    <h1>Master Vedic Maths Instantly</h1>
+    <p>Learn ancient calculation techniques that multiply speed and mental power</p>
+  </section>
+
+  <!-- Free Lab Embed -->
+  <section class="lab-section">
+    <iframe src="vedic-maths-lab.html" title="Vedic Maths Interactive Lab"></iframe>
+  </section>
+
+  <!-- What You'll Learn in Full Course -->
+  <section class="benefits-section">
+    <div class="benefits-inner">
+      <div class="benefits-head">
+        <h2>Why Choose Advanced Vedic Maths?</h2>
+        <p>From the free lab to complete mastery — here's what makes this course special</p>
+      </div>
+
+      <div class="benefits-grid">
+        <div class="benefit-card">
+          <div class="benefit-icon">⚡</div>
+          <h3>5x Faster Calculations</h3>
+          <p>Multiply 2-digit, 3-digit numbers in your head. Impress yourself and others.</p>
+        </div>
+
+        <div class="benefit-card">
+          <div class="benefit-icon">🧠</div>
+          <h3>Ancient Wisdom</h3>
+          <p>Learn Sutras (aphorisms) from the Vedas — time-tested shortcuts used for millennia.</p>
+        </div>
+
+        <div class="benefit-card">
+          <div class="benefit-icon">📚</div>
+          <h3>35 In-Depth Lessons</h3>
+          <p>Video tutorials, step-by-step breakdowns, and competitive exam shortcuts.</p>
+        </div>
+
+        <div class="benefit-card">
+          <div class="benefit-icon">🏆</div>
+          <h3>Live Doubt Sessions</h3>
+          <p>Weekly live classes with instructor. Ask questions, solve together.</p>
+        </div>
+
+        <div class="benefit-card">
+          <div class="benefit-icon">📖</div>
+          <h3>Tricks for Every Operation</h3>
+          <p>Multiply, square, divide, find roots — Vedic methods for all operations.</p>
+        </div>
+
+        <div class="benefit-card">
+          <div class="benefit-icon">🎓</div>
+          <h3>Verifiable Certificate</h3>
+          <p>Prove your skills with a shareable certificate. Add to LinkedIn, resume.</p>
+        </div>
+      </div>
+
+      <div class="rating-card">
+        <div class="rating-stars">★★★★★</div>
+        <p class="rating-text"><strong>4.9/5 rating</strong> • 847 students completed this course</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Course Details -->
+  <section class="highlights-section">
+    <div class="highlights-inner">
+      <div class="highlights-head">
+        <h2>Course Breakdown</h2>
+      </div>
+
+      <div class="highlights-grid">
+        <div class="highlight-item">
+          <h3>📺 Video Lessons</h3>
+          <p>24 hours of recorded content. Learn at your pace, rewatch anytime.</p>
+        </div>
+
+        <div class="highlight-item">
+          <h3>🗂️ 35 Lessons</h3>
+          <p>Multiplication, squaring, division, roots — one technique per lesson.</p>
+        </div>
+
+        <div class="highlight-item">
+          <h3>💬 Live Classes</h3>
+          <p>Weekly 90-min live sessions. Q&A, live problem solving, community.</p>
+        </div>
+
+        <div class="highlight-item">
+          <h3>✍️ Worksheets</h3>
+          <p>Practice PDFs for each technique. Test yourself after each lesson.</p>
+        </div>
+
+        <div class="highlight-item">
+          <h3>📊 Quick Reference</h3>
+          <p>Downloadable sutra cards for on-the-go revision.</p>
+        </div>
+
+        <div class="highlight-item">
+          <h3>🎓 Certificate</h3>
+          <p>Shareable credential after course completion.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Enrollment CTA -->
+  <section class="enrollment-cta">
+    <h2>Ready to Master Vedic Maths?</h2>
+    <p style="font-size: 16px; margin: 0 0 24px;">Join 3,200+ students who've already learned to calculate at lightning speed</p>
+
+    <div class="price-display">
+      <span class="price-now">₹1,499</span>
+      <span class="price-old">₹3,999</span>
+      <span class="price-off">Save 62%</span>
+    </div>
+
+    <div class="course-info-grid">
+      <div class="info-stat">
+        <span class="info-stat-value">24</span>
+        <span class="info-stat-label">Hours of Video</span>
+      </div>
+      <div class="info-stat">
+        <span class="info-stat-value">35</span>
+        <span class="info-stat-label">Complete Lessons</span>
+      </div>
+      <div class="info-stat">
+        <span class="info-stat-value">∞</span>
+        <span class="info-stat-label">Lifetime Access</span>
+      </div>
+      <div class="info-stat">
+        <span class="info-stat-value">7 days</span>
+        <span class="info-stat-label">Money-Back Guarantee</span>
+      </div>
+    </div>
+
+    <div style="margin: 32px 0;">
+      <a href="login.html?mode=signup&intent=vedic-maths" class="enroll-btn">Enroll Now</a>
+      <a href="courses.html" class="enroll-btn secondary">View More Courses</a>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq-section">
+    <div class="faq-inner">
+      <div class="faq-head">
+        <h2>Frequently Asked Questions</h2>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question">What level is this course for?</button>
+        <div class="faq-answer">
+          This course is designed for Grade 8–12 students and anyone wanting to boost mental math skills. No prerequisites — we start from basics and build up.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question">Do I need to know advanced math?</button>
+        <div class="faq-answer">
+          No. Vedic Maths is actually simpler than conventional methods. If you can add and subtract, you're ready.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question">How long does it take to complete?</button>
+        <div class="faq-answer">
+          Most students complete it in 4–6 weeks watching 1–2 lessons per day. You can go faster or slower — lifetime access means you learn at your pace.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question">Is there a live doubt session?</button>
+        <div class="faq-answer">
+          Yes. Dr. Mithun Sharma hosts live sessions every Thursday at 6:30 PM IST. All students can join and ask questions.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question">Do I get a certificate?</button>
+        <div class="faq-answer">
+          Absolutely. Once you complete all 35 lessons and pass the final quiz, you get a shareable certificate recognized on LinkedIn and your resume.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question">What if I don't like the course?</button>
+        <div class="faq-answer">
+          We offer a full 7-day money-back guarantee. No questions asked. We're confident you'll love it.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question">Can I access after purchase?</button>
+        <div class="faq-answer">
+          Yes — lifetime access to all videos, worksheets, and updates. Once you buy, the course is yours forever.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <section class="footer-cta">
+    <h2>Don't Just Calculate — Dominate</h2>
+    <p>Master Vedic Maths and impress peers, teachers, and yourself. Start the free lab, then enroll for the complete journey.</p>
+    <a href="login.html?mode=signup&intent=vedic-maths" class="enroll-btn">Start My Course Today</a>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="footer__top">
+    <div class="footer__brand">
+      <span class="nav__logo-mark">LA</span> <span class="nav__logo-text">Learners Academy</span>
+      <p>A path from Grade 6 to your next promotion — video lessons, live classes, real certificates.</p>
+    </div>
+    <div class="footer__col">
+      <h6>School</h6>
+      <a href="courses.html?tag=grade-6">Grade 6–10</a><a href="courses.html?tag=grade-11">Grade 11–12</a><a href="courses.html?tag=board-prep">Board Exam Prep</a><a href="courses.html?tag=competitive">JEE / NEET</a>
+    </div>
+    <div class="footer__col">
+      <h6>Career Tools</h6>
+      <a href="courses.html?subject=python">Python</a><a href="courses.html?subject=sql">SQL</a><a href="courses.html?subject=power-bi">Power BI</a><a href="courses.html?subject=tableau">Tableau</a>
+    </div>
+    <div class="footer__col">
+      <h6>Company</h6>
+      <a href="#">About</a><a href="teach.html">Teach on Learners Academy</a><a href="#">Careers</a><a href="#">Contact</a>
+    </div>
+  </div>
+  <div class="footer__bottom">
+    <span>© 2026 Learners Academy Learning. All rights reserved.</span>
+    <span class="footer__legal"><a href="#">Privacy</a><a href="#">Terms</a></span>
+  </div>
+</footer>
+
+<script>
+/* FAQ Toggling */
+document.querySelectorAll('.faq-question').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const item = btn.closest('.faq-item');
+    item.classList.toggle('open');
+  });
+});
+
+/* Smooth scroll for anchor links */
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function (e) {
+    e.preventDefault();
+    const target = document.querySelector(this.getAttribute('href'));
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth' });
+    }
+  });
+});
+</script>
+
+</body>
+</html>
