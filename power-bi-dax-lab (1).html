@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Power BI · DAX Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Work+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#14213D;
+    --paper:#FBF6E9;
+    --paper-dim:#F1E8CE;
+    --marigold:#E8A33D;
+    --vermillion:#C1432D;
+    --peacock:#1F6F5C;
+    --charcoal:#2A2A2A;
+    --line: rgba(20,33,61,0.14);
+  }
+  *{box-sizing:border-box;}
+  html{-webkit-tap-highlight-color:transparent;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--charcoal);
+    font-family:'Work Sans', sans-serif;
+    line-height:1.5;
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(20,33,61,0.07) 1px, transparent 0);
+    background-size: 22px 22px;
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important;}
+  }
+
+  /* ---------- Hero ---------- */
+  header.hero{
+    position:relative;
+    padding:64px 24px 48px;
+    text-align:center;
+    background:
+      radial-gradient(circle at 12% 20%, rgba(232,163,61,0.18), transparent 40%),
+      radial-gradient(circle at 88% 15%, rgba(31,111,89,0.16), transparent 42%),
+      var(--ink);
+    color:var(--paper);
+    overflow:hidden;
+  }
+  header.hero::before, header.hero::after{
+    content:"";
+    position:absolute;
+    top:0; bottom:0; width:1px;
+    background:repeating-linear-gradient(180deg, rgba(251,246,233,0.18) 0 6px, transparent 6px 14px);
+  }
+  header.hero::before{ left:28px; }
+  header.hero::after{ right:28px; }
+  .eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--marigold);
+    margin-bottom:14px;
+  }
+  header.hero h1{
+    font-family:'Fraunces', serif;
+    font-weight:700;
+    font-size:clamp(34px, 6vw, 58px);
+    margin:0 0 12px;
+    letter-spacing:-0.01em;
+  }
+  header.hero .tagline{
+    font-size:16px;
+    max-width:480px;
+    margin:0 auto 36px;
+    color:rgba(251,246,233,0.78);
+  }
+  .hero-demo{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:clamp(13px, 2.6vw, 18px);
+    font-weight:600;
+    min-height:52px;
+    flex-wrap:wrap;
+    padding:0 12px;
+  }
+  .hero-demo .op{ color:rgba(251,246,233,0.5); }
+  .hero-demo .digit{
+    display:inline-block;
+    opacity:0;
+    transform:translateY(6px);
+    animation:riseIn 0.4s ease forwards;
+  }
+  .hero-demo .result-digit{ color:var(--marigold); }
+  @keyframes riseIn{ to{ opacity:1; transform:translateY(0); } }
+
+  /* ---------- Tabs ---------- */
+  nav.tabs{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    justify-content:center;
+    padding:22px 16px;
+    max-width:960px;
+    margin:0 auto;
+  }
+  nav.tabs button{
+    font-family:'Work Sans', sans-serif;
+    font-size:14px;
+    font-weight:600;
+    padding:9px 16px;
+    border-radius:999px;
+    border:1px solid var(--line);
+    background:#fff;
+    color:var(--ink);
+    cursor:pointer;
+    transition: all 0.18s ease;
+  }
+  nav.tabs button:hover{ border-color:var(--marigold); }
+  nav.tabs button.active{
+    background:var(--ink);
+    color:var(--paper);
+    border-color:var(--ink);
+  }
+  nav.tabs button:focus-visible, .reveal-btn:focus-visible, input:focus-visible, select:focus-visible{
+    outline:3px solid var(--peacock);
+    outline-offset:2px;
+  }
+
+  /* ---------- Panels ---------- */
+  main{ max-width:760px; margin:0 auto; padding:8px 20px 80px; }
+  .panel{ display:none; animation:fadeUp 0.35s ease; }
+  .panel.active{ display:block; }
+  @keyframes fadeUp{ from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);} }
+
+  .panel-head h2{
+    font-family:'Fraunces', serif;
+    font-size:26px;
+    font-weight:600;
+    margin:28px 0 4px;
+    display:flex;
+    align-items:baseline;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  .sutra{
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    font-weight:500;
+    font-size:15px;
+    color:var(--peacock);
+  }
+  .panel-head p{
+    color:#555;
+    font-size:15px;
+    max-width:58ch;
+  }
+
+  .workspace{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:22px;
+    margin-top:16px;
+    position:relative;
+  }
+  .workspace::before{
+    content:"";
+    position:absolute;
+    top:0; left:22px; right:22px; height:3px;
+    background:linear-gradient(90deg, var(--marigold), var(--vermillion), var(--peacock));
+    border-radius:0 0 3px 3px;
+  }
+  .field-row{
+    display:flex;
+    gap:14px;
+    flex-wrap:wrap;
+    align-items:flex-end;
+    margin-bottom:16px;
+  }
+  .field-row label{
+    font-size:13px;
+    font-weight:600;
+    color:var(--ink);
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+  }
+  .field-row input{
+    font-family:'JetBrains Mono', monospace;
+    font-size:15px;
+    padding:9px 12px;
+    border:1.5px solid var(--line);
+    border-radius:8px;
+    width:170px;
+    background:var(--paper-dim);
+    color:var(--ink);
+  }
+  .field-row input.wide{ width:230px; }
+  .field-row input:focus{ border-color:var(--marigold); outline:none; }
+  .field-row select{
+    font-family:'Work Sans', sans-serif;
+    font-size:14px;
+    font-weight:500;
+    padding:9.5px 12px;
+    border:1.5px solid var(--line);
+    border-radius:8px;
+    background:var(--paper-dim);
+    color:var(--ink);
+    min-width:150px;
+  }
+  .field-row select:focus{ border-color:var(--marigold); outline:none; }
+
+  .reveal-btn{
+    font-family:'Work Sans', sans-serif;
+    font-weight:600;
+    font-size:14px;
+    padding:10px 18px;
+    border-radius:8px;
+    border:none;
+    background:var(--vermillion);
+    color:#fff;
+    cursor:pointer;
+    transition:transform 0.12s ease, background 0.18s ease;
+  }
+  .reveal-btn:hover{ background:#a53523; }
+  .reveal-btn:active{ transform:scale(0.97); }
+
+  .steps{ margin-top:20px; display:flex; flex-direction:column; gap:0; }
+  .step{
+    display:flex;
+    gap:14px;
+    align-items:flex-start;
+    padding:12px 0;
+    border-bottom:1px dashed var(--line);
+    opacity:0;
+    transform:translateX(-8px);
+  }
+  .step.show{ animation:stepIn 0.4s ease forwards; }
+  @keyframes stepIn{ to{opacity:1; transform:translateX(0);} }
+  .step:last-child{ border-bottom:none; }
+  .step-marker{
+    flex:0 0 auto;
+    width:26px; height:26px;
+    border-radius:50%;
+    background:var(--paper-dim);
+    border:1.5px solid var(--marigold);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    font-weight:600;
+    color:var(--ink);
+  }
+  .step-body .label{ font-size:13px; font-weight:600; color:var(--ink); margin-bottom:2px; }
+  .step-body .detail{ font-family:'JetBrains Mono', monospace; font-size:14.5px; color:var(--charcoal); }
+  .step-body .detail .muted{ color:#999; }
+
+  .answer{
+    margin-top:18px;
+    padding:16px 18px;
+    border-radius:10px;
+    background:var(--ink);
+    color:var(--paper);
+    font-family:'JetBrains Mono', monospace;
+    font-size:19px;
+    font-weight:600;
+    display:none;
+    align-items:center;
+    justify-content:space-between;
+    gap:14px;
+    opacity:0;
+  }
+  .answer.show{ display:flex; animation:fadeUp 0.4s ease forwards; }
+  .answer.code{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:10px;
+  }
+  .answer.code pre{
+    margin:0;
+    white-space:pre-wrap;
+    word-break:break-word;
+    font-family:'JetBrains Mono', monospace;
+    font-size:14.5px;
+    font-weight:500;
+    line-height:1.6;
+    color:var(--paper);
+  }
+  .answer .tag{
+    font-family:'Work Sans', sans-serif;
+    font-size:11px;
+    font-weight:600;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--marigold);
+    flex:0 0 auto;
+  }
+  .note{
+    font-size:13px;
+    color:var(--vermillion);
+    margin-top:12px;
+    display:none;
+  }
+  .note.show{ display:block; }
+
+  footer{
+    text-align:center;
+    padding:28px 20px 40px;
+    font-size:13px;
+    color:#888;
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="eyebrow">Learners Academy · Analytics Lab</div>
+  <h1>Power BI · DAX Lab</h1>
+  <p class="tagline">Five modelling and DAX patterns, built live from your inputs. Fill in your table and column names, and watch the formula — and the filter-context logic behind it — assemble.</p>
+  <div class="hero-demo" id="heroDemo"></div>
+</header>
+
+<nav class="tabs" role="tablist">
+  <button class="active" data-tab="calc">CALCULATE & Filters</button>
+  <button data-tab="time">Time Intelligence</button>
+  <button data-tab="rel">Relationships</button>
+  <button data-tab="iter">Iterator (X) Functions</button>
+  <button data-tab="pattern">Common Patterns</button>
+</nav>
+
+<main>
+
+  <section class="panel active" data-panel="calc">
+    <div class="panel-head">
+      <h2>CALCULATE & Filter Context <span class="sutra">Filter context override</span></h2>
+      <p>Wrap an aggregation in CALCULATE and give it filter arguments. Each argument replaces whatever filter already exists on that column — it doesn't add to it.</p>
+    </div>
+    <div class="workspace">
+      <div class="field-row">
+        <label>Measure name
+          <input type="text" class="wide" id="dax-name" value="Total Sales">
+        </label>
+        <label>Aggregation
+          <select id="dax-agg">
+            <option value="SUM">SUM</option>
+            <option value="AVERAGE">AVERAGE</option>
+            <option value="COUNT">COUNT</option>
+            <option value="DISTINCTCOUNT">DISTINCTCOUNT</option>
+            <option value="MIN">MIN</option>
+            <option value="MAX">MAX</option>
+          </select>
+        </label>
+        <label>Column to aggregate
+          <input type="text" class="wide" id="dax-col" value="Sales[Amount]">
+        </label>
+      </div>
+      <div class="field-row">
+        <label>Filter column
+          <input type="text" class="wide" id="dax-filtercol" value="Sales[Region]">
+        </label>
+        <label>Operator
+          <select id="dax-op">
+            <option value="=">=</option>
+            <option value="<>">&lt;&gt;</option>
+            <option value=">">&gt;</option>
+            <option value="<">&lt;</option>
+            <option value=">=">&gt;=</option>
+            <option value="<=">&lt;=</option>
+          </select>
+        </label>
+        <label>Value
+          <input type="text" id="dax-val" value="West">
+        </label>
+        <label>Value type
+          <select id="dax-valtype">
+            <option value="text">Text</option>
+            <option value="number">Number</option>
+          </select>
+        </label>
+        <button class="reveal-btn" data-target="calc">Reveal the trick</button>
+      </div>
+      <div class="steps" id="calc-steps"></div>
+      <div class="answer" id="calc-answer"></div>
+      <div class="note" id="calc-note"></div>
+    </div>
+  </section>
+
+  <section class="panel" data-panel="time">
+    <div class="panel-head">
+      <h2>Time Intelligence <span class="sutra">Shift the date filter</span></h2>
+      <p>Every time-intelligence function works the same way: it takes the current filter on your date column and moves or stretches it. The measure underneath never changes.</p>
+    </div>
+    <div class="workspace">
+      <div class="field-row">
+        <label>Existing measure
+          <input type="text" class="wide" id="ti-measure" value="[Total Sales]">
+        </label>
+        <label>Date column
+          <input type="text" class="wide" id="ti-datecol" value="'Date'[Date]">
+        </label>
+        <label>Function
+          <select id="ti-func">
+            <option value="ytd">Year to date (TOTALYTD)</option>
+            <option value="mtd">Month to date (TOTALMTD)</option>
+            <option value="qtd">Quarter to date (TOTALQTD)</option>
+            <option value="priorYear">Same period last year</option>
+            <option value="priorPeriod">Prior period (DATEADD)</option>
+            <option value="yoy">Year-over-year growth %</option>
+          </select>
+        </label>
+        <button class="reveal-btn" data-target="time">Reveal the trick</button>
+      </div>
+      <div class="steps" id="time-steps"></div>
+      <div class="answer" id="time-answer"></div>
+      <div class="note" id="time-note"></div>
+    </div>
+  </section>
+
+  <section class="panel" data-panel="rel">
+    <div class="panel-head">
+      <h2>Relationships & Filter Flow <span class="sutra">One side filters the many side</span></h2>
+      <p>In a star schema, filters flow from the "one" side of a relationship down to the "many" side by default. Cardinality and cross-filter direction decide who can filter whom.</p>
+    </div>
+    <div class="workspace">
+      <div class="field-row">
+        <label>Dimension table
+          <input type="text" id="rel-dim" value="Product">
+        </label>
+        <label>Dimension key
+          <input type="text" class="wide" id="rel-dimkey" value="Product[ProductID]">
+        </label>
+      </div>
+      <div class="field-row">
+        <label>Fact table
+          <input type="text" id="rel-fact" value="Sales">
+        </label>
+        <label>Fact key
+          <input type="text" class="wide" id="rel-factkey" value="Sales[ProductID]">
+        </label>
+      </div>
+      <div class="field-row">
+        <label>Cardinality
+          <select id="rel-card">
+            <option value="onemany">One-to-Many</option>
+            <option value="manymany">Many-to-Many</option>
+            <option value="oneone">One-to-One</option>
+          </select>
+        </label>
+        <label>Cross-filter direction
+          <select id="rel-dir">
+            <option value="single">Single (dimension → fact)</option>
+            <option value="both">Both (bidirectional)</option>
+          </select>
+        </label>
+        <button class="reveal-btn" data-target="rel">Reveal the trick</button>
+      </div>
+      <div class="steps" id="rel-steps"></div>
+      <div class="answer" id="rel-answer"></div>
+      <div class="note" id="rel-note"></div>
+    </div>
+  </section>
+
+  <section class="panel" data-panel="iter">
+    <div class="panel-head">
+      <h2>Iterator (X) Functions <span class="sutra">Row context, then aggregate</span></h2>
+      <p>Every X-function walks a table one row at a time, evaluates an expression in that row's context, then rolls all the row results up with a single aggregation.</p>
+    </div>
+    <div class="workspace">
+      <div class="field-row">
+        <label>Measure name
+          <input type="text" id="it-name" value="Revenue">
+        </label>
+        <label>Iterator
+          <select id="it-func">
+            <option value="SUMX">SUMX</option>
+            <option value="AVERAGEX">AVERAGEX</option>
+            <option value="MAXX">MAXX</option>
+            <option value="MINX">MINX</option>
+            <option value="COUNTX">COUNTX</option>
+          </select>
+        </label>
+      </div>
+      <div class="field-row">
+        <label>Table
+          <input type="text" id="it-table" value="Sales">
+        </label>
+        <label>Row expression
+          <input type="text" class="wide" id="it-expr" value="Sales[Qty] * Sales[Price]">
+        </label>
+        <button class="reveal-btn" data-target="iter">Reveal the trick</button>
+      </div>
+      <div class="steps" id="iter-steps"></div>
+      <div class="answer" id="iter-answer"></div>
+      <div class="note" id="iter-note"></div>
+    </div>
+  </section>
+
+  <section class="panel" data-panel="pattern">
+    <div class="panel-head">
+      <h2>Common DAX Patterns <span class="sutra">% of total · running total · rank</span></h2>
+      <p>Three patterns you'll write in almost every report, all built from the same idea: temporarily clear a filter with ALL(), then rebuild it exactly the way you want.</p>
+    </div>
+    <div class="workspace">
+      <div class="field-row">
+        <label>Pattern
+          <select id="cp-pattern">
+            <option value="percent">% of Total</option>
+            <option value="running">Running Total</option>
+            <option value="rank">Rank</option>
+          </select>
+        </label>
+        <label>Existing measure
+          <input type="text" class="wide" id="cp-measure" value="[Total Sales]">
+        </label>
+      </div>
+      <div class="field-row">
+        <label>Table to reset (ALL argument)
+          <input type="text" id="cp-table" value="Product">
+        </label>
+        <label>Date / sort column (for running total)
+          <input type="text" class="wide" id="cp-col" value="'Date'[Date]">
+        </label>
+        <button class="reveal-btn" data-target="pattern">Reveal the trick</button>
+      </div>
+      <div class="steps" id="pattern-steps"></div>
+      <div class="answer" id="pattern-answer"></div>
+      <div class="note" id="pattern-note"></div>
+    </div>
+  </section>
+
+</main>
+
+<footer>Built for Learners Academy — a self-contained page, ready to drop into your course library.</footer>
+
+<script>
+/* ---------------- Tab switching ---------------- */
+document.querySelectorAll('nav.tabs button').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('nav.tabs button').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelector(`.panel[data-panel="${btn.dataset.tab}"]`).classList.add('active');
+  });
+});
+
+/* ---------------- Helpers ---------------- */
+function escapeHtml(str){
+  return String(str)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;');
+}
+
+/* ---------------- Step + answer rendering ---------------- */
+function renderSteps(containerId, answerId, noteId, steps, answerText, answerTag, isCode){
+  const stepsEl = document.getElementById(containerId);
+  const answerEl = document.getElementById(answerId);
+  const noteEl = document.getElementById(noteId);
+  stepsEl.innerHTML = '';
+  answerEl.classList.remove('show');
+  answerEl.classList.toggle('code', !!isCode);
+  noteEl.classList.remove('show');
+  noteEl.textContent = '';
+
+  steps.forEach((s, i)=>{
+    const div = document.createElement('div');
+    div.className = 'step';
+    div.innerHTML = `<div class="step-marker">${i+1}</div>
+      <div class="step-body">
+        <div class="label">${s.label}</div>
+        <div class="detail">${s.detail}</div>
+      </div>`;
+    stepsEl.appendChild(div);
+    setTimeout(()=>div.classList.add('show'), i*260);
+  });
+
+  setTimeout(()=>{
+    if(isCode){
+      answerEl.innerHTML = `<span class="tag">${answerTag||'DAX'}</span><pre>${escapeHtml(answerText)}</pre>`;
+    } else {
+      answerEl.innerHTML = `<span class="tag">${answerTag||'Answer'}</span><span>${answerText}</span>`;
+    }
+    answerEl.classList.add('show');
+  }, steps.length*260 + 150);
+}
+
+function showNote(noteId, msg){
+  const noteEl = document.getElementById(noteId);
+  noteEl.textContent = msg;
+  noteEl.classList.add('show');
+  document.getElementById(noteId.replace('-note','-steps')).innerHTML = '';
+  document.getElementById(noteId.replace('-note','-answer')).classList.remove('show');
+}
+
+/* ---------------- 1. CALCULATE & Filter Context ---------------- */
+document.querySelector('[data-target="calc"]').addEventListener('click', ()=>{
+  const name = document.getElementById('dax-name').value.trim() || 'New Measure';
+  const agg = document.getElementById('dax-agg').value;
+  const col = document.getElementById('dax-col').value.trim();
+  const filtercol = document.getElementById('dax-filtercol').value.trim();
+  const op = document.getElementById('dax-op').value;
+  const rawVal = document.getElementById('dax-val').value.trim();
+  const valtype = document.getElementById('dax-valtype').value;
+
+  if(!col || !filtercol || !rawVal){ showNote('calc-note','Fill in the column to aggregate, the filter column, and a value.'); return; }
+
+  const valueLiteral = valtype === 'text' ? `"${rawVal}"` : rawVal;
+  const dax = `${name} = \nCALCULATE(\n    ${agg}(${col}),\n    ${filtercol} ${op} ${valueLiteral}\n)`;
+
+  const steps = [
+    { label:'Start with the base aggregation', detail:`${agg}(${col})` },
+    { label:'Wrap it in CALCULATE', detail:`This lets its arguments override the current filter context` },
+    { label:'Add the filter argument', detail:`${filtercol} ${op} ${valueLiteral} — replaces any existing filter on ${filtercol}, it doesn't stack on top of it` }
+  ];
+  renderSteps('calc-steps','calc-answer','calc-note', steps, dax, 'DAX', true);
+});
+
+/* ---------------- 2. Time Intelligence ---------------- */
+document.querySelector('[data-target="time"]').addEventListener('click', ()=>{
+  const measure = document.getElementById('ti-measure').value.trim() || '[Total Sales]';
+  const datecol = document.getElementById('ti-datecol').value.trim() || "'Date'[Date]";
+  const func = document.getElementById('ti-func').value;
+
+  if(!measure || !datecol){ showNote('time-note','Fill in the measure and the date column.'); return; }
+
+  let dax, stepThree;
+  if(func === 'ytd'){
+    dax = `${measure.replace(/^\[|\]$/g,'')} YTD = \nTOTALYTD(\n    ${measure},\n    ${datecol}\n)`;
+    stepThree = 'TOTALYTD extends the date filter back to January 1st (or your fiscal year start) of the currently visible year.';
+  } else if(func === 'mtd'){
+    dax = `${measure.replace(/^\[|\]$/g,'')} MTD = \nTOTALMTD(\n    ${measure},\n    ${datecol}\n)`;
+    stepThree = 'TOTALMTD extends the date filter back to the 1st of the currently visible month.';
+  } else if(func === 'qtd'){
+    dax = `${measure.replace(/^\[|\]$/g,'')} QTD = \nTOTALQTD(\n    ${measure},\n    ${datecol}\n)`;
+    stepThree = 'TOTALQTD extends the date filter back to the 1st day of the currently visible quarter.';
+  } else if(func === 'priorYear'){
+    dax = `${measure.replace(/^\[|\]$/g,'')} PY = \nCALCULATE(\n    ${measure},\n    SAMEPERIODLASTYEAR(${datecol})\n)`;
+    stepThree = 'SAMEPERIODLASTYEAR shifts the whole visible date range back exactly one year, keeping the same span.';
+  } else if(func === 'priorPeriod'){
+    dax = `${measure.replace(/^\[|\]$/g,'')} Prior Period = \nCALCULATE(\n    ${measure},\n    DATEADD(${datecol}, -1, MONTH)\n)`;
+    stepThree = 'DATEADD shifts the date filter by one interval — swap MONTH for DAY, QUARTER or YEAR depending on what "prior period" means for you.';
+  } else { // yoy
+    dax = `${measure.replace(/^\[|\]$/g,'')} YoY % = \nVAR CurrentValue = ${measure}\nVAR PriorValue =\n    CALCULATE(\n        ${measure},\n        SAMEPERIODLASTYEAR(${datecol})\n    )\nRETURN\n    DIVIDE(CurrentValue - PriorValue, PriorValue)`;
+    stepThree = 'The prior-year value is calculated exactly like the "Same period last year" pattern, then compared to the current value with DIVIDE (safe against divide-by-zero).';
+  }
+
+  const steps = [
+    { label:'Confirm you have a proper date table', detail:`${datecol} needs to come from a continuous, gap-free table marked as the model's Date Table` },
+    { label:'Reference the existing measure, don\'t rewrite it', detail:`${measure} is reused as-is — time intelligence only changes the filter around it` },
+    { label:'Pick the shift', detail: stepThree }
+  ];
+  renderSteps('time-steps','time-answer','time-note', steps, dax, 'DAX', true);
+});
+
+/* ---------------- 3. Relationships & Filter Flow ---------------- */
+document.querySelector('[data-target="rel"]').addEventListener('click', ()=>{
+  const dim = document.getElementById('rel-dim').value.trim() || 'Dimension';
+  const dimkey = document.getElementById('rel-dimkey').value.trim();
+  const fact = document.getElementById('rel-fact').value.trim() || 'Fact';
+  const factkey = document.getElementById('rel-factkey').value.trim();
+  const card = document.getElementById('rel-card').value;
+  const dir = document.getElementById('rel-dir').value;
+
+  if(!dimkey || !factkey){ showNote('rel-note','Fill in both key columns.'); return; }
+
+  let notation, cardDetail, flowDetail, answerText;
+
+  if(card === 'onemany'){
+    notation = `${dim} (1) → ${fact} (∞)`;
+    cardDetail = `${dim} holds one row per ${dimkey.split('[')[0]||'key'}; ${fact} can hold many rows with the same ${factkey}`;
+    flowDetail = dir === 'both'
+      ? `Filters flow both ways: ${dim} filters ${fact} as normal, and a filter placed on ${fact} also flows back up and filters ${dim}. Handy for scenarios like "show only products that sold," but risky if several bidirectional relationships create more than one filter path.`
+      : `Filters set on ${dim} flow down and filter ${fact} automatically. Filters on ${fact} do <strong>not</strong> flow back up to ${dim} — that's the safe, default setup.`;
+    answerText = `${notation} · ${dir === 'both' ? 'Bidirectional' : 'Single direction'}`;
+  } else if(card === 'manymany'){
+    notation = `${dim} (∞) ⇄ ${fact} (∞)`;
+    cardDetail = `Neither ${dimkey} in ${dim} nor ${factkey} in ${fact} is unique — duplicates exist on both sides`;
+    flowDetail = `Power BI can build this relationship directly, but it's worth double-checking the model: a proper bridge table with two one-to-many relationships is usually more predictable and easier to debug than a direct many-to-many link, especially once you add a third table.`;
+    answerText = `${notation} · Needs care`;
+  } else { // oneone
+    notation = `${dim} (1) — ${fact} (1)`;
+    cardDetail = `Both ${dimkey} and ${factkey} are unique — every row on one side matches exactly one row on the other`;
+    flowDetail = `Filters flow both ways automatically in a one-to-one relationship. If the two tables always have a matching row, it's often simpler to merge them into a single table at the data-load stage instead.`;
+    answerText = `${notation} · Filters both ways`;
+  }
+
+  const steps = [
+    { label:'Identify the cardinality', detail: cardDetail },
+    { label:'Map the key columns', detail:`${factkey}  ↔  ${dimkey}` },
+    { label:'Set the cross-filter direction', detail: dir === 'both' ? 'Both — bidirectional' : 'Single — dimension filters fact only' },
+    { label:'What actually flows where', detail: flowDetail }
+  ];
+  renderSteps('rel-steps','rel-answer','rel-note', steps, answerText, 'Relationship', false);
+});
+
+/* ---------------- 4. Iterator (X) Functions ---------------- */
+const ITER_VERBS = {
+  SUMX:'adds up', AVERAGEX:'averages', MAXX:'keeps the largest of', MINX:'keeps the smallest of', COUNTX:'counts'
+};
+document.querySelector('[data-target="iter"]').addEventListener('click', ()=>{
+  const name = document.getElementById('it-name').value.trim() || 'Measure';
+  const func = document.getElementById('it-func').value;
+  const table = document.getElementById('it-table').value.trim();
+  const expr = document.getElementById('it-expr').value.trim();
+
+  if(!table || !expr){ showNote('iter-note','Fill in the table and the row expression.'); return; }
+
+  const dax = `${name} = \n${func}(\n    ${table},\n    ${expr}\n)`;
+
+  const steps = [
+    { label:`${func} walks ${table} one row at a time`, detail:`This creates a row context — one row of ${table} is "current" at each step` },
+    { label:'It evaluates the expression on that row', detail: expr },
+    { label:`Then it ${ITER_VERBS[func]} every row result`, detail:`${func} collapses all the per-row values into a single number` }
+  ];
+  renderSteps('iter-steps','iter-answer','iter-note', steps, dax, 'DAX', true);
+});
+
+/* ---------------- 5. Common Patterns ---------------- */
+document.querySelector('[data-target="pattern"]').addEventListener('click', ()=>{
+  const pattern = document.getElementById('cp-pattern').value;
+  const measure = document.getElementById('cp-measure').value.trim() || '[Total Sales]';
+  const table = document.getElementById('cp-table').value.trim() || 'Table';
+  const col = document.getElementById('cp-col').value.trim() || "'Date'[Date]";
+
+  let dax, steps;
+
+  if(pattern === 'percent'){
+    dax = `% of Total = \nDIVIDE(\n    ${measure},\n    CALCULATE(\n        ${measure},\n        ALL(${table})\n    )\n)`;
+    steps = [
+      { label:'Numerator: the measure in the current filter context', detail: measure },
+      { label:'Denominator: the same measure with the filter cleared', detail:`ALL(${table}) removes every filter on ${table}, so this branch always returns the grand total` },
+      { label:'DIVIDE instead of "/"', detail:`DIVIDE returns a blank instead of an error if the denominator is ever 0` }
+    ];
+  } else if(pattern === 'running'){
+    dax = `Running Total = \nCALCULATE(\n    ${measure},\n    FILTER(\n        ALL(${col}),\n        ${col} <= MAX(${col})\n    )\n)`;
+    steps = [
+      { label:'Clear the existing date filter', detail:`ALL(${col}) brings every date back into view` },
+      { label:'Keep only dates up to today\'s row', detail:`FILTER trims that list down to ${col} <= MAX(${col}) — MAX still reads the current row\'s own date` },
+      { label:'Reapply that trimmed filter to the measure', detail:`CALCULATE evaluates ${measure} inside the shrunken date filter` }
+    ];
+  } else { // rank
+    dax = `Rank = \nRANKX(\n    ALL(${table}),\n    ${measure}\n)`;
+    steps = [
+      { label:'Build the full list to rank within', detail:`ALL(${table}) ignores the current row's own filter, so every item in ${table} is in the running` },
+      { label:'Recalculate the measure for each of them', detail:`RANKX evaluates ${measure} once per item in that list` },
+      { label:'Count how many rank higher than the current one', detail:`That count (+1) is the rank shown for the current row` }
+    ];
+  }
+
+  renderSteps('pattern-steps','pattern-answer','pattern-note', steps, dax, 'DAX', true);
+});
+
+/* ---------------- Hero auto-demo ---------------- */
+const heroExamples = [
+  ['CALCULATE','(','SUM(Sales[Amount])',',','Sales[Region]="West"',')'],
+  ['TOTALYTD','(','[Total Sales]',',',"'Date'[Date]",')'],
+  ['SUMX','(','Sales',',','Sales[Qty]*Sales[Price]',')'],
+  ['RANKX','(','ALL(Product)',',','[Total Sales]',')']
+];
+let heroIdx = 0;
+function playHeroDemo(){
+  const parts = heroExamples[heroIdx % heroExamples.length];
+  heroIdx++;
+  const el = document.getElementById('heroDemo');
+  el.innerHTML = '';
+  parts.forEach((word,i)=>{
+    const span = document.createElement('span');
+    span.textContent = word;
+    let cls = 'digit';
+    if(word === '(' || word === ')' || word === ',') cls += ' op';
+    else if(i===0) cls += ' result-digit';
+    span.className = cls;
+    span.style.animationDelay = (i*110) + 'ms';
+    el.appendChild(span);
+  });
+}
+playHeroDemo();
+setInterval(playHeroDemo, 3600);
+</script>
+
+</body>
+</html>

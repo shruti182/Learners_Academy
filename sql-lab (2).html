@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SQL Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Work+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#14213D;
+    --paper:#FBF6E9;
+    --paper-dim:#F1E8CE;
+    --marigold:#E8A33D;
+    --vermillion:#C1432D;
+    --peacock:#1F6F5C;
+    --charcoal:#2A2A2A;
+    --line: rgba(20,33,61,0.14);
+  }
+  *{box-sizing:border-box;}
+  html{-webkit-tap-highlight-color:transparent;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--charcoal);
+    font-family:'Work Sans', sans-serif;
+    line-height:1.5;
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(20,33,61,0.07) 1px, transparent 0);
+    background-size: 22px 22px;
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important;}
+  }
+
+  /* ---------- Hero ---------- */
+  header.hero{
+    position:relative;
+    padding:64px 24px 48px;
+    text-align:center;
+    background:
+      radial-gradient(circle at 12% 20%, rgba(232,163,61,0.18), transparent 40%),
+      radial-gradient(circle at 88% 15%, rgba(31,111,89,0.16), transparent 42%),
+      var(--ink);
+    color:var(--paper);
+    overflow:hidden;
+  }
+  header.hero::before, header.hero::after{
+    content:"";
+    position:absolute;
+    top:0; bottom:0; width:1px;
+    background:repeating-linear-gradient(180deg, rgba(251,246,233,0.18) 0 6px, transparent 6px 14px);
+  }
+  header.hero::before{ left:28px; }
+  header.hero::after{ right:28px; }
+  .eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--marigold);
+    margin-bottom:14px;
+  }
+  header.hero h1{
+    font-family:'Fraunces', serif;
+    font-weight:700;
+    font-size:clamp(34px, 6vw, 58px);
+    margin:0 0 12px;
+    letter-spacing:-0.01em;
+  }
+  header.hero .tagline{
+    font-size:16px;
+    max-width:480px;
+    margin:0 auto 36px;
+    color:rgba(251,246,233,0.78);
+  }
+  .hero-demo{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:clamp(12px, 2.4vw, 17px);
+    font-weight:600;
+    min-height:52px;
+    flex-wrap:wrap;
+    padding:0 12px;
+  }
+  .hero-demo .op{ color:rgba(251,246,233,0.5); }
+  .hero-demo .digit{
+    display:inline-block;
+    opacity:0;
+    transform:translateY(6px);
+    animation:riseIn 0.4s ease forwards;
+  }
+  .hero-demo .result-digit{ color:var(--marigold); }
+  @keyframes riseIn{ to{ opacity:1; transform:translateY(0); } }
+
+  /* ---------- Tabs ---------- */
+  nav.tabs{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    justify-content:center;
+    padding:22px 16px;
+    max-width:960px;
+    margin:0 auto;
+  }
+  nav.tabs button{
+    font-family:'Work Sans', sans-serif;
+    font-size:14px;
+    font-weight:600;
+    padding:9px 16px;
+    border-radius:999px;
+    border:1px solid var(--line);
+    background:#fff;
+    color:var(--ink);
+    cursor:pointer;
+    transition: all 0.18s ease;
+  }
+  nav.tabs button:hover{ border-color:var(--marigold); }
+  nav.tabs button.active{
+    background:var(--ink);
+    color:var(--paper);
+    border-color:var(--ink);
+  }
+  nav.tabs button:focus-visible, .reveal-btn:focus-visible, input:focus-visible, select:focus-visible{
+    outline:3px solid var(--peacock);
+    outline-offset:2px;
+  }
+
+  /* ---------- Panels ---------- */
+  main{ max-width:760px; margin:0 auto; padding:8px 20px 80px; }
+  .panel{ display:none; animation:fadeUp 0.35s ease; }
+  .panel.active{ display:block; }
+  @keyframes fadeUp{ from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);} }
+
+  .panel-head h2{
+    font-family:'Fraunces', serif;
+    font-size:26px;
+    font-weight:600;
+    margin:28px 0 4px;
+    display:flex;
+    align-items:baseline;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  .sutra{
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    font-weight:500;
+    font-size:15px;
+    color:var(--peacock);
+  }
+  .panel-head p{
+    color:#555;
+    font-size:15px;
+    max-width:58ch;
+  }
+
+  .workspace{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:22px;
+    margin-top:16px;
+    position:relative;
+  }
+  .workspace::before{
+    content:"";
+    position:absolute;
+    top:0; left:22px; right:22px; height:3px;
+    background:linear-gradient(90deg, var(--marigold), var(--vermillion), var(--peacock));
+    border-radius:0 0 3px 3px;
+  }
+  .field-row{
+    display:flex;
+    gap:14px;
+    flex-wrap:wrap;
+    align-items:flex-end;
+    margin-bottom:16px;
+  }
+  .field-row label{
+    font-size:13px;
+    font-weight:600;
+    color:var(--ink);
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+  }
+  .field-row input{
+    font-family:'JetBrains Mono', monospace;
+    font-size:15px;
+    padding:9px 12px;
+    border:1.5px solid var(--line);
+    border-radius:8px;
+    width:150px;
+    background:var(--paper-dim);
+    color:var(--ink);
+  }
+  .field-row input.wide{ width:220px; }
+  .field-row input.narrow{ width:90px; }
+  .field-row input:focus{ border-color:var(--marigold); outline:none; }
+  .field-row select{
+    font-family:'Work Sans', sans-serif;
+    font-size:14px;
+    font-weight:500;
+    padding:9.5px 12px;
+    border:1.5px solid var(--line);
+    border-radius:8px;
+    background:var(--paper-dim);
+    color:var(--ink);
+    min-width:140px;
+  }
+  .field-row select:focus{ border-color:var(--marigold); outline:none; }
+
+  .reveal-btn{
+    font-family:'Work Sans', sans-serif;
+    font-weight:600;
+    font-size:14px;
+    padding:10px 18px;
+    border-radius:8px;
+    border:none;
+    background:var(--vermillion);
+    color:#fff;
+    cursor:pointer;
+    transition:transform 0.12s ease, background 0.18s ease;
+  }
+  .reveal-btn:hover{ background:#a53523; }
+  .reveal-btn:active{ transform:scale(0.97); }
+
+  .steps{ margin-top:20px; display:flex; flex-direction:column; gap:0; }
+  .step{
+    display:flex;
+    gap:14px;
+    align-items:flex-start;
+    padding:12px 0;
+    border-bottom:1px dashed var(--line);
+    opacity:0;
+    transform:translateX(-8px);
+  }
+  .step.show{ animation:stepIn 0.4s ease forwards; }
+  @keyframes stepIn{ to{opacity:1; transform:translateX(0);} }
+  .step:last-child{ border-bottom:none; }
+  .step-marker{
+    flex:0 0 auto;
+    width:26px; height:26px;
+    border-radius:50%;
+    background:var(--paper-dim);
+    border:1.5px solid var(--marigold);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    font-weight:600;
+    color:var(--ink);
+  }
+  .step-body .label{ font-size:13px; font-weight:600; color:var(--ink); margin-bottom:2px; }
+  .step-body .detail{ font-family:'JetBrains Mono', monospace; font-size:14.5px; color:var(--charcoal); }
+  .step-body .detail .muted{ color:#999; }
+
+  .answer{
+    margin-top:18px;
+    padding:16px 18px;
+    border-radius:10px;
+    background:var(--ink);
+    color:var(--paper);
+    font-family:'JetBrains Mono', monospace;
+    font-size:19px;
+    font-weight:600;
+    display:none;
+    align-items:center;
+    justify-content:space-between;
+    gap:14px;
+    opacity:0;
+  }
+  .answer.show{ display:flex; animation:fadeUp 0.4s ease forwards; }
+  .answer.code{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:10px;
+  }
+  .answer.code pre{
+    margin:0;
+    white-space:pre-wrap;
+    word-break:break-word;
+    font-family:'JetBrains Mono', monospace;
+    font-size:14.5px;
+    font-weight:500;
+    line-height:1.6;
+    color:var(--paper);
+  }
+  .answer .tag{
+    font-family:'Work Sans', sans-serif;
+    font-size:11px;
+    font-weight:600;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--marigold);
+    flex:0 0 auto;
+  }
+  .note{
+    font-size:13px;
+    color:var(--vermillion);
+    margin-top:12px;
+    display:none;
+  }
+  .note.show{ display:block; }
+
+  footer{
+    text-align:center;
+    padding:28px 20px 40px;
+    font-size:13px;
+    color:#888;
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="eyebrow">Learners Academy · Query Lab</div>
+  <h1>SQL Lab</h1>
+  <p class="tagline">Five query patterns, assembled live from your table and column names. Fill in the fields, watch the query — and the logic behind it — take shape.</p>
+  <div class="hero-demo" id="heroDemo"></div>
+</header>
+
+<nav class="tabs" role="tablist">
+  <button class="active" data-tab="join">JOINs</button>
+  <button data-tab="window">Window Functions</button>
+  <button data-tab="group">GROUP BY & HAVING</button>
+  <button data-tab="cte">CTEs & Subqueries</button>
+  <button data-tab="pattern">Common Patterns</button>
+</nav>
+
+<main>
+
+  <section class="panel active" data-panel="join">
+    <div class="panel-head">
+      <h2>JOINs <span class="sutra">Match rows across tables</span></h2>
+      <p>Every join starts from one table and reaches across to another, matching rows on a key. The join type decides what happens to the rows that don't find a match.</p>
+    </div>
+    <div class="workspace">
+      <div class="field-row">
+        <label>Left table
+          <input type="text" id="j-left" value="Orders">
+        </label>
+        <label>Alias
+          <input type="text" class="narrow" id="j-leftalias" value="o">
+        </label>
+        <label>Left key
+          <input type="text" class="wide" id="j-leftkey" value="CustomerID">
+        </label>
+      </div>
+      <div class="field-row">
+        <label>Right table
+          <input type="text" id="j-right" value="Customers">
+        </label>
+        <label>Alias
+          <input type="text" class="narrow" id="j-rightalias" value="c">
+        </label>
+        <label>Right key
+          <input type="text" class="wide" id="j-rightkey" value="CustomerID">
+        </label>
+      </div>
+      <div class="field-row">
+        <label>Join type
+          <select id="j-type">
+            <option value="INNER">INNER</option>
+            <option value="LEFT">LEFT</option>
+            <option value="RIGHT">RIGHT</option>
+            <option value="FULL">FULL OUTER</option>
+          </select>
+        </label>
+        <label>Columns to select
+          <input type="text" class="wide" id="j-cols" value="*">
+        </label>
+        <button class="reveal-btn" data-target="join">Reveal the trick</button>
+      </div>
+      <div class="steps" id="join-steps"></div>
+      <div class="answer" id="join-answer"></div>
+      <div class="note" id="join-note"></div>
+    </div>
+  </section>
+
+  <section class="panel" data-panel="window">
+    <div class="panel-head">
+      <h2>Window Functions <span class="sutra">Same table, no collapsing</span></h2>
+      <p>A window function calculates across a group of rows without merging them into one — every row keeps its place, it just gets a new column of context.</p>
+    </div>
+    <div class="workspace">
+      <div class="field-row">
+        <label>Function
+          <select id="w-func">
+            <option value="ROW_NUMBER">ROW_NUMBER</option>
+            <option value="RANK">RANK</option>
+            <option value="DENSE_RANK">DENSE_RANK</option>
+            <option value="sum_running">Running SUM</option>
+            <option value="avg_running">Running AVG</option>
+          </select>
+        </label>
+        <label>Table
+          <input type="text" id="w-table" value="Sales">
+        </label>
+        <label>Output alias
+          <input type="text" id="w-alias" value="rn">
+        </label>
+      </div>
+      <div class="field-row">
+        <label>Partition by
+          <input type="text" class="wide" id="w-partition" value="Region">
+        </label>
+        <label>Order by
+          <input type="text" class="wide" id="w-order" value="OrderDate">
+        </label>
+        <label>Direction
+          <select id="w-dir">
+            <option value="ASC">ASC</option>
+            <option value="DESC">DESC</option>
+          </select>
+        </label>
+      </div>
+      <div class="field-row">
+        <label>Value column (running SUM/AVG only)
+          <input type="text" class="wide" id="w-valcol" value="Amount">
+        </label>
+        <button class="reveal-btn" data-target="window">Reveal the trick</button>
+      </div>
+      <div class="steps" id="window-steps"></div>
+      <div class="answer" id="window-answer"></div>
+      <div class="note" id="window-note"></div>
+    </div>
+  </section>
+
+  <section class="panel" data-panel="group">
+    <div class="panel-head">
+      <h2>GROUP BY & HAVING <span class="sutra">Filter before vs. after grouping</span></h2>
+      <p>WHERE filters individual rows before grouping happens. HAVING filters the grouped rows afterward — it's the only place you can filter on an aggregate.</p>
+    </div>
+    <div class="workspace">
+      <div class="field-row">
+        <label>Table
+          <input type="text" id="g-table" value="Orders">
+        </label>
+        <label>Group by column
+          <input type="text" class="wide" id="g-group" value="Region">
+        </label>
+      </div>
+      <div class="field-row">
+        <label>Aggregate
+          <select id="g-agg">
+            <option value="SUM">SUM</option>
+            <option value="AVG">AVG</option>
+            <option value="COUNT">COUNT</option>
+            <option value="MIN">MIN</option>
+            <option value="MAX">MAX</option>
+          </select>
+        </label>
+        <label>Aggregate column
+          <input type="text" class="wide" id="g-aggcol" value="Amount">
+        </label>
+        <label>Alias
+          <input type="text" class="wide" id="g-alias" value="total_amount">
+        </label>
+      </div>
+      <div class="field-row">
+        <label>WHERE column <span style="font-weight:400;color:#888;">(optional)</span>
+          <input type="text" class="wide" id="g-wherecol" value="OrderStatus">
+        </label>
+        <label>Operator
+          <select id="g-whereop">
+            <option value="=">=</option>
+            <option value="<>">&lt;&gt;</option>
+            <option value=">">&gt;</option>
+            <option value="<">&lt;</option>
+          </select>
+        </label>
+        <label>Value
+          <input type="text" id="g-whereval" value="'Completed'">
+        </label>
+      </div>
+      <div class="field-row">
+        <label>HAVING operator
+          <select id="g-havingop">
+            <option value=">">&gt;</option>
+            <option value="<">&lt;</option>
+            <option value=">=">&gt;=</option>
+            <option value="<=">&lt;=</option>
+            <option value="=">=</option>
+          </select>
+        </label>
+        <label>HAVING value
+          <input type="text" id="g-havingval" value="10000">
+        </label>
+        <button class="reveal-btn" data-target="group">Reveal the trick</button>
+      </div>
+      <div class="steps" id="group-steps"></div>
+      <div class="answer" id="group-answer"></div>
+      <div class="note" id="group-note"></div>
+    </div>
+  </section>
+
+  <section class="panel" data-panel="cte">
+    <div class="panel-head">
+      <h2>CTEs & Subqueries <span class="sutra">Name a subquery, then use it</span></h2>
+      <p>A CTE runs an inner query first, gives it a name, and lets the outer query treat it exactly like a real table — useful whenever a subquery gets too nested to read.</p>
+    </div>
+    <div class="workspace">
+      <div class="field-row">
+        <label>CTE name
+          <input type="text" id="c-name" value="recent_orders">
+        </label>
+        <label>Inner table
+          <input type="text" id="c-table" value="Orders">
+        </label>
+        <label>Inner columns
+          <input type="text" class="wide" id="c-cols" value="CustomerID, OrderDate, Amount">
+        </label>
+      </div>
+      <div class="field-row">
+        <label>Inner filter column
+          <input type="text" class="wide" id="c-col" value="OrderDate">
+        </label>
+        <label>Operator
+          <select id="c-op">
+            <option value=">=">&gt;=</option>
+            <option value=">">&gt;</option>
+            <option value="=">=</option>
+            <option value="<">&lt;</option>
+            <option value="<=">&lt;=</option>
+          </select>
+        </label>
+        <label>Value
+          <input type="text" class="wide" id="c-val" value="'2026-01-01'">
+        </label>
+      </div>
+      <div class="field-row">
+        <label>Outer filter column
+          <input type="text" class="wide" id="c-outcol" value="Amount">
+        </label>
+        <label>Operator
+          <select id="c-outop">
+            <option value=">">&gt;</option>
+            <option value=">=">&gt;=</option>
+            <option value="=">=</option>
+            <option value="<">&lt;</option>
+            <option value="<=">&lt;=</option>
+          </select>
+        </label>
+        <label>Value
+          <input type="text" id="c-outval" value="1000">
+        </label>
+        <button class="reveal-btn" data-target="cte">Reveal the trick</button>
+      </div>
+      <div class="steps" id="cte-steps"></div>
+      <div class="answer" id="cte-answer"></div>
+      <div class="note" id="cte-note"></div>
+    </div>
+  </section>
+
+  <section class="panel" data-panel="pattern">
+    <div class="panel-head">
+      <h2>Common Patterns <span class="sutra">Dedupe · Top-N · Pivot</span></h2>
+      <p>Three queries you'll write constantly, all leaning on the same trick: number or reshape the rows first, then filter or aggregate around that.</p>
+    </div>
+    <div class="workspace">
+      <div class="field-row">
+        <label>Pattern
+          <select id="p-pattern">
+            <option value="dedupe">Deduplicate rows</option>
+            <option value="topn">Top-N per group</option>
+            <option value="pivot">Pivot rows to columns</option>
+          </select>
+        </label>
+        <label>Table
+          <input type="text" id="p-table" value="Orders">
+        </label>
+      </div>
+      <div class="field-row">
+        <label>Group / partition column
+          <input type="text" class="wide" id="p-partition" value="CustomerID">
+        </label>
+        <label>Order by column (dedupe / top-N)
+          <input type="text" class="wide" id="p-order" value="OrderDate DESC">
+        </label>
+        <label>N (top-N only)
+          <input type="text" class="narrow" id="p-n" value="3">
+        </label>
+      </div>
+      <div class="field-row">
+        <label>Category column (pivot only)
+          <input type="text" class="wide" id="p-catcol" value="Status">
+        </label>
+        <label>Category value (pivot only)
+          <input type="text" id="p-catval" value="Shipped">
+        </label>
+        <label>Metric column (pivot only)
+          <input type="text" class="wide" id="p-metric" value="Amount">
+        </label>
+        <button class="reveal-btn" data-target="pattern">Reveal the trick</button>
+      </div>
+      <div class="steps" id="pattern-steps"></div>
+      <div class="answer" id="pattern-answer"></div>
+      <div class="note" id="pattern-note"></div>
+    </div>
+  </section>
+
+</main>
+
+<footer>Built for Learners Academy — a self-contained page, ready to drop into your course library.</footer>
+
+<script>
+/* ---------------- Tab switching ---------------- */
+document.querySelectorAll('nav.tabs button').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('nav.tabs button').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelector(`.panel[data-panel="${btn.dataset.tab}"]`).classList.add('active');
+  });
+});
+
+/* ---------------- Helpers ---------------- */
+function escapeHtml(str){
+  return String(str)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;');
+}
+
+/* ---------------- Step + answer rendering ---------------- */
+function renderSteps(containerId, answerId, noteId, steps, answerText, answerTag, isCode){
+  const stepsEl = document.getElementById(containerId);
+  const answerEl = document.getElementById(answerId);
+  const noteEl = document.getElementById(noteId);
+  stepsEl.innerHTML = '';
+  answerEl.classList.remove('show');
+  answerEl.classList.toggle('code', !!isCode);
+  noteEl.classList.remove('show');
+  noteEl.textContent = '';
+
+  steps.forEach((s, i)=>{
+    const div = document.createElement('div');
+    div.className = 'step';
+    div.innerHTML = `<div class="step-marker">${i+1}</div>
+      <div class="step-body">
+        <div class="label">${s.label}</div>
+        <div class="detail">${s.detail}</div>
+      </div>`;
+    stepsEl.appendChild(div);
+    setTimeout(()=>div.classList.add('show'), i*260);
+  });
+
+  setTimeout(()=>{
+    if(isCode){
+      answerEl.innerHTML = `<span class="tag">${answerTag||'SQL'}</span><pre>${escapeHtml(answerText)}</pre>`;
+    } else {
+      answerEl.innerHTML = `<span class="tag">${answerTag||'Answer'}</span><span>${answerText}</span>`;
+    }
+    answerEl.classList.add('show');
+  }, steps.length*260 + 150);
+}
+
+function showNote(noteId, msg){
+  const noteEl = document.getElementById(noteId);
+  noteEl.textContent = msg;
+  noteEl.classList.add('show');
+  document.getElementById(noteId.replace('-note','-steps')).innerHTML = '';
+  document.getElementById(noteId.replace('-note','-answer')).classList.remove('show');
+}
+
+/* ---------------- 1. JOINs ---------------- */
+const JOIN_TEXT = { INNER:'INNER JOIN', LEFT:'LEFT JOIN', RIGHT:'RIGHT JOIN', FULL:'FULL OUTER JOIN' };
+const JOIN_EXPLAIN = {
+  INNER:'Only rows with a match on both sides survive — anything unmatched on either side is dropped.',
+  LEFT:'Every row from the left table survives. Where there\'s no match on the right, those columns come back NULL.',
+  RIGHT:'Every row from the right table survives. Where there\'s no match on the left, those columns come back NULL.',
+  FULL:'Every row from both tables survives. Whichever side has no match comes back NULL.'
+};
+document.querySelector('[data-target="join"]').addEventListener('click', ()=>{
+  const left = document.getElementById('j-left').value.trim() || 'LeftTable';
+  const leftalias = document.getElementById('j-leftalias').value.trim() || 'l';
+  const leftkey = document.getElementById('j-leftkey').value.trim();
+  const right = document.getElementById('j-right').value.trim() || 'RightTable';
+  const rightalias = document.getElementById('j-rightalias').value.trim() || 'r';
+  const rightkey = document.getElementById('j-rightkey').value.trim();
+  const type = document.getElementById('j-type').value;
+  const cols = document.getElementById('j-cols').value.trim() || '*';
+
+  if(!leftkey || !rightkey){ showNote('join-note','Fill in both key columns.'); return; }
+
+  const sql = `SELECT ${cols}\nFROM ${left} AS ${leftalias}\n${JOIN_TEXT[type]} ${right} AS ${rightalias}\n    ON ${leftalias}.${leftkey} = ${rightalias}.${rightkey}`;
+
+  const steps = [
+    { label:'Start from the left table', detail:`FROM ${left} AS ${leftalias}` },
+    { label:'Choose how unmatched rows are treated', detail: JOIN_EXPLAIN[type] },
+    { label:'Match rows on the key', detail:`ON ${leftalias}.${leftkey} = ${rightalias}.${rightkey}` }
+  ];
+  renderSteps('join-steps','join-answer','join-note', steps, sql, 'SQL', true);
+});
+
+/* ---------------- 2. Window Functions ---------------- */
+const RANK_EXPLAIN = {
+  ROW_NUMBER:'ROW_NUMBER hands out 1, 2, 3... with no ties — even identical rows get different numbers.',
+  RANK:'RANK gives tied rows the same number, then skips ahead — after two rows tied at 1, the next one is 3.',
+  DENSE_RANK:'DENSE_RANK gives tied rows the same number too, but never skips — after two rows tied at 1, the next one is 2.'
+};
+document.querySelector('[data-target="window"]').addEventListener('click', ()=>{
+  const func = document.getElementById('w-func').value;
+  const table = document.getElementById('w-table').value.trim() || 'Table';
+  const alias = document.getElementById('w-alias').value.trim() || 'result';
+  const partition = document.getElementById('w-partition').value.trim();
+  const order = document.getElementById('w-order').value.trim();
+  const dir = document.getElementById('w-dir').value;
+  const valcol = document.getElementById('w-valcol').value.trim();
+
+  if(!partition || !order){ showNote('window-note','Fill in the partition and order columns.'); return; }
+
+  let sql, steps;
+  if(func === 'sum_running' || func === 'avg_running'){
+    if(!valcol){ showNote('window-note','Fill in the value column for the running total.'); return; }
+    const agg = func === 'sum_running' ? 'SUM' : 'AVG';
+    sql = `SELECT *,\n    ${agg}(${valcol}) OVER (\n        PARTITION BY ${partition}\n        ORDER BY ${order} ${dir}\n        ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW\n    ) AS ${alias}\nFROM ${table}`;
+    steps = [
+      { label:'PARTITION BY restarts the running total per group', detail:`PARTITION BY ${partition}` },
+      { label:'ORDER BY decides what counts as "so far"', detail:`ORDER BY ${order} ${dir}` },
+      { label:'The frame defines the window', detail:`ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW — everything from the start of this partition up to the current row` }
+    ];
+  } else {
+    sql = `SELECT *,\n    ${func}() OVER (\n        PARTITION BY ${partition}\n        ORDER BY ${order} ${dir}\n    ) AS ${alias}\nFROM ${table}`;
+    steps = [
+      { label:'PARTITION BY restarts the count per group', detail:`PARTITION BY ${partition}` },
+      { label:'ORDER BY decides the order inside each partition', detail:`ORDER BY ${order} ${dir}` },
+      { label:`How ${func} handles ties`, detail: RANK_EXPLAIN[func] }
+    ];
+  }
+  renderSteps('window-steps','window-answer','window-note', steps, sql, 'SQL', true);
+});
+
+/* ---------------- 3. GROUP BY & HAVING ---------------- */
+document.querySelector('[data-target="group"]').addEventListener('click', ()=>{
+  const table = document.getElementById('g-table').value.trim() || 'Table';
+  const group = document.getElementById('g-group').value.trim();
+  const agg = document.getElementById('g-agg').value;
+  const aggcol = document.getElementById('g-aggcol').value.trim();
+  const alias = document.getElementById('g-alias').value.trim() || 'result';
+  const wherecol = document.getElementById('g-wherecol').value.trim();
+  const whereop = document.getElementById('g-whereop').value;
+  const whereval = document.getElementById('g-whereval').value.trim();
+  const havingop = document.getElementById('g-havingop').value;
+  const havingval = document.getElementById('g-havingval').value.trim() || '0';
+
+  if(!group || !aggcol){ showNote('group-note','Fill in the group-by column and the aggregate column.'); return; }
+
+  let sql = `SELECT ${group}, ${agg}(${aggcol}) AS ${alias}\nFROM ${table}`;
+  const hasWhere = wherecol && whereval;
+  if(hasWhere) sql += `\nWHERE ${wherecol} ${whereop} ${whereval}`;
+  sql += `\nGROUP BY ${group}`;
+  sql += `\nHAVING ${agg}(${aggcol}) ${havingop} ${havingval}`;
+
+  const steps = [
+    { label:'WHERE filters rows before any grouping', detail: hasWhere ? `WHERE ${wherecol} ${whereop} ${whereval}` : 'No row-level filter applied — every row enters the grouping step' },
+    { label:'GROUP BY collapses rows into one per group', detail:`GROUP BY ${group}` },
+    { label:'HAVING filters the grouped rows using the aggregate', detail:`HAVING ${agg}(${aggcol}) ${havingop} ${havingval} — something WHERE can\'t do directly` }
+  ];
+  renderSteps('group-steps','group-answer','group-note', steps, sql, 'SQL', true);
+});
+
+/* ---------------- 4. CTEs & Subqueries ---------------- */
+document.querySelector('[data-target="cte"]').addEventListener('click', ()=>{
+  const name = document.getElementById('c-name').value.trim() || 'cte_name';
+  const table = document.getElementById('c-table').value.trim() || 'Table';
+  const cols = document.getElementById('c-cols').value.trim() || '*';
+  const col = document.getElementById('c-col').value.trim();
+  const op = document.getElementById('c-op').value;
+  const val = document.getElementById('c-val').value.trim();
+  const outcol = document.getElementById('c-outcol').value.trim();
+  const outop = document.getElementById('c-outop').value;
+  const outval = document.getElementById('c-outval').value.trim();
+
+  if(!col || !val || !outcol || !outval){ showNote('cte-note','Fill in both the inner and outer filter conditions.'); return; }
+
+  const sql = `WITH ${name} AS (\n    SELECT ${cols}\n    FROM ${table}\n    WHERE ${col} ${op} ${val}\n)\nSELECT *\nFROM ${name}\nWHERE ${outcol} ${outop} ${outval}`;
+
+  const steps = [
+    { label:'The inner query runs first and gets a name', detail:`${name} becomes a temporary, named result set — it only exists for this query` },
+    { label:'The outer query treats it like a real table', detail:`FROM ${name}` },
+    { label:'Add whatever extra filtering the outer layer needs', detail:`WHERE ${outcol} ${outop} ${outval}` }
+  ];
+  renderSteps('cte-steps','cte-answer','cte-note', steps, sql, 'SQL', true);
+});
+
+/* ---------------- 5. Common Patterns ---------------- */
+document.querySelector('[data-target="pattern"]').addEventListener('click', ()=>{
+  const pattern = document.getElementById('p-pattern').value;
+  const table = document.getElementById('p-table').value.trim() || 'Table';
+  const partition = document.getElementById('p-partition').value.trim();
+  const order = document.getElementById('p-order').value.trim();
+  const n = document.getElementById('p-n').value.trim() || '1';
+  const catcol = document.getElementById('p-catcol').value.trim();
+  const catval = document.getElementById('p-catval').value.trim();
+  const metric = document.getElementById('p-metric').value.trim();
+
+  let sql, steps;
+
+  if(pattern === 'dedupe'){
+    if(!partition || !order){ showNote('pattern-note','Fill in the partition and order-by columns.'); return; }
+    sql = `WITH ranked AS (\n    SELECT *,\n        ROW_NUMBER() OVER (\n            PARTITION BY ${partition}\n            ORDER BY ${order}\n        ) AS rn\n    FROM ${table}\n)\nSELECT *\nFROM ranked\nWHERE rn = 1`;
+    steps = [
+      { label:'Number every row within each group', detail:`PARTITION BY ${partition}, ORDER BY ${order}` },
+      { label:'Row 1 in each group is the one you want to keep', detail:'ROW_NUMBER() starts back at 1 for every new group' },
+      { label:'Keep only that row', detail:'WHERE rn = 1 drops every duplicate' }
+    ];
+  } else if(pattern === 'topn'){
+    if(!partition || !order){ showNote('pattern-note','Fill in the partition and order-by columns.'); return; }
+    sql = `WITH ranked AS (\n    SELECT *,\n        ROW_NUMBER() OVER (\n            PARTITION BY ${partition}\n            ORDER BY ${order}\n        ) AS rn\n    FROM ${table}\n)\nSELECT *\nFROM ranked\nWHERE rn <= ${n}`;
+    steps = [
+      { label:'Number every row within each group', detail:`PARTITION BY ${partition}, ORDER BY ${order}` },
+      { label:'The lowest numbers are the top rows in that order', detail:'ROW_NUMBER() starts back at 1 for every new group' },
+      { label:`Keep the first ${n} of each group`, detail:`WHERE rn <= ${n}` }
+    ];
+  } else { // pivot
+    if(!partition || !catcol || !catval || !metric){ showNote('pattern-note','Fill in the group column, category column/value, and metric column.'); return; }
+    sql = `SELECT ${partition},\n    SUM(CASE WHEN ${catcol} = '${catval}' THEN ${metric} ELSE 0 END) AS ${catval}\nFROM ${table}\nGROUP BY ${partition}`;
+    steps = [
+      { label:'CASE checks the category on every row', detail:`CASE WHEN ${catcol} = '${catval}' THEN ${metric} ELSE 0 END` },
+      { label:'SUM collapses the matching rows into one number', detail:`Rows where ${catcol} isn\'t '${catval}' contribute 0, so they don\'t affect the total` },
+      { label:'GROUP BY still runs underneath', detail:`GROUP BY ${partition} — add one more CASE/SUM pair per category to pivot several at once` }
+    ];
+  }
+  renderSteps('pattern-steps','pattern-answer','pattern-note', steps, sql, 'SQL', true);
+});
+
+/* ---------------- Hero auto-demo ---------------- */
+const heroExamples = [
+  ['SELECT','*','FROM','Orders','o','INNER JOIN','Customers','c','ON','o.CustomerID=c.CustomerID'],
+  ['ROW_NUMBER()','OVER','(','PARTITION BY','CustomerID','ORDER BY','OrderDate','DESC',')'],
+  ['SELECT','Region',',','SUM(Amount)','FROM','Orders','GROUP BY','Region','HAVING','SUM(Amount)>10000'],
+  ['WITH','recent','AS','(','SELECT','*','FROM','Orders',')','SELECT','*','FROM','recent']
+];
+let heroIdx = 0;
+function playHeroDemo(){
+  const parts = heroExamples[heroIdx % heroExamples.length];
+  heroIdx++;
+  const el = document.getElementById('heroDemo');
+  el.innerHTML = '';
+  parts.forEach((word,i)=>{
+    const span = document.createElement('span');
+    span.textContent = word;
+    let cls = 'digit';
+    if(word === '(' || word === ')' || word === ',') cls += ' op';
+    else if(i===0) cls += ' result-digit';
+    span.className = cls;
+    span.style.animationDelay = (i*90) + 'ms';
+    el.appendChild(span);
+  });
+}
+playHeroDemo();
+setInterval(playHeroDemo, 3800);
+</script>
+
+</body>
+</html>
