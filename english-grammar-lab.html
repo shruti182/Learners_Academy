@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>English Grammar Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Work+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#14213D;
+    --paper:#FBF6E9;
+    --paper-dim:#F1E8CE;
+    --marigold:#E8A33D;
+    --vermillion:#C1432D;
+    --peacock:#1F6F5C;
+    --charcoal:#2A2A2A;
+    --line: rgba(20,33,61,0.14);
+  }
+  *{box-sizing:border-box;}
+  html{-webkit-tap-highlight-color:transparent;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--charcoal);
+    font-family:'Work Sans', sans-serif;
+    line-height:1.5;
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(20,33,61,0.07) 1px, transparent 0);
+    background-size: 22px 22px;
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important;}
+  }
+
+  /* ---------- Hero ---------- */
+  header.hero{
+    position:relative;
+    padding:64px 24px 48px;
+    text-align:center;
+    background:
+      radial-gradient(circle at 12% 20%, rgba(232,163,61,0.18), transparent 40%),
+      radial-gradient(circle at 88% 15%, rgba(31,111,89,0.16), transparent 42%),
+      var(--ink);
+    color:var(--paper);
+    overflow:hidden;
+  }
+  header.hero::before, header.hero::after{
+    content:"";
+    position:absolute;
+    top:0; bottom:0; width:1px;
+    background:repeating-linear-gradient(180deg, rgba(251,246,233,0.18) 0 6px, transparent 6px 14px);
+  }
+  header.hero::before{ left:28px; }
+  header.hero::after{ right:28px; }
+  .eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--marigold);
+    margin-bottom:14px;
+  }
+  header.hero h1{
+    font-family:'Fraunces', serif;
+    font-weight:700;
+    font-size:clamp(34px, 6vw, 58px);
+    margin:0 0 12px;
+    letter-spacing:-0.01em;
+  }
+  header.hero .tagline{
+    font-size:16px;
+    max-width:480px;
+    margin:0 auto 36px;
+    color:rgba(251,246,233,0.78);
+  }
+  .hero-demo{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:clamp(16px, 3.4vw, 24px);
+    font-weight:600;
+    min-height:52px;
+    flex-wrap:wrap;
+    padding:0 12px;
+  }
+  .hero-demo .op{ color:rgba(251,246,233,0.5); }
+  .hero-demo .digit{
+    display:inline-block;
+    opacity:0;
+    transform:translateY(6px);
+    animation:riseIn 0.4s ease forwards;
+  }
+  .hero-demo .result-digit{ color:var(--marigold); }
+  @keyframes riseIn{ to{ opacity:1; transform:translateY(0); } }
+
+  /* ---------- Tabs ---------- */
+  nav.tabs{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    justify-content:center;
+    padding:22px 16px;
+    max-width:960px;
+    margin:0 auto;
+  }
+  nav.tabs button{
+    font-family:'Work Sans', sans-serif;
+    font-size:14px;
+    font-weight:600;
+    padding:9px 16px;
+    border-radius:999px;
+    border:1px solid var(--line);
+    background:#fff;
+    color:var(--ink);
+    cursor:pointer;
+    transition: all 0.18s ease;
+  }
+  nav.tabs button:hover{ border-color:var(--marigold); }
+  nav.tabs button.active{
+    background:var(--ink);
+    color:var(--paper);
+    border-color:var(--ink);
+  }
+  nav.tabs button:focus-visible, .reveal-btn:focus-visible, input:focus-visible, select:focus-visible{
+    outline:3px solid var(--peacock);
+    outline-offset:2px;
+  }
+
+  /* ---------- Panels ---------- */
+  main{ max-width:760px; margin:0 auto; padding:8px 20px 80px; }
+  .panel{ display:none; animation:fadeUp 0.35s ease; }
+  .panel.active{ display:block; }
+  @keyframes fadeUp{ from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);} }
+
+  .panel-head h2{
+    font-family:'Fraunces', serif;
+    font-size:26px;
+    font-weight:600;
+    margin:28px 0 4px;
+    display:flex;
+    align-items:baseline;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  .sutra{
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    font-weight:500;
+    font-size:15px;
+    color:var(--peacock);
+  }
+  .panel-head p{
+    color:#555;
+    font-size:15px;
+    max-width:58ch;
+  }
+
+  .workspace{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:22px;
+    margin-top:16px;
+    position:relative;
+  }
+  .workspace::before{
+    content:"";
+    position:absolute;
+    top:0; left:22px; right:22px; height:3px;
+    background:linear-gradient(90deg, var(--marigold), var(--vermillion), var(--peacock));
+    border-radius:0 0 3px 3px;
+  }
+  .field-row{
+    display:flex;
+    gap:14px;
+    flex-wrap:wrap;
+    align-items:flex-end;
+    margin-bottom:16px;
+  }
+  .field-row label{
+    font-size:13px;
+    font-weight:600;
+    color:var(--ink);
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+  }
+  .field-row input{
+    font-family:'JetBrains Mono', monospace;
+    font-size:16px;
+    padding:9px 12px;
+    border:1.5px solid var(--line);
+    border-radius:8px;
+    width:150px;
+    background:var(--paper-dim);
+    color:var(--ink);
+  }
+  .field-row input.wide{ width:200px; }
+  .field-row input:focus{ border-color:var(--marigold); outline:none; }
+  .field-row select{
+    font-family:'Work Sans', sans-serif;
+    font-size:14px;
+    font-weight:500;
+    padding:9.5px 12px;
+    border:1.5px solid var(--line);
+    border-radius:8px;
+    background:var(--paper-dim);
+    color:var(--ink);
+    min-width:150px;
+  }
+  .field-row select:focus{ border-color:var(--marigold); outline:none; }
+
+  .reveal-btn{
+    font-family:'Work Sans', sans-serif;
+    font-weight:600;
+    font-size:14px;
+    padding:10px 18px;
+    border-radius:8px;
+    border:none;
+    background:var(--vermillion);
+    color:#fff;
+    cursor:pointer;
+    transition:transform 0.12s ease, background 0.18s ease;
+  }
+  .reveal-btn:hover{ background:#a53523; }
+  .reveal-btn:active{ transform:scale(0.97); }
+
+  .steps{ margin-top:20px; display:flex; flex-direction:column; gap:0; }
+  .step{
+    display:flex;
+    gap:14px;
+    align-items:flex-start;
+    padding:12px 0;
+    border-bottom:1px dashed var(--line);
+    opacity:0;
+    transform:translateX(-8px);
+  }
+  .step.show{ animation:stepIn 0.4s ease forwards; }
+  @keyframes stepIn{ to{opacity:1; transform:translateX(0);} }
+  .step:last-child{ border-bottom:none; }
+  .step-marker{
+    flex:0 0 auto;
+    width:26px; height:26px;
+    border-radius:50%;
+    background:var(--paper-dim);
+    border:1.5px solid var(--marigold);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    font-weight:600;
+    color:var(--ink);
+  }
+  .step-body .label{ font-size:13px; font-weight:600; color:var(--ink); margin-bottom:2px; }
+  .step-body .detail{ font-family:'JetBrains Mono', monospace; font-size:15px; color:var(--charcoal); }
+  .step-body .detail .muted{ color:#999; }
+
+  .answer{
+    margin-top:18px;
+    padding:16px 18px;
+    border-radius:10px;
+    background:var(--ink);
+    color:var(--paper);
+    font-family:'JetBrains Mono', monospace;
+    font-size:19px;
+    font-weight:600;
+    display:none;
+    align-items:center;
+    justify-content:space-between;
+    gap:14px;
+    opacity:0;
+  }
+  .answer.show{ display:flex; animation:fadeUp 0.4s ease forwards; }
+  .answer .tag{
+    font-family:'Work Sans', sans-serif;
+    font-size:11px;
+    font-weight:600;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--marigold);
+    flex:0 0 auto;
+  }
+  .note{
+    font-size:13px;
+    color:var(--vermillion);
+    margin-top:12px;
+    display:none;
+  }
+  .note.show{ display:block; }
+
+  footer{
+    text-align:center;
+    padding:28px 20px 40px;
+    font-size:13px;
+    color:#888;
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="eyebrow">Learners Academy · Language Lab</div>
+  <h1>English Grammar Lab</h1>
+  <p class="tagline">Five grammar rules turned into instant transformers. Fill in the blanks, and watch the rule do the work — no memorising required.</p>
+  <div class="hero-demo" id="heroDemo"></div>
+</header>
+
+<nav class="tabs" role="tablist">
+  <button class="active" data-tab="passive">Active → Passive</button>
+  <button data-tab="reported">Direct → Indirect</button>
+  <button data-tab="degrees">Degrees of Comparison</button>
+  <button data-tab="plural">Singular → Plural</button>
+  <button data-tab="article">A or An</button>
+</nav>
+
+<main>
+
+  <section class="panel active" data-panel="passive">
+    <div class="panel-head">
+      <h2>Active → Passive Voice <span class="sutra">Subject ↔ Object</span></h2>
+      <p>The object of the active sentence becomes the new subject. The verb turns into its past participle, and a matching form of "be" is added in front of it.</p>
+    </div>
+    <div class="workspace">
+      <div class="field-row">
+        <label>Subject
+          <input type="text" class="wide" id="ap-subject" value="The chef">
+        </label>
+        <label>Verb (base form)
+          <input type="text" id="ap-verb" value="cook">
+        </label>
+        <label>Object
+          <input type="text" class="wide" id="ap-object" value="the meal">
+        </label>
+      </div>
+      <div class="field-row">
+        <label>New subject is
+          <select id="ap-number">
+            <option value="singular">Singular</option>
+            <option value="plural">Plural</option>
+          </select>
+        </label>
+        <label>Tense
+          <select id="ap-tense">
+            <option value="simple_present">Simple Present</option>
+            <option value="simple_past">Simple Past</option>
+            <option value="simple_future">Simple Future</option>
+            <option value="present_continuous">Present Continuous</option>
+            <option value="past_continuous">Past Continuous</option>
+            <option value="present_perfect">Present Perfect</option>
+          </select>
+        </label>
+        <button class="reveal-btn" data-target="passive">Reveal the trick</button>
+      </div>
+      <div class="steps" id="passive-steps"></div>
+      <div class="answer" id="passive-answer"></div>
+      <div class="note" id="passive-note"></div>
+    </div>
+  </section>
+
+  <section class="panel" data-panel="reported">
+    <div class="panel-head">
+      <h2>Direct → Indirect Speech <span class="sutra">The Backshift Rule</span></h2>
+      <p>Drop the quotation marks, add "that", swap the pronoun to match the reporter, and push the tense one step into the past.</p>
+    </div>
+    <div class="workspace">
+      <div class="field-row">
+        <label>Reporter
+          <select id="rs-reporter">
+            <option value="He">He said</option>
+            <option value="She">She said</option>
+            <option value="They">They said</option>
+          </select>
+        </label>
+        <label>Speaker's pronoun in the quote
+          <select id="rs-pronoun">
+            <option value="I">I</option>
+            <option value="We">We</option>
+            <option value="He">He</option>
+            <option value="She">She</option>
+            <option value="It">It</option>
+            <option value="They">They</option>
+          </select>
+        </label>
+        <label>Tense in the quote
+          <select id="rs-tense">
+            <option value="simple_present">Simple Present</option>
+            <option value="present_continuous">Present Continuous</option>
+            <option value="present_perfect">Present Perfect</option>
+            <option value="simple_past">Simple Past</option>
+          </select>
+        </label>
+      </div>
+      <div class="field-row">
+        <label>Verb (base form)
+          <input type="text" id="rs-verb" value="play">
+        </label>
+        <label>Rest of the sentence
+          <input type="text" class="wide" id="rs-rest" value="football">
+        </label>
+        <label>Time / place word
+          <select id="rs-time">
+            <option value="none">— none —</option>
+            <option value="now">now</option>
+            <option value="today">today</option>
+            <option value="tonight">tonight</option>
+            <option value="tomorrow">tomorrow</option>
+            <option value="yesterday">yesterday</option>
+            <option value="here">here</option>
+            <option value="this">this</option>
+            <option value="next week">next week</option>
+            <option value="last week">last week</option>
+          </select>
+        </label>
+        <button class="reveal-btn" data-target="reported">Reveal the trick</button>
+      </div>
+      <div class="steps" id="reported-steps"></div>
+      <div class="answer" id="reported-answer"></div>
+      <div class="note" id="reported-note"></div>
+    </div>
+  </section>
+
+  <section class="panel" data-panel="degrees">
+    <div class="panel-head">
+      <h2>Degrees of Comparison <span class="sutra">-er/-est vs more/most</span></h2>
+      <p>Short words change their tail. Long words get "more" and "most" in front instead. A handful of stubborn words just have to be memorised.</p>
+    </div>
+    <div class="workspace">
+      <div class="field-row">
+        <label>Adjective
+          <input type="text" id="doc-adj" value="happy">
+        </label>
+        <button class="reveal-btn" data-target="degrees">Reveal the trick</button>
+      </div>
+      <div class="steps" id="degrees-steps"></div>
+      <div class="answer" id="degrees-answer"></div>
+      <div class="note" id="degrees-note"></div>
+    </div>
+  </section>
+
+  <section class="panel" data-panel="plural">
+    <div class="panel-head">
+      <h2>Singular → Plural <span class="sutra">Endings decide the rule</span></h2>
+      <p>Hissing endings get "-es", a consonant-plus-y flips to "-ies", and a stubborn list of old English words refuses to follow any rule at all.</p>
+    </div>
+    <div class="workspace">
+      <div class="field-row">
+        <label>Singular noun
+          <input type="text" id="pl-noun" value="city">
+        </label>
+        <button class="reveal-btn" data-target="plural">Reveal the trick</button>
+      </div>
+      <div class="steps" id="plural-steps"></div>
+      <div class="answer" id="plural-answer"></div>
+      <div class="note" id="plural-note"></div>
+    </div>
+  </section>
+
+  <section class="panel" data-panel="article">
+    <div class="panel-head">
+      <h2>A or An <span class="sutra">Listen for the sound, not the letter</span></h2>
+      <p>The choice depends on the sound the next word starts with, not the letter. That's why it's "an hour" but "a university".</p>
+    </div>
+    <div class="workspace">
+      <div class="field-row">
+        <label>Word or phrase
+          <input type="text" class="wide" id="an-word" value="umbrella">
+        </label>
+        <button class="reveal-btn" data-target="article">Reveal the trick</button>
+      </div>
+      <div class="steps" id="article-steps"></div>
+      <div class="answer" id="article-answer"></div>
+      <div class="note" id="article-note"></div>
+    </div>
+  </section>
+
+</main>
+
+<footer>Built for Learners Academy — a self-contained page, ready to drop into your course library.</footer>
+
+<script>
+/* ---------------- Tab switching ---------------- */
+document.querySelectorAll('nav.tabs button').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('nav.tabs button').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelector(`.panel[data-panel="${btn.dataset.tab}"]`).classList.add('active');
+  });
+});
+
+/* ---------------- Step rendering helper ---------------- */
+function renderSteps(containerId, answerId, noteId, steps, answerText, answerTag){
+  const stepsEl = document.getElementById(containerId);
+  const answerEl = document.getElementById(answerId);
+  const noteEl = document.getElementById(noteId);
+  stepsEl.innerHTML = '';
+  answerEl.classList.remove('show');
+  noteEl.classList.remove('show');
+  noteEl.textContent = '';
+
+  steps.forEach((s, i)=>{
+    const div = document.createElement('div');
+    div.className = 'step';
+    div.innerHTML = `<div class="step-marker">${i+1}</div>
+      <div class="step-body">
+        <div class="label">${s.label}</div>
+        <div class="detail">${s.detail}</div>
+      </div>`;
+    stepsEl.appendChild(div);
+    setTimeout(()=>div.classList.add('show'), i*260);
+  });
+
+  setTimeout(()=>{
+    answerEl.innerHTML = `<span class="tag">${answerTag||'Answer'}</span><span>${answerText}</span>`;
+    answerEl.classList.add('show');
+  }, steps.length*260 + 150);
+}
+
+function showNote(noteId, msg){
+  const noteEl = document.getElementById(noteId);
+  noteEl.textContent = msg;
+  noteEl.classList.add('show');
+  document.getElementById(noteId.replace('-note','-steps')).innerHTML = '';
+  document.getElementById(noteId.replace('-note','-answer')).classList.remove('show');
+}
+
+/* ---------------- Shared verb helpers ---------------- */
+const IRREGULAR = {
+  go:['went','gone'], eat:['ate','eaten'], write:['wrote','written'], take:['took','taken'],
+  see:['saw','seen'], do:['did','done'], make:['made','made'], break:['broke','broken'],
+  speak:['spoke','spoken'], buy:['bought','bought'], catch:['caught','caught'], teach:['taught','taught'],
+  bring:['brought','brought'], think:['thought','thought'], sell:['sold','sold'], tell:['told','told'],
+  sing:['sang','sung'], drink:['drank','drunk'], drive:['drove','driven'], give:['gave','given'],
+  forget:['forgot','forgotten'], choose:['chose','chosen'], know:['knew','known'], throw:['threw','thrown'],
+  grow:['grew','grown'], fly:['flew','flown'], draw:['drew','drawn'], wear:['wore','worn'],
+  tear:['tore','torn'], swim:['swam','swum'], ride:['rode','ridden'], rise:['rose','risen'],
+  steal:['stole','stolen'], hide:['hid','hidden'], bite:['bit','bitten'], freeze:['froze','frozen'],
+  forgive:['forgave','forgiven'], understand:['understood','understood'], stand:['stood','stood'],
+  build:['built','built'], send:['sent','sent'], spend:['spent','spent'], lend:['lent','lent'],
+  keep:['kept','kept'], sleep:['slept','slept'], feel:['felt','felt'], leave:['left','left'],
+  lose:['lost','lost'], find:['found','found'], win:['won','won'], hold:['held','held'],
+  meet:['met','met'], read:['read','read'], put:['put','put'], cut:['cut','cut'], hit:['hit','hit'],
+  cost:['cost','cost'], hurt:['hurt','hurt'], let:['let','let'], set:['set','set'], shut:['shut','shut'],
+  cast:['cast','cast'], run:['ran','run'], begin:['began','begun'], swing:['swung','swung'],
+  sit:['sat','sat'], come:['came','come'], become:['became','become'], fall:['fell','fallen'],
+  fight:['fought','fought'], pay:['paid','paid'], say:['said','said'], have:['had','had']
+};
+function isShortCVC(v){
+  return v.length>=3 && /^[^aeiou][aeiou][^aeiouwxy]$/.test(v.slice(-3));
+}
+function pastSimple(verb){
+  const v = verb.trim().toLowerCase();
+  if(!v) return v;
+  if(IRREGULAR[v]) return IRREGULAR[v][0];
+  if(v.endsWith('e')) return v+'d';
+  if(/[^aeiou]y$/.test(v)) return v.slice(0,-1)+'ied';
+  if(isShortCVC(v)) return v+v.slice(-1)+'ed';
+  return v+'ed';
+}
+function pastParticiple(verb){
+  const v = verb.trim().toLowerCase();
+  if(!v) return v;
+  if(IRREGULAR[v]) return IRREGULAR[v][1];
+  return pastSimple(v);
+}
+function ingForm(verb){
+  const v = verb.trim().toLowerCase();
+  if(!v) return v;
+  if(v.endsWith('ie')) return v.slice(0,-2)+'ying';
+  if(v.endsWith('e') && !v.endsWith('ee') && !v.endsWith('oe')) return v.slice(0,-1)+'ing';
+  if(isShortCVC(v)) return v+v.slice(-1)+'ing';
+  return v+'ing';
+}
+
+/* ---------------- 1. Active → Passive ---------------- */
+document.querySelector('[data-target="passive"]').addEventListener('click', ()=>{
+  const subject = document.getElementById('ap-subject').value.trim() || 'the subject';
+  const verb = document.getElementById('ap-verb').value.trim();
+  const object = document.getElementById('ap-object').value.trim() || 'the object';
+  const number = document.getElementById('ap-number').value;
+  const tense = document.getElementById('ap-tense').value;
+
+  if(!verb){ showNote('passive-note','Type a verb in its base form, like "cook" or "write".'); return; }
+
+  const participle = pastParticiple(verb);
+  const plural = number === 'plural';
+  let beWord, sentence, beExplain;
+
+  if(tense === 'simple_present'){
+    beWord = plural ? 'are' : 'is';
+    sentence = `${object} ${beWord} ${participle} by ${subject}.`;
+    beExplain = `"${beWord}" — simple present, ${plural?'plural':'singular'} subject`;
+  } else if(tense === 'simple_past'){
+    beWord = plural ? 'were' : 'was';
+    sentence = `${object} ${beWord} ${participle} by ${subject}.`;
+    beExplain = `"${beWord}" — simple past, ${plural?'plural':'singular'} subject`;
+  } else if(tense === 'simple_future'){
+    sentence = `${object} will be ${participle} by ${subject}.`;
+    beExplain = `"will be" — simple future stays the same for singular or plural`;
+  } else if(tense === 'present_continuous'){
+    beWord = plural ? 'are' : 'is';
+    sentence = `${object} ${beWord} being ${participle} by ${subject}.`;
+    beExplain = `"${beWord} being" — present continuous, ${plural?'plural':'singular'} subject`;
+  } else if(tense === 'past_continuous'){
+    beWord = plural ? 'were' : 'was';
+    sentence = `${object} ${beWord} being ${participle} by ${subject}.`;
+    beExplain = `"${beWord} being" — past continuous, ${plural?'plural':'singular'} subject`;
+  } else { // present_perfect
+    beWord = plural ? 'have' : 'has';
+    sentence = `${object} ${beWord} been ${participle} by ${subject}.`;
+    beExplain = `"${beWord} been" — present perfect, ${plural?'plural':'singular'} subject`;
+  }
+
+  const steps = [
+    { label:'Swap subject and object', detail:`<strong>${object}</strong> moves to the front, <strong>${subject}</strong> moves after "by"` },
+    { label:'Convert the verb to its past participle', detail:`${verb} → <strong>${participle}</strong>` },
+    { label:'Add the matching form of "be"', detail: beExplain }
+  ];
+  renderSteps('passive-steps','passive-answer','passive-note', steps, sentence, 'Passive');
+});
+
+/* ---------------- 2. Direct → Indirect ---------------- */
+document.querySelector('[data-target="reported"]').addEventListener('click', ()=>{
+  const reporter = document.getElementById('rs-reporter').value;
+  const pronoun = document.getElementById('rs-pronoun').value;
+  const tense = document.getElementById('rs-tense').value;
+  const verb = document.getElementById('rs-verb').value.trim();
+  const rest = document.getElementById('rs-rest').value.trim();
+  const timeWord = document.getElementById('rs-time').value;
+
+  if(!verb){ showNote('reported-note','Type a verb in its base form, like "play" or "go".'); return; }
+
+  // Pronoun conversion
+  let convertedPronoun, isPlural;
+  if(pronoun === 'I'){
+    convertedPronoun = reporter.toLowerCase() === 'they' ? 'they' : reporter.toLowerCase();
+    isPlural = reporter === 'They';
+  } else if(pronoun === 'We'){
+    convertedPronoun = 'they'; isPlural = true;
+  } else if(pronoun === 'They'){
+    convertedPronoun = 'they'; isPlural = true;
+  } else {
+    convertedPronoun = pronoun.toLowerCase(); isPlural = false;
+  }
+
+  const timeMap = {
+    now:'then', today:'that day', tonight:'that night', tomorrow:'the next day',
+    yesterday:'the day before', here:'there', this:'that', 'next week':'the following week',
+    'last week':'the previous week'
+  };
+  const convertedTime = timeWord !== 'none' ? timeMap[timeWord] : '';
+
+  // Tense backshift
+  let verbPhrase, tenseLabel;
+  const beWord = isPlural ? 'were' : 'was';
+  if(tense === 'simple_present'){
+    verbPhrase = pastSimple(verb);
+    tenseLabel = 'Simple Present → Simple Past';
+  } else if(tense === 'present_continuous'){
+    verbPhrase = `${beWord} ${ingForm(verb)}`;
+    tenseLabel = 'Present Continuous → Past Continuous';
+  } else if(tense === 'present_perfect'){
+    verbPhrase = `had ${pastParticiple(verb)}`;
+    tenseLabel = 'Present Perfect → Past Perfect';
+  } else { // simple_past
+    verbPhrase = `had ${pastParticiple(verb)}`;
+    tenseLabel = 'Simple Past → Past Perfect';
+  }
+
+  const tail = [rest, convertedTime].filter(Boolean).join(' ');
+  const sentence = `${reporter} said that ${convertedPronoun} ${verbPhrase}${tail? ' '+tail : ''}.`;
+
+  const steps = [
+    { label:'Drop the quotes, add "that"', detail:`${reporter} said, "..." → ${reporter} said that ...` },
+    { label:'Convert the pronoun', detail:`${pronoun} → <strong>${convertedPronoun}</strong>` },
+    { label:'Shift the tense back one step', detail:`${tenseLabel}: ${verb} → <strong>${verbPhrase}</strong>` }
+  ];
+  if(convertedTime){
+    steps.push({ label:'Swap the time / place word', detail:`${timeWord} → <strong>${convertedTime}</strong>` });
+  }
+  renderSteps('reported-steps','reported-answer','reported-note', steps, sentence, 'Indirect');
+});
+
+/* ---------------- 3. Degrees of Comparison ---------------- */
+const IRREGULAR_DEGREES = {
+  good:['better','best'], well:['better','best'], bad:['worse','worst'], ill:['worse','worst'],
+  little:['less','least'], many:['more','most'], much:['more','most'], far:['farther','farthest']
+};
+function countSyllables(w){
+  const m = w.match(/[aeiouy]+/g);
+  return m ? m.length : 1;
+}
+document.querySelector('[data-target="degrees"]').addEventListener('click', ()=>{
+  const raw = document.getElementById('doc-adj').value.trim().toLowerCase();
+  if(!raw){ showNote('degrees-note','Type an adjective, like "big" or "beautiful".'); return; }
+
+  if(IRREGULAR_DEGREES[raw]){
+    const [comp, sup] = IRREGULAR_DEGREES[raw];
+    const steps = [
+      { label:'Check the irregular list first', detail:`"${raw}" doesn't follow a spelling rule — it's memorised` },
+      { label:'Comparative form', detail:`${raw} → <strong>${comp}</strong>` },
+      { label:'Superlative form', detail:`${raw} → <strong>${sup}</strong>` }
+    ];
+    renderSteps('degrees-steps','degrees-answer','degrees-note', steps, `${raw} → ${comp} → ${sup}`, 'Degrees');
+    return;
+  }
+
+  const syllables = countSyllables(raw);
+  let comp, sup, ruleLabel;
+
+  if(/[^aeiou]y$/.test(raw)){
+    comp = raw.slice(0,-1)+'ier'; sup = raw.slice(0,-1)+'iest';
+    ruleLabel = 'Ends in consonant + y → change y to i, add -er/-est';
+  } else if(raw.endsWith('e')){
+    comp = raw+'r'; sup = raw+'st';
+    ruleLabel = 'Ends in silent e → just add -r/-st';
+  } else if(syllables===1 && isShortCVC(raw)){
+    const last = raw.slice(-1);
+    comp = raw+last+'er'; sup = raw+last+'est';
+    ruleLabel = 'One syllable, short vowel + single consonant → double the consonant, add -er/-est';
+  } else if(syllables===1){
+    comp = raw+'er'; sup = raw+'est';
+    ruleLabel = 'One short syllable → add -er/-est directly';
+  } else if(syllables===2 && (raw.endsWith('er')||raw.endsWith('ow')||raw.endsWith('le'))){
+    comp = raw+'er'; sup = raw+'est';
+    ruleLabel = 'Two syllables ending in -er/-ow/-le → still takes -er/-est';
+  } else {
+    comp = 'more '+raw; sup = 'most '+raw;
+    ruleLabel = 'Two or more syllables → use more / most instead of changing the word';
+  }
+
+  const steps = [
+    { label:'Work out which rule applies', detail: ruleLabel },
+    { label:'Build the comparative', detail:`${raw} → <strong>${comp}</strong>` },
+    { label:'Build the superlative', detail:`${raw} → <strong>${sup}</strong>` }
+  ];
+  renderSteps('degrees-steps','degrees-answer','degrees-note', steps, `${raw} → ${comp} → ${sup}`, 'Degrees');
+});
+
+/* ---------------- 4. Singular → Plural ---------------- */
+const IRREGULAR_PLURALS = {
+  man:'men', woman:'women', child:'children', foot:'feet', tooth:'teeth', mouse:'mice',
+  person:'people', ox:'oxen', goose:'geese', die:'dice', cactus:'cacti', criterion:'criteria',
+  phenomenon:'phenomena', sheep:'sheep', deer:'deer', fish:'fish', series:'series', species:'species'
+};
+const F_TO_VES = ['leaf','knife','wife','life','wolf','calf','half','shelf','thief','loaf','elf','loaf'];
+const O_PLUS_S = ['photo','piano','halo','video','radio','kilo','memo','logo'];
+document.querySelector('[data-target="plural"]').addEventListener('click', ()=>{
+  const raw = document.getElementById('pl-noun').value.trim().toLowerCase();
+  if(!raw){ showNote('plural-note','Type a singular noun, like "box" or "baby".'); return; }
+
+  if(IRREGULAR_PLURALS[raw]){
+    const answer = IRREGULAR_PLURALS[raw];
+    const steps = [
+      { label:'Check the irregular list first', detail:`"${raw}" doesn't take -s or -es at all` },
+      { label:'Irregular plural', detail:`${raw} → <strong>${answer}</strong>` }
+    ];
+    renderSteps('plural-steps','plural-answer','plural-note', steps, `${raw} → ${answer}`, 'Plural');
+    return;
+  }
+
+  let answer, ruleLabel;
+  if(/(s|x|z|ch|sh)$/.test(raw)){
+    answer = raw+'es';
+    ruleLabel = 'Ends in a hissing sound (s, x, z, ch, sh) → add -es';
+  } else if(/[^aeiou]y$/.test(raw)){
+    answer = raw.slice(0,-1)+'ies';
+    ruleLabel = 'Ends in consonant + y → change y to i, add -es';
+  } else if(/[aeiou]y$/.test(raw)){
+    answer = raw+'s';
+    ruleLabel = 'Ends in vowel + y → just add -s';
+  } else if(raw.endsWith('fe') && F_TO_VES.includes(raw.slice(0,-2))){
+    answer = raw.slice(0,-2)+'ves';
+    ruleLabel = 'Ends in -fe → change to -ves';
+  } else if(raw.endsWith('f') && F_TO_VES.includes(raw)){
+    answer = raw.slice(0,-1)+'ves';
+    ruleLabel = 'Ends in -f → change to -ves';
+  } else if(raw.endsWith('o') && /[aeiou]o$/.test(raw)){
+    answer = raw+'s';
+    ruleLabel = 'Ends in vowel + o → just add -s';
+  } else if(raw.endsWith('o') && O_PLUS_S.includes(raw)){
+    answer = raw+'s';
+    ruleLabel = 'On the exceptions list → add -s, not -es';
+  } else if(raw.endsWith('o')){
+    answer = raw+'es';
+    ruleLabel = 'Ends in consonant + o → add -es';
+  } else {
+    answer = raw+'s';
+    ruleLabel = 'No special ending → just add -s';
+  }
+
+  const steps = [
+    { label:'Look at the ending', detail: ruleLabel },
+    { label:'Apply the rule', detail:`${raw} → <strong>${answer}</strong>` }
+  ];
+  renderSteps('plural-steps','plural-answer','plural-note', steps, `${raw} → ${answer}`, 'Plural');
+});
+
+/* ---------------- 5. A or An ---------------- */
+const CONSONANT_SOUND_EXCEPTIONS = ['university','uniform','unicorn','unique','european','one','once','user','useful','union','unit','used'];
+const VOWEL_SOUND_EXCEPTIONS = ['honest','honor','honour','hour','heir'];
+document.querySelector('[data-target="article"]').addEventListener('click', ()=>{
+  const raw = document.getElementById('an-word').value.trim().toLowerCase();
+  if(!raw){ showNote('article-note','Type a word or short phrase, like "apple" or "hour".'); return; }
+  const firstWord = raw.split(' ')[0];
+
+  let article, ruleLabel;
+  if(CONSONANT_SOUND_EXCEPTIONS.includes(firstWord)){
+    article = 'a';
+    ruleLabel = `Starts with a vowel letter, but sounds like "yoo-" → takes <strong>a</strong>`;
+  } else if(VOWEL_SOUND_EXCEPTIONS.includes(firstWord)){
+    article = 'an';
+    ruleLabel = `Starts with a silent "h" → the sound is really a vowel → takes <strong>an</strong>`;
+  } else if(/^[aeiou]/.test(firstWord)){
+    article = 'an';
+    ruleLabel = `Starts with a vowel sound → takes <strong>an</strong>`;
+  } else {
+    article = 'a';
+    ruleLabel = `Starts with a consonant sound → takes <strong>a</strong>`;
+  }
+
+  const steps = [
+    { label:'Listen to the first sound, not the first letter', detail:`"${firstWord}" — ${/^[aeiou]/.test(firstWord) ? 'starts on a vowel letter' : 'starts on a consonant letter'}` },
+    { label:'Check the exceptions list', detail: ruleLabel }
+  ];
+  renderSteps('article-steps','article-answer','article-note', steps, `${article} ${raw}`, 'Article');
+});
+
+/* ---------------- Hero auto-demo ---------------- */
+const heroExamples = [
+  ['happy','→','happier','→','happiest'],
+  ['big','→','bigger','→','biggest'],
+  ['careful','→','more careful','→','most careful'],
+  ['city','→','cities'],
+  ['leaf','→','leaves']
+];
+let heroIdx = 0;
+function playHeroDemo(){
+  const parts = heroExamples[heroIdx % heroExamples.length];
+  heroIdx++;
+  const el = document.getElementById('heroDemo');
+  el.innerHTML = '';
+  parts.forEach((word,i)=>{
+    const span = document.createElement('span');
+    span.textContent = word;
+    let cls = 'digit';
+    if(word === '→') cls += ' op';
+    else if(i>=2) cls += ' result-digit';
+    span.className = cls;
+    span.style.animationDelay = (i*140) + 'ms';
+    el.appendChild(span);
+  });
+}
+playHeroDemo();
+setInterval(playHeroDemo, 3600);
+</script>
+
+</body>
+</html>
